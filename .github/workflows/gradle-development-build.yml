@@ -1,0 +1,78 @@
+name: Development Build
+on:
+  schedule:
+    - cron: '00 1 * * 0'  # At 01:00 on Sundays.
+  workflow_dispatch:
+jobs:
+  check_activity:
+    runs-on: ubuntu-latest
+    outputs:
+      activity_output: ${{ steps.activity_id.outputs.should_run }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Check Latest Commit Date
+        id: activity_id
+        run: |
+          NC='\033[0m' # No Color
+          YELLOW='\033[1;33m'
+          GREEN='\033[1;32m'
+          RED='\033[1;31m'
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo -e "${YELLOW} Manual workflow dispatch detected. Skipping date check. ${NC}"
+          echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            last_commit_date=$(git log -1 --format=%ct)
+            current_date=$(date +%s)
+            diff=$(($current_date-$last_commit_date))
+            if [ $diff -le 604800 ]; then
+              echo -e "${GREEN} Latest commit was within the last week. ${NC}"
+              echo "should_run=true" >> $GITHUB_OUTPUT
+            else
+              echo -e "${RED} Latest commit was more than a week ago. ${NC}"
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+  windows_build:
+    needs: check_activity
+    if: ${{needs.check_activity.outputs.activity_output == 'true'}}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'adopt'
+          cache: gradle
+      - name: Run lwjgl3:jpackageImage
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: lwjgl3:jpackageImage
+
+      - name: Zip Distribution
+        uses: vimtor/action-zip@v1
+        with:
+          files: lwjgl3/build/jpackage/MeloAstronomer
+          dest: lwjgl3/build/Melo-Astronomer.zip
+
+      - name: Automatically Create Release
+        # You may pin to the exact commit or the version.
+        # uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          # GitHub secret token
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          # Git tag (for automatic releases)
+          automatic_release_tag: "latest" # optional
+          # Should this release be marked as a draft?
+          #           draft: # optional
+          # Should this release be marked as a pre-release?
+          prerelease: true # optional, default is true
+          # Release title (for automatic releases)
+          title: "Development Build" # optional
+          # Assets to upload to the release
+          files: |
+            README.md
+            lwjgl3/build/Melo-Astronomer.zip

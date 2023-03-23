@@ -1,0 +1,57 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven { url 'https://s01.oss.sonatype.org' }
+    mavenLocal()
+    google()
+    gradlePluginPortal()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+  }
+  dependencies {
+    classpath "io.freefair.gradle:lombok-plugin:6.5.0.3"
+
+  }
+}
+
+allprojects {
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
+}
+task writeAllAssetsToFile {
+  doLast {
+    def assetsFolder = new File("${project.rootDir}/assets/")
+    def assetsFile = new File(assetsFolder, "assets.txt")
+    assetsFile.delete()
+    fileTree(assetsFolder).collect {assetsFolder.relativePath(it) }.each {
+      assetsFile.append(it + "\n")
+    }
+  }
+}
+
+configure(subprojects) {
+  apply plugin: 'java-library'
+  apply plugin: 'io.freefair.lombok'
+  sourceCompatibility = 17
+  compileJava {
+    options.incremental = true
+    compileJava.dependsOn writeAllAssetsToFile
+
+  }
+}
+
+subprojects {
+  version = '1.0.0'
+  ext.appName = 'MeloAstronomer'
+  repositories {
+    mavenCentral()
+    maven { url 'https://s01.oss.sonatype.org' }
+    mavenLocal()
+    gradlePluginPortal()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://jitpack.io' }
+  }
+}
+
+eclipse.project.name = 'MeloAstronomer' + '-parent'

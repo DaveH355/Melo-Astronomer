@@ -1,0 +1,154 @@
+
+Pixeld16.png
+size: 256, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+background_down
+  rotate: false
+  xy: 1, 191
+  size: 48, 48
+  split: 9, 11, 10, 8
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+background_selected
+  rotate: false
+  xy: 1, 141
+  size: 48, 48
+  split: 8, 11, 10, 8
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+background_up
+  rotate: false
+  xy: 51, 191
+  size: 48, 48
+  split: 8, 11, 10, 9
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+button_disabled
+  rotate: false
+  xy: 101, 207
+  size: 32, 32
+  split: 12, 13, 11, 13
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+button_down
+  rotate: false
+  xy: 135, 207
+  size: 32, 32
+  split: 12, 14, 11, 9
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+button_over
+  rotate: false
+  xy: 51, 157
+  size: 32, 32
+  split: 12, 13, 11, 13
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+button_up
+  rotate: false
+  xy: 1, 107
+  size: 32, 32
+  split: 12, 13, 11, 13
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+checkbox_off
+  rotate: false
+  xy: 169, 223
+  size: 16, 16
+  split: 7, 6, 7, 6
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+checkbox_on
+  rotate: false
+  xy: 1, 53
+  size: 16, 16
+  split: 8, 7, 8, 7
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+progress_bar
+  rotate: false
+  xy: 1, 71
+  size: 32, 16
+  split: 14, 6, 7, 6
+  pad: 6, 6, 6, 6
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+progress_bar_vertcal
+  rotate: false
+  xy: 1, 1
+  size: 16, 32
+  split: 7, 7, 7, 8
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+progress_fill
+  rotate: false
+  xy: 1, 89
+  size: 32, 16
+  split: 6, 7, 7, 6
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+progress_fill_noborder
+  rotate: false
+  xy: 51, 149
+  size: 22, 6
+  split: 1, 2, 2, 1
+  orig: 22, 6
+  offset: 0, 0
+  index: -1
+progress_fill_vertical
+  rotate: false
+  xy: 35, 118
+  size: 6, 21
+  split: 1, 2, 2, 1
+  orig: 6, 21
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 19, 53
+  size: 2, 16
+  orig: 2, 16
+  offset: 0, 0
+  index: -1
+icon_error
+  rotate: false
+  xy: 187, 223
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+icon_info
+  rotate: false
+  xy: 1, 35
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+icon_warning
+  rotate: false
+  xy: 205, 223
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 85, 173
+  size: 2, 16
+  orig: 2, 16
+  offset: 0, 0
+  index: -1
