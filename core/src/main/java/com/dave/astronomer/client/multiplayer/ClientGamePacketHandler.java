@@ -27,7 +27,6 @@ public class ClientGamePacketHandler implements PacketHandler {
     }
 
     public void onRemoveEntity(ClientboundRemoveEntityPacket packet) {
-
         engine.removeEntity(packet.uuid);
     }
 

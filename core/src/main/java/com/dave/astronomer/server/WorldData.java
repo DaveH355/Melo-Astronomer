@@ -9,16 +9,9 @@ import lombok.Getter;
 
 public class WorldData {
     @Getter private TiledMap map;
-    private Circle playerBoundingCircle;
 
     public WorldData(TiledMap map) {
         this.map = map;
 
-        Sprite sprite = MainPlayer.createSpriteComponent().getSprite();
-        playerBoundingCircle = PhysicsUtils.traceCircle(sprite, true);
-    }
-
-    public Circle getPlayerBoundingCircle() {
-        return new Circle(playerBoundingCircle);
     }
 }

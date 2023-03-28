@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/HU/Desktop/Coding Projects/TestGDX/assets/maps/test2.tmx",
+    "activeFile": "map.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -11,14 +11,14 @@
     "fileStates": {
         "": {
             "scaleInDock": 8,
-            "scaleInEditor": 5.5
+            "scaleInEditor": 3
         },
         "C:/Users/HU/Desktop/Coding Projects/TestGDX/assets/maps/test2.tmx": {
-            "scale": 4,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 598,
-                "y": 552.375
+                "x": 444,
+                "y": 525.5
             }
         },
         "C:/Users/HU/Desktop/Coding Projects/TestGDX/assets/maps/test2.tmx#Stardew_Valley_Spring": {
@@ -28,24 +28,23 @@
             "scaleInDock": 1
         },
         "map.tmx": {
-            "scale": 3,
-            "selectedLayer": 3,
+            "scale": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 599.8333333333333,
-                "y": 599.8333333333333
+                "x": 763,
+                "y": 265.5
             }
         },
         "map.tmx#Modern_Exteriors_Complete_Tileset": {
-            "scaleInDock": 4
+            "scaleInDock": 2
         },
         "map.tmx#Stardew_Valley_Spring": {
-            "scaleInDock": 8
+            "scaleInDock": 3
         }
     },
     "last.imagePath": "C:/Users/HU/Desktop/Coding Projects/TestGDX/assets/maps",
     "openFiles": [
-        "map.tmx",
-        "C:/Users/HU/Desktop/Coding Projects/TestGDX/assets/maps/test2.tmx"
+        "map.tmx"
     ],
     "project": "main.tiled-project",
     "property.type": "Grass",

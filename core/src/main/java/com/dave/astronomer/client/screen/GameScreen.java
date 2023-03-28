@@ -1,6 +1,7 @@
 package com.dave.astronomer.client.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -43,15 +44,11 @@ public class GameScreen implements Screen {
     private Vector3 cameraTarget = new Vector3();
 
     public GameScreen(GameScreenConfig config) {
-        batch = new SpriteBatch();
+        batch = new SpriteBatch(2000);
 
 
         camera = new OrthographicCamera();
         viewport = new ScreenViewport(camera);
-
-
-
-
 
 
         physicsSytem = new ClientPhysicsSystem();
@@ -144,26 +141,6 @@ public class GameScreen implements Screen {
 
         camera.update();
 
-
-
-
-        //camera follow player
-        MainPlayer player = GameState.getInstance().getMainPlayer();
-        Vector3 target = new Vector3(player.getPosition(), 0);
-
-        cameraTarget = cameraTarget.lerp(target, delta * 4);
-
-        // snap camera position to full pixels
-        float snappedX = cameraTarget.x;
-        float snappedY = cameraTarget.y;
-
-        snappedX = MathUtils.floor(snappedX * Constants.PIXELS_PER_METER) / Constants.PIXELS_PER_METER;
-        snappedY = MathUtils.floor(snappedY * Constants.PIXELS_PER_METER) / Constants.PIXELS_PER_METER;
-
-        camera.position.set(cameraTarget);
-
-
-
         batch.setProjectionMatrix(camera.combined);
 
 
@@ -176,6 +153,14 @@ public class GameScreen implements Screen {
         //debug
         debugRenderer.render(physicsSytem.getWorld(), camera.combined);
         debugHud.render(delta);
+
+        //camera follow player
+        MainPlayer player = GameState.getInstance().getMainPlayer();
+        Vector3 target = new Vector3(player.getPosition(), 0);
+
+        cameraTarget = cameraTarget.lerp(target, delta * 4);
+
+        camera.position.set(cameraTarget);
 
 
     }
@@ -217,6 +202,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+
+        if (engine != null) {
+            engine.dispose();
+        }
+
+
+        if (debugHud != null) {
+            debugHud.dispose();
+        }
+
         try {
             if (client != null) {
                 client.stop();
@@ -234,16 +229,6 @@ public class GameScreen implements Screen {
             Log.error("", e);
         }
 
-
-        if (engine != null) {
-            engine.dispose();
-        }
-
-
-
-        if (debugHud != null) {
-            debugHud.dispose();
-        }
 
     }
 }

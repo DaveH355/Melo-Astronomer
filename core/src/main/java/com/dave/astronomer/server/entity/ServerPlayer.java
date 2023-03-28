@@ -5,13 +5,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.dave.astronomer.client.world.component.BodyComponent;
 import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
 import com.dave.astronomer.common.world.entity.Player;
-import com.dave.astronomer.server.ServerState;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,13 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServerPlayer extends Player {
-    @Getter @Setter private BodyComponent bodyComponent;
+    @Getter @Setter private Body body;
 
     @Getter private PlayerConnection connection;
 
     @Getter @Setter private boolean isReady = false;
 
-    @Getter @Setter private Vector2 clientVelocity = Vector2.Zero;
+    @Getter @Setter private Vector2 clientPosition = new Vector2(0, 0);
 
     @Getter private Map<Integer, State> serverState = new HashMap<>();
     @Getter private Map<Integer, State> clientState = new HashMap<>();
@@ -34,27 +33,33 @@ public class ServerPlayer extends Player {
         super(engine, connection.uuid);
         this.connection = connection;
 
-        bodyComponent = createBodyComponent();
+        body = createBody();
     }
 
 
-    private BodyComponent createBodyComponent() {
+    private Body createBody() {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         PhysicsSystem physicsSystem = getEngine().getSystem(PhysicsSystem.class);
 
-        Body body = physicsSystem.getWorld().createBody(bodyDef);
+        Body b = physicsSystem.getWorld().createBody(bodyDef);
         FixtureDef fdef = new FixtureDef();
 
-        Circle circle = ServerState.getInstance().getWorldData().getPlayerBoundingCircle();
+
+        Circle circle = PlayerData.getBoundingCircle();
         fdef.shape = PhysicsUtils.toShape(circle);
-        fdef.restitution = 1;
-        fdef.friction = 0;
+        fdef.friction = 1;
 
-        body.createFixture(fdef);
 
-        return new BodyComponent(body);
+        b.createFixture(fdef);
+
+        return b;
     }
 
+    @Override
+    public void forcePosition(Vector2 position, float angle) {
+        super.forcePosition(position, angle);
+        clientPosition = position;
+    }
 }

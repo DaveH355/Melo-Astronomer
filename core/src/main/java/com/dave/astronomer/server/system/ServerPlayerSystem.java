@@ -2,7 +2,11 @@ package com.dave.astronomer.server.system;
 
 
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.PolledTimer;
+import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.ClientboundPlayerForceStatePacket;
 import com.dave.astronomer.common.network.packet.ClientboundUpdateEntityPosPacket;
@@ -29,7 +33,13 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
 
     @Override
     public void processEntity(ServerPlayer player, float delta) {
-        player.setVelocity(player.getClientVelocity());
+        float maxSpeed = PlayerData.METERS_PER_SEC;
+        Body body = player.getBody();
+        Vector2 target = player.getClientPosition();
+        if (target.y == 0) System.out.println("oh no");
+
+        Vector2 velocity = PhysicsUtils.calculateVelocityToPosition(target, maxSpeed, delta, body);
+        body.setLinearVelocity(velocity);
 
 
         validateState(player);

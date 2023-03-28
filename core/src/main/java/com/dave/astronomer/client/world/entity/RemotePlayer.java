@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import com.dave.astronomer.client.world.ClientPhysicsSystem;
-import com.dave.astronomer.client.world.component.BodyComponent;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.world.CoreEngine;
@@ -18,7 +17,7 @@ public class RemotePlayer extends AbstractClientPlayer {
     @Getter
     private SpriteComponent spriteComponent;
     @Getter
-    private BodyComponent bodyComponent;
+    private Body body;
 
     public RemotePlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
@@ -26,23 +25,22 @@ public class RemotePlayer extends AbstractClientPlayer {
 
 
         spriteComponent = MainPlayer.createSpriteComponent();
-        bodyComponent = createBodyComponent(spriteComponent);
+        body = createBody(spriteComponent);
 
         addComponents(
-                spriteComponent,
-                bodyComponent
+                spriteComponent
         );
 
     }
 
 
 
-    public BodyComponent createBodyComponent(SpriteComponent spriteComponent) {
+    public Body createBody(SpriteComponent spriteComponent) {
         ClientPhysicsSystem physicsSystem = getEngine().getSystem(ClientPhysicsSystem.class);
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
 
-        Body body = physicsSystem.getWorld().createBody(def);
+        Body b = physicsSystem.getWorld().createBody(def);
 
         FixtureDef fdef = new FixtureDef();
 
@@ -50,8 +48,8 @@ public class RemotePlayer extends AbstractClientPlayer {
         Circle circle = PhysicsUtils.traceCircle(spriteComponent.getSprite(), true);
         fdef.shape = PhysicsUtils.toShape(circle);
 
-        body.createFixture(fdef);
-        return new BodyComponent(body);
+        b.createFixture(fdef);
+        return b;
     }
 
 

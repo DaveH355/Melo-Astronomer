@@ -6,6 +6,7 @@ import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.entity.AbstractClientPlayer;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.PolledTimer;
+import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.network.packet.ServerboundPlayerUpdateStatePacket;
 import com.dave.astronomer.common.world.SingleEntitySystem;
 import com.dave.astronomer.common.world.entity.Player;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
 
     private PolledTimer timer = new PolledTimer(50, TimeUnit.MILLISECONDS);
+    private boolean sentEmptyUpdate = false;
 
     public MainPlayerSystem() {
 
@@ -23,7 +25,7 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
 
     @Override
     public void processEntity(MainPlayer p, float delta) {
-        Vector2 velocity = p.getVelocity();
+        Vector2 velocity = p.getExactVelocity();
         velocity.set(0, 0);
 
         if (p.getWalkRightKey().isDown()) velocity.x += 1;
@@ -32,7 +34,7 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
         if (p.getWalkDownKey().isDown()) velocity.y -= 1;
 
         velocity.nor();
-        velocity.scl(p.metersPerSecond);
+        velocity.scl(PlayerData.METERS_PER_SEC);
 
 
         p.setVelocity(velocity);
@@ -41,17 +43,18 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
         sprite.setPosition(p.getPosition().x, p.getPosition().y);
 
 
-        determineAnimation(p);
-
         if (timer.update()) {
             sendUpdateToServer(p.captureState());
         }
 
 
+        determineAnimation(p);
+
+
     }
 
     public static void determineAnimation(AbstractClientPlayer p) {
-        Vector2 velocity = p.getVelocity();
+        Vector2 velocity = p.getExactVelocity();
         String animation = "idle";
 
         if (velocity.x > 0) {

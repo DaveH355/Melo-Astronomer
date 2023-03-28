@@ -80,10 +80,6 @@ public class MainMenuScreen implements Screen {
             batch.end();
         }
 
-
-
-
-
         activeUI.render(delta);
     }
 
@@ -141,9 +137,6 @@ public class MainMenuScreen implements Screen {
         mainMenuUI.dispose();
         multiplayerUI.dispose();
         directConnectUI.dispose();
-
-
-
     }
 
 

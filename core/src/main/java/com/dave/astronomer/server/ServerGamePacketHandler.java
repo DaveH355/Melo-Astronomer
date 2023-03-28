@@ -29,7 +29,7 @@ public class ServerGamePacketHandler implements PacketHandler {
         BaseEntity entity = engine.getEntityByUUID(connection.uuid);
 
         if (entity != null) {
-            engine.removeEntityAndHandle(entity);
+            engine.removeEntity(entity);
 
             ClientboundRemoveEntityPacket packet = new ClientboundRemoveEntityPacket();
             packet.uuid = entity.getUuid();
@@ -45,7 +45,7 @@ public class ServerGamePacketHandler implements PacketHandler {
 
         BaseEntity entity = engine.getEntityByUUID(clientState.uuid);
         if (entity instanceof ServerPlayer player) {
-            player.setClientVelocity(clientState.velocity);
+            player.setClientPosition(clientState.position);
         } else {
             return;
         }

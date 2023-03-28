@@ -20,7 +20,7 @@ import java.util.UUID;
 public class NetworkUtils {
     private NetworkUtils(){}
     public static final int TCP_PORT = 42590;
-    public static final int UDP_PORT = TCP_PORT + 1;
+    public static final int UDP_PORT = 42591;
     public static final int BROADCAST_PORT = 5037;
     public static final String BROADCAST_ADDRESS = "224.0.1.25";
 

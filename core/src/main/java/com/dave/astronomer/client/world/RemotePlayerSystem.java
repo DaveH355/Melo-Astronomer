@@ -3,6 +3,7 @@ package com.dave.astronomer.client.world;
 import com.badlogic.gdx.math.Vector2;
 import com.dave.astronomer.client.world.entity.RemotePlayer;
 import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.world.SingleEntitySystem;
 
 public class RemotePlayerSystem extends SingleEntitySystem<RemotePlayer> {
@@ -16,7 +17,8 @@ public class RemotePlayerSystem extends SingleEntitySystem<RemotePlayer> {
         if (Math.abs(position.x - targetPosition.x) < 0.01f && Math.abs(position.y - targetPosition.y) < 0.01f) {
             player.setVelocity(new Vector2(0, 0));
         } else {
-            Vector2 requiredVelocity = PhysicsUtils.calculateVelocityToPosition(targetPosition, 5f, delta, player.getBodyComponent().getBody());
+            float maxSpeed = PlayerData.METERS_PER_SEC;
+            Vector2 requiredVelocity = PhysicsUtils.calculateVelocityToPosition(targetPosition, maxSpeed, delta, player.getBody());
 
             player.setVelocity(requiredVelocity);
         }

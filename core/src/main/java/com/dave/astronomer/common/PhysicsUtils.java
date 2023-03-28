@@ -106,11 +106,11 @@ public class PhysicsUtils {
     }
 
     public static Rectangle traceRectangle(Sprite sprite) {
-        Pixmap visible = getVisiblePixmap(sprite);
+        Pixmap pixmap = getVisiblePixmap(sprite);
 
 
-        int width = visible.getWidth();
-        int height = visible.getHeight();
+        int width = pixmap.getWidth();
+        int height = pixmap.getHeight();
 
         // The rectangle is defined by (minX, minY) and (maxX, maxY)
         // The bottom leftmost pixel with a color is at (minX, minY)
@@ -121,7 +121,7 @@ public class PhysicsUtils {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                int color = visible.getPixel(x, y);
+                int color = pixmap.getPixel(x, y);
 
                 if ((color & 0x000000ff) != 0) { // check if alpha is not 0
                     minX = Math.min(minX, x);
@@ -139,7 +139,7 @@ public class PhysicsUtils {
         rectangle.setY(minY);
 
 
-        visible.dispose();
+        pixmap.dispose();
 
         return rectangle;
     }

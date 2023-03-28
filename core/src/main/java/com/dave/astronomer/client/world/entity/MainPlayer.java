@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.world.ClientPhysicsSystem;
-import com.dave.astronomer.client.world.component.BodyComponent;
 import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.AnimationUtils;
@@ -28,9 +26,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MainPlayer extends AbstractClientPlayer {
-    public float metersPerSecond = 5f;
+
     @Getter private SpriteComponent spriteComponent;
-    @Getter private BodyComponent bodyComponent;
+    @Getter private Body body;
     @Getter private InputComponent inputComponent;
     @Getter private InputComponent.KeyAction walkUpKey, walkDownKey, walkLeftKey, walkRightKey;
 
@@ -40,11 +38,10 @@ public class MainPlayer extends AbstractClientPlayer {
 
         spriteComponent = createSpriteComponent();
         inputComponent = createInputComponent();
-        bodyComponent = createBodyComponent(spriteComponent);
+        body = createBody(spriteComponent);
 
         addComponents(
                 inputComponent,
-                bodyComponent,
                 spriteComponent
         );
 
@@ -85,30 +82,30 @@ public class MainPlayer extends AbstractClientPlayer {
 
         return inputComponent;
     }
-    private BodyComponent createBodyComponent(SpriteComponent spriteComponent) {
+    private Body createBody(SpriteComponent spriteComponent) {
         ClientPhysicsSystem physicsSystem = getEngine().getSystem(ClientPhysicsSystem.class);
 
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
 
-        Body body = physicsSystem.getWorld().createBody(def);
+
+        Body b = physicsSystem.getWorld().createBody(def);
 
         FixtureDef fdef = new FixtureDef();
 
 
+
         Circle circle = PhysicsUtils.traceCircle(spriteComponent.getSprite(), true);
         fdef.shape = PhysicsUtils.toShape(circle);
-        fdef.restitution = 1;
-        fdef.friction = 0;
+        fdef.friction = 1;
+
 
         //TODO: collision system that stops players from colliding
-        body.createFixture(fdef);
+        b.createFixture(fdef);
 
-        return new BodyComponent(body);
+        return b;
     }
 
-    public Vector2 getPosition() {
-        return bodyComponent.getBody().getPosition();
-    }
+
 
 }
