@@ -3,14 +3,14 @@ package com.dave.astronomer.client.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.*;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.DebugHud;
 import com.dave.astronomer.client.GameScreenConfig;
@@ -29,9 +29,8 @@ import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 
 public class GameScreen implements Screen {
-
-
     private ScreenViewport viewport;
+    private ShaderProgram shader;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private CoreEngine engine;
@@ -43,12 +42,29 @@ public class GameScreen implements Screen {
     private Box2DDebugRenderer debugRenderer;
     private Vector3 cameraTarget = new Vector3();
 
+
     public GameScreen(GameScreenConfig config) {
+        ShaderProgram.pedantic = false;
+//        shader = new ShaderProgram(Gdx.files.internal("shaders/2xBilinear.vert").readString(),
+//            Gdx.files.internal("shaders/2xBilinear.frag").readString());
+
+//
+//        if (!shader.isCompiled()) {
+//            RuntimeException exception = new RuntimeException(shader.getLog());
+//            errorToMainMenu(exception);
+//
+//        }
+
+
+
         batch = new SpriteBatch(2000);
+
 
 
         camera = new OrthographicCamera();
         viewport = new ScreenViewport(camera);
+        viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER );
+
 
 
         physicsSytem = new ClientPhysicsSystem();
@@ -103,6 +119,7 @@ public class GameScreen implements Screen {
         GameState.getInstance().setGameBatch(batch);
         GameState.getInstance().setMapSystem(mapSystem);
 
+
         client.requestGameStart();
     }
     private void errorToMainMenu(Exception e) {
@@ -138,21 +155,20 @@ public class GameScreen implements Screen {
         client.update();
         if (!client.isReadyForGame()) return;
 
-
         camera.update();
+
 
         batch.setProjectionMatrix(camera.combined);
 
 
         batch.begin();
         engine.update(delta);
-
         batch.end();
-
 
         //debug
         debugRenderer.render(physicsSytem.getWorld(), camera.combined);
         debugHud.render(delta);
+
 
         //camera follow player
         MainPlayer player = GameState.getInstance().getMainPlayer();
@@ -160,28 +176,42 @@ public class GameScreen implements Screen {
 
         cameraTarget = cameraTarget.lerp(target, delta * 4);
 
+        // snap camera position to full pixels
+        float snappedX = cameraTarget.x;
+        float snappedY = cameraTarget.y;
+
+        snappedX = MathUtils.floor(snappedX * Constants.PIXELS_PER_METER) / Constants.PIXELS_PER_METER;
+        snappedY = MathUtils.floor(snappedY * Constants.PIXELS_PER_METER) / Constants.PIXELS_PER_METER;
+
+
+//        camera.position.set(snappedX, snappedY, 0);
         camera.position.set(cameraTarget);
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            camera.zoom -= 0.05f;
+        }
 
 
     }
 
     @Override
     public void resize(int width, int height) {
-
         viewport.update(width, height, false);
-
         debugHud.update(width, height, true);
 
         float coveragePercentX = (float) width / Gdx.app.getGraphics().getDisplayMode().width * 100f;
         float coveragePercentY = (float) height / Gdx.app.getGraphics().getDisplayMode().height * 100f;
 
         if (coveragePercentX >= 80 && coveragePercentY >= 80) {
-            camera.zoom = 1/ Constants.PIXELS_PER_METER / 5;
+            viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER /4);
         } else if (coveragePercentX >= 50 && coveragePercentY >= 50) {
-            camera.zoom = 1/ Constants.PIXELS_PER_METER / 3;
+            viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER /2);
         }else {
-            camera.zoom = 1/ Constants.PIXELS_PER_METER / 2;
+            viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER * 1);
         }
+
+        viewport.update(viewport.getScreenWidth(), viewport.getScreenHeight(), false);
 
     }
 
@@ -211,6 +241,10 @@ public class GameScreen implements Screen {
         if (debugHud != null) {
             debugHud.dispose();
         }
+        if (shader != null) {
+            shader.dispose();
+        }
+
 
         try {
             if (client != null) {

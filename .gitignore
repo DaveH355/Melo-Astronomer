@@ -144,6 +144,9 @@ Thumbs.db
 *.*#
 *#*#
 
+## Tiled Map
+*.tiled-session
+
 ## Game data & auto generated
 assets/assets.txt
 assets/game/*

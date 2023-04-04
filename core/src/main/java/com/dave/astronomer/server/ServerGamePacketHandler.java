@@ -107,7 +107,7 @@ public class ServerGamePacketHandler implements PacketHandler {
     private ServerPlayer createMainPlayer(PlayerConnection connection) {
 
         //TODO: load pos from save file or default spawn location if player is new
-        Vector2 position = new Vector2(45, 45);
+        Vector2 position = new Vector2(30, 20);
 
         ServerPlayer player = new ServerPlayer(engine, connection);
         player.forcePosition(position, 0);

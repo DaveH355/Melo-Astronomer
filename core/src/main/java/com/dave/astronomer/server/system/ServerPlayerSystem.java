@@ -36,7 +36,6 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
         float maxSpeed = PlayerData.METERS_PER_SEC;
         Body body = player.getBody();
         Vector2 target = player.getClientPosition();
-        if (target.y == 0) System.out.println("oh no");
 
         Vector2 velocity = PhysicsUtils.calculateVelocityToPosition(target, maxSpeed, delta, body);
         body.setLinearVelocity(velocity);
@@ -51,9 +50,6 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
 
 
         server.sendToAllExceptUDP(connection.getID(), packet);
-
-
-
 
     }
     private void validateState(ServerPlayer player) {

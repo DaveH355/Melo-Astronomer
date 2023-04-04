@@ -10,8 +10,8 @@ import static com.esotericsoftware.minlog.Log.*;
 
 public class MALogger extends Logger implements Disposable {
     private final long firstLogTime = System.currentTimeMillis();
-    PrintStream printStream;
-    PrintStream altPrintStream;
+    private PrintStream printStream;
+    private PrintStream altPrintStream;
     public MALogger(File gameDirectory) throws FileNotFoundException {
         File logDirectory = new File(gameDirectory,"log");
         logDirectory.mkdir();

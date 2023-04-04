@@ -12,11 +12,10 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Shape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
@@ -33,11 +32,11 @@ public class MapSystem extends EntitySystem {
     private TiledMap map;
 
     @Getter private TiledMapTileLayer backLayer;
-    @Getter private TiledMapTileLayer buildingsLayer;
+
     @Getter private TiledMapTileLayer alwaysFrontLayer;
+
     private String alwaysFront = "Always Front";
     private String back = "Back";
-    private String buildings = "Buildings";
     private String collision = "Collision";
 
 
@@ -69,13 +68,13 @@ public class MapSystem extends EntitySystem {
     private void loadMap(TiledMap map, World world) {
         MapLayers layers = map.getLayers();
         backLayer = (TiledMapTileLayer) layers.get(back);
-        buildingsLayer = ((TiledMapTileLayer) layers.get(buildings));
+
         alwaysFrontLayer = ((TiledMapTileLayer) layers.get(alwaysFront));
 
 
         loadCells(backLayer);
-        loadCells(buildingsLayer);
         loadCells(alwaysFrontLayer);
+
 
         MapLayer collisionLayer = layers.get(collision);
         collisionLayer.getObjects().forEach(mapObject -> handleAsPhysicsObject(mapObject, world));
@@ -117,7 +116,10 @@ public class MapSystem extends EntitySystem {
     private void handleAsPhysicsObject(MapObject mapObject, World world) {
         Shape shape;
         if (mapObject instanceof RectangleMapObject object) {
-            shape = PhysicsUtils.toShape(object);
+            Rectangle rectangle = object.getRectangle();
+
+            Polygon polygon = PhysicsUtils.bevelRectangle(rectangle, 2);
+            shape = PhysicsUtils.toShape(polygon);
 
         } else if (mapObject instanceof PolygonMapObject object) {
             shape = PhysicsUtils.toShape(object);

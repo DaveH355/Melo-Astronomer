@@ -8,9 +8,7 @@ import com.badlogic.gdx.maps.objects.CircleMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -20,19 +18,23 @@ import com.dave.astronomer.common.world.PhysicsSystem;
 import java.util.ArrayList;
 import java.util.List;
 
+//Note: anything toShape needs to be adjusted with Pixels Per Meter
 public class PhysicsUtils {
-    // https://stackoverflow.com/questions/45805732/libgdx-tiled-map-box2d-collision-with-polygon-map-object
-    public static PolygonShape toShape(RectangleMapObject rectangleObject) {
-        Rectangle rectangle = rectangleObject.getRectangle();
-        return toShape(rectangle);
+    private PhysicsUtils() {
     }
+    // https://stackoverflow.com/questions/45805732/libgdx-tiled-map-box2d-collision-with-polygon-map-object
+
+    public static PolygonShape toShape(RectangleMapObject rectangleObject) {
+        return toShape(rectangleObject.getRectangle());
+    }
+
     public static PolygonShape toShape(Rectangle rectangle) {
         PolygonShape polygon = new PolygonShape();
         Vector2 center = new Vector2((rectangle.x + rectangle.width * 0.5f) / Constants.PIXELS_PER_METER,
-                (rectangle.y + rectangle.height * 0.5f ) / Constants.PIXELS_PER_METER);
+            (rectangle.y + rectangle.height * 0.5f) / Constants.PIXELS_PER_METER);
 
         polygon.setAsBox(rectangle.width * 0.5f / Constants.PIXELS_PER_METER,
-                rectangle.height * 0.5f / Constants.PIXELS_PER_METER, center, 0.0f);
+            rectangle.height * 0.5f / Constants.PIXELS_PER_METER, center, 0.0f);
 
         return polygon;
     }
@@ -55,8 +57,9 @@ public class PhysicsUtils {
 
     public static CircleShape toShape(CircleMapObject circleObject) {
         Circle circle = circleObject.getCircle();
-         return toShape(circle);
+        return toShape(circle);
     }
+
     public static CircleShape toShape(Circle circle) {
         CircleShape circleShape = new CircleShape();
 
@@ -67,8 +70,13 @@ public class PhysicsUtils {
     }
 
     public static PolygonShape toShape(PolygonMapObject polygonObject) {
-        PolygonShape polygon = new PolygonShape();
-        float[] vertices = polygonObject.getPolygon().getTransformedVertices();
+        return toShape(polygonObject.getPolygon());
+    }
+
+    public static PolygonShape toShape(Polygon polygon) {
+
+        PolygonShape shape = new PolygonShape();
+        float[] vertices = polygon.getTransformedVertices();
 
         float[] worldVertices = new float[vertices.length];
 
@@ -76,8 +84,8 @@ public class PhysicsUtils {
             worldVertices[i] = vertices[i] / Constants.PIXELS_PER_METER;
         }
 
-        polygon.set(worldVertices);
-        return polygon;
+        shape.set(worldVertices);
+        return shape;
     }
 
     public static Vector2 calculateVelocityToPosition(Vector2 targetPosition, float maxSpeed, float delta, Body body) {
@@ -90,6 +98,7 @@ public class PhysicsUtils {
         Vector2 velocity = targetDirection.scl(delta * maxSpeed * PhysicsSystem.STEP_FREQUENCY);
         return velocity;
     }
+
     private static Pixmap getVisiblePixmap(Sprite sprite) {
         Texture texture = sprite.getTexture();
         TextureData data = texture.getTextureData();
@@ -173,7 +182,7 @@ public class PhysicsUtils {
         // Calculate radius
         float maxDistance = 0;
         for (Vector2 pixel : coloredPixels) {
-            float distance = (float)Math.sqrt(Math.pow(pixel.x - xCenter, 2) + Math.pow(pixel.y - yCenter, 2));
+            float distance = (float) Math.sqrt(Math.pow(pixel.x - xCenter, 2) + Math.pow(pixel.y - yCenter, 2));
             if (distance > maxDistance) {
                 maxDistance = distance;
             }
@@ -192,5 +201,18 @@ public class PhysicsUtils {
         pixmap.dispose();
 
         return circle;
+    }
+
+    public static Polygon bevelRectangle(Rectangle rect, float bevelSize) {
+        return new Polygon(new float[]{
+            rect.x, rect.y + bevelSize,
+            rect.x + bevelSize, rect.y,
+            rect.x + rect.width - bevelSize, rect.y,
+            rect.x + rect.width, rect.y + bevelSize,
+            rect.x + rect.width, rect.y + rect.height - bevelSize,
+            rect.x + rect.width - bevelSize, rect.y + rect.height,
+            rect.x + bevelSize, rect.y + rect.height,
+            rect.x, rect.y + rect.height - bevelSize
+        });
     }
 }

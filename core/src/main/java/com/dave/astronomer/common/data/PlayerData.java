@@ -8,7 +8,7 @@ import com.dave.astronomer.common.PhysicsUtils;
 public class PlayerData {
     private PlayerData(){}
     private static final Circle boundingCircle;
-    public static final float METERS_PER_SEC = 5f;
+    public static final float METERS_PER_SEC = 3.5f;
 
     static {
         Sprite sprite = MainPlayer.createSpriteComponent().getSprite();

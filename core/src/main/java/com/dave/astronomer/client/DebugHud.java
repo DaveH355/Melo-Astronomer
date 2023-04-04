@@ -22,7 +22,7 @@ public class DebugHud implements Disposable {
     private Table table;
 
     public DebugHud(SpriteBatch batch) {
-        stage = new Stage(new ExtendViewport(Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT), batch);
+        stage = new Stage(new ExtendViewport(Constants.UI_WIDTH, Constants.UI_HEIGHT), batch);
         table = new Table();
         table.setFillParent(true);
 
@@ -59,6 +59,7 @@ public class DebugHud implements Disposable {
         addMetric("Peak sprites batched", () -> {
             return batch.maxSpritesInBatch + "";
         });
+
 
 
 

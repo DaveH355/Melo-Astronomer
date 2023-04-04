@@ -1,5 +1,6 @@
 package com.dave.astronomer.client.multiplayer;
 
+import com.badlogic.gdx.math.Polygon;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.MAClient;
 import com.dave.astronomer.client.world.entity.MainPlayer;
@@ -44,6 +45,7 @@ public class ClientGamePacketHandler implements PacketHandler {
 
         RemotePlayer remotePlayer = new RemotePlayer(engine, packet.uuid);
         remotePlayer.forcePosition(packet.position, 0);
+        remotePlayer.lerpPosition(packet.position.x, packet.position.y);
 
         engine.addEntity(remotePlayer);
     }

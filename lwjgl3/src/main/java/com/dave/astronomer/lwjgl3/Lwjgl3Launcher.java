@@ -2,6 +2,7 @@ package com.dave.astronomer.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowConfiguration;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.common.Constants;
 
@@ -20,6 +21,7 @@ public class Lwjgl3Launcher {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
         configuration.setTitle("Melo Astronomer");
         configuration.useVsync(false);
+
         configuration.setWindowSizeLimits(256, 144, -1, -1);
         configuration.setIdleFPS(30);
         //// Limits FPS to the refresh rate of the currently active monitor.
