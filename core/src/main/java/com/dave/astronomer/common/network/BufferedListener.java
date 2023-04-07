@@ -7,7 +7,6 @@ import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;

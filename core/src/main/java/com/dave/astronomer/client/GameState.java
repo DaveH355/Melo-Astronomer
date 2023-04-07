@@ -2,8 +2,6 @@ package com.dave.astronomer.client;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.dave.astronomer.client.world.ClientMapSystem;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.world.CoreEngine;

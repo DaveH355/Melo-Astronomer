@@ -8,7 +8,6 @@ import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
 
-
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +40,7 @@ public abstract class Player extends BaseEntity implements Disposable {
         public UUID uuid;
         public Vector2 velocity;
         public long captureDateMillis;
-        public int stateID;
+        public int id;
     }
     public State captureState() {
         State state = new State();
@@ -49,7 +48,12 @@ public abstract class Player extends BaseEntity implements Disposable {
         state.velocity = getExactVelocity();
         state.captureDateMillis = TimeUtils.millis();
         state.uuid = getUuid();
-        state.stateID = STATE_ID_POOL.incrementAndGet();
+        state.id = STATE_ID_POOL.incrementAndGet();
+        return state;
+    }
+    public State captureState(int id) {
+        State state = captureState();
+        state.id = id;
         return state;
     }
     public void setState(State state) {

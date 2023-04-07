@@ -1,7 +1,6 @@
 package com.dave.astronomer.server.system;
 
 
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.dave.astronomer.common.PhysicsUtils;
@@ -14,12 +13,12 @@ import com.dave.astronomer.common.world.SingleEntitySystem;
 import com.dave.astronomer.common.world.entity.Player;
 import com.dave.astronomer.server.MAServer;
 import com.dave.astronomer.server.entity.ServerPlayer;
+import com.esotericsoftware.minlog.Log;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
-    private static final float POSITION_TOLERANCE = 1f;
+    private static final float POSITION_TOLERANCE = 0.5f;
     private PolledTimer timer = new PolledTimer(50, TimeUnit.MILLISECONDS);
     private MAServer server;
     public ServerPlayerSystem(MAServer server) {
@@ -35,14 +34,25 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
     public void processEntity(ServerPlayer player, float delta) {
         float maxSpeed = PlayerData.METERS_PER_SEC;
         Body body = player.getBody();
-        Vector2 target = player.getClientPosition();
 
-        Vector2 velocity = PhysicsUtils.calculateVelocityToPosition(target, maxSpeed, delta, body);
+        if (player.getClientState().isEmpty()) return;
+        Vector2 current = player.getPosition();
+        Vector2 target = player.getClientState().getLast().position;
+
+        Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, maxSpeed);
+
+        //stop velocity at a threshold to prevent oscillation at the cost of some accuracy
+        if (current.dst(target) < 0.05f) {
+            velocity.set(0, 0);
+        }
+
         body.setLinearVelocity(velocity);
 
+        if (Math.abs(target.x - player.getPosition().x) <= POSITION_TOLERANCE &&
+            Math.abs(target.y - player.getPosition().y) <= POSITION_TOLERANCE) {
+            validateState(player);
 
-        validateState(player);
-
+        }
 
 
         PlayerConnection connection = player.getConnection();
@@ -53,35 +63,36 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
 
     }
     private void validateState(ServerPlayer player) {
-        //make sure client and server state all match
-        Player.State latest = null;
         boolean flag = false;
-        for (Map.Entry<Integer, Player.State> entry : player.getClientState().entrySet()) {
-            int id = entry.getKey();
-            Player.State clientState = entry.getValue();
-            Player.State serverState = player.getServerState().get(id);
 
-            //set the latest state
-            if (latest == null) latest = serverState;
-            if (serverState.captureDateMillis > latest.captureDateMillis) {
-                latest = serverState;
-            }
+        //validation begin
+        Player.State clientState = player.getClientState().getLast();
+        Player.State serverState = player.getServerState().getLast();
 
-            if (!validatePosition(clientState, serverState)) {
-                flag = true;
-            }
 
+        if (clientState.id != serverState.id) {
+            flag = true;
+            Log.warn("Player " + player.getUuid() + " state buffer out of order");
         }
+
+        if (!validatePosition(clientState, serverState)) {
+            flag = true;
+        }
+        //validation end
 
         if (flag) {
-            player.setState(latest);
+            player.setState(serverState);
 
-            ClientboundPlayerForceStatePacket packet = new ClientboundPlayerForceStatePacket(latest);
+            ClientboundPlayerForceStatePacket packet = new ClientboundPlayerForceStatePacket(serverState);
             player.getConnection().sendTCP(packet);
+
+            player.getClientState().clear();
+            player.getServerState().clear();
+        } else {
+            //remove last state, it has been validated
+            player.getClientState().removeLast();
+            player.getServerState().removeLast();
         }
-        //clear states, they have been validated
-        player.getClientState().clear();
-        player.getServerState().clear();
     }
     private boolean validatePosition(Player.State clientState, Player.State serverState) {
         float xDiff = Math.abs(serverState.position.x - clientState.position.x);
@@ -93,7 +104,6 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
         }
         return true;
     }
-
 
     @Override
     public Class<ServerPlayer> getGenericType() {

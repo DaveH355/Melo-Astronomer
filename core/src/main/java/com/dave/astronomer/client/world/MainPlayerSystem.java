@@ -58,18 +58,17 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
         String animation = "idle";
 
         if (velocity.x > 0) {
-            animation = "walk_right";
+            animation = "walk";
         }
         if (velocity.x < 0) {
-            animation = "walk_left";
+            animation = "walk";
         }
         if (velocity.y < 0) {
-            animation = "walk_down";
+            animation = "walk";
         }
         if (velocity.y > 0) {
-            animation = "walk_up";
+            animation = "walk";
         }
-
 
         p.getSpriteComponent().selectAnimationIfAbsent(animation, true);
     }

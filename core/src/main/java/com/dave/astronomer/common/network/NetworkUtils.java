@@ -6,7 +6,6 @@ import com.dave.astronomer.common.network.packet.Packet;
 import com.dave.astronomer.common.world.entity.Player;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
-
 import net.jodah.typetools.TypeResolver;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;

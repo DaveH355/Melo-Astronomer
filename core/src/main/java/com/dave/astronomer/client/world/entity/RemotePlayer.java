@@ -1,13 +1,9 @@
 package com.dave.astronomer.client.world.entity;
 
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-
 import com.dave.astronomer.client.world.ClientPhysicsSystem;
 import com.dave.astronomer.client.world.component.SpriteComponent;
-import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.world.CoreEngine;
 import lombok.Getter;
 
@@ -25,32 +21,12 @@ public class RemotePlayer extends AbstractClientPlayer {
 
 
         spriteComponent = MainPlayer.createSpriteComponent();
-        body = createBody(spriteComponent);
+        body = PlayerData.createBody(engine.getSystem(ClientPhysicsSystem.class).getWorld());
 
         addComponents(
                 spriteComponent
         );
 
     }
-
-
-
-    public Body createBody(SpriteComponent spriteComponent) {
-        ClientPhysicsSystem physicsSystem = getEngine().getSystem(ClientPhysicsSystem.class);
-        BodyDef def = new BodyDef();
-        def.type = BodyDef.BodyType.DynamicBody;
-
-        Body b = physicsSystem.getWorld().createBody(def);
-
-        FixtureDef fdef = new FixtureDef();
-
-
-        Circle circle = PhysicsUtils.traceCircle(spriteComponent.getSprite(), true);
-        fdef.shape = PhysicsUtils.toShape(circle);
-
-        b.createFixture(fdef);
-        return b;
-    }
-
 
 }

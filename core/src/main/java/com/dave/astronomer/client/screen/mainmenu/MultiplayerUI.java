@@ -17,7 +17,6 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
 import com.github.tommyettinger.textra.TypingLabel;
 
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 

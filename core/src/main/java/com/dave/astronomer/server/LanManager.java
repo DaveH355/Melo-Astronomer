@@ -6,7 +6,6 @@ import com.dave.astronomer.common.network.NetworkUtils;
 import com.dave.astronomer.common.network.discovery.LanDiscoveryDatagram;
 import com.esotericsoftware.kryonet.serialization.Serialization;
 import com.esotericsoftware.minlog.Log;
-
 import lombok.Getter;
 import lombok.Setter;
 

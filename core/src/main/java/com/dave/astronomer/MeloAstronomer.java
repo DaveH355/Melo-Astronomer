@@ -3,6 +3,7 @@ package com.dave.astronomer;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.dave.astronomer.client.GameSkin;
 import com.dave.astronomer.client.NonGameClient;
@@ -30,6 +31,7 @@ public class MeloAstronomer extends Game {
     private MALogger logger;
 
     public MeloAstronomer() {
+        ShaderProgram.pedantic = false;
         instance = this;
     }
 

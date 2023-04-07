@@ -40,7 +40,7 @@ public class DebugHud implements Disposable {
             double usedMemoryMB = Gdx.app.getJavaHeap() / 1000000f;
             return String.format("%.2f / %.2f MB", usedMemoryMB, totalMemoryMB);
         });
-        addMetric("Ping", () -> {
+        addMetric("RTT ping", () -> {
             MAClient client = GameState.getInstance().getClient();
             return client.getReturnTripTime() + "";
         });

@@ -14,11 +14,14 @@ public class SpriteComponent extends BaseComponent {
     private Animation<TextureRegion> animation;
     private Map<String, Animation<TextureRegion>> animationMap;
     @Getter @Setter private Sprite sprite;
+
     private boolean looping;
     private float stateTime;
 
     public SpriteComponent(Map<String, Animation<TextureRegion>> animationMap){
         this.animationMap = animationMap;
+
+
     }
 
     public TextureRegion getRegion() {
@@ -33,6 +36,14 @@ public class SpriteComponent extends BaseComponent {
 
         this.looping = looping;
         this.animation = animationMap.get(name);
+
         stateTime = 0;
+    }
+    public void selectAnimationIfFinished(String name, boolean looping) {
+        if (!animation.isAnimationFinished(stateTime)) return;
+
+        this.animation = animationMap.get(name);
+        this.looping = looping;
+        this.stateTime = 0;
     }
 }

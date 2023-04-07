@@ -2,6 +2,7 @@ package com.dave.astronomer.client.world;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dave.astronomer.client.GameState;
@@ -20,7 +21,6 @@ public class SpriteRenderSystem extends BaseEntitySystem {
     }
 
 
-
     @Override
     public void processEntity(BaseEntity entity, float deltaTime) {
         SpriteBatch batch = GameState.getInstance().getGameBatch();
@@ -31,7 +31,25 @@ public class SpriteRenderSystem extends BaseEntitySystem {
 
         Sprite sprite = component.getSprite();
         sprite.setRegion(component.getRegion());
+
+
+        //draw shadow
+        float x = sprite.getX();
+        float y = sprite.getY();
+        Color color = sprite.getColor().cpy();
+
+        sprite.setPosition(x - 0.05f, y + 0.1f);
+        sprite.setColor(0, 0, 0, 0.3f);
+
+        sprite.draw(batch);
+
+
+        //reset
+        sprite.setColor(color);
+        sprite.setPosition(x, y);
+
+
+        //draw normal
         sprite.draw(batch);
     }
-
 }

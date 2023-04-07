@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.dave.astronomer.MeloAstronomer;
-
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.screen.UIState;
 import com.dave.astronomer.common.Constants;
@@ -70,7 +69,7 @@ public class MainMenuScreen implements Screen {
     }
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(5/255f,23/255f,50/255f, 1);
+        Gdx.gl.glClearColor(0,0,0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 

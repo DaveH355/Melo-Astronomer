@@ -3,14 +3,16 @@ package com.dave.astronomer.client.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.utils.viewport.*;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.DebugHud;
 import com.dave.astronomer.client.GameScreenConfig;
@@ -29,41 +31,25 @@ import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 
 public class GameScreen implements Screen {
-    private ScreenViewport viewport;
+    private Viewport viewport;
     private ShaderProgram shader;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private CoreEngine engine;
     private MAClient client;
     private MAServer server;
-
     private DebugHud debugHud;
     private ClientPhysicsSystem physicsSytem;
     private Box2DDebugRenderer debugRenderer;
     private Vector3 cameraTarget = new Vector3();
-
-
+    //TODO: fix pixel wobble when rendering
     public GameScreen(GameScreenConfig config) {
-        ShaderProgram.pedantic = false;
-//        shader = new ShaderProgram(Gdx.files.internal("shaders/2xBilinear.vert").readString(),
-//            Gdx.files.internal("shaders/2xBilinear.frag").readString());
-
-//
-//        if (!shader.isCompiled()) {
-//            RuntimeException exception = new RuntimeException(shader.getLog());
-//            errorToMainMenu(exception);
-//
-//        }
-
-
-
         batch = new SpriteBatch(2000);
 
 
-
         camera = new OrthographicCamera();
-        viewport = new ScreenViewport(camera);
-        viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER );
+        camera.zoom = 0.5f;
+        viewport = new FillViewport(Constants.DEFAULT_WIDTH / Constants.PIXELS_PER_METER, Constants.DEFAULT_HEIGHT / Constants.PIXELS_PER_METER, camera);
 
 
 
@@ -122,7 +108,7 @@ public class GameScreen implements Screen {
 
         client.requestGameStart();
     }
-    private void errorToMainMenu(Exception e) {
+    public void errorToMainMenu(Exception e) {
         Log.error("", e);
 
         Gdx.app.postRunnable(() -> {
@@ -144,7 +130,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(5/255f,23/255f,50/255f, 1);
+        Gdx.gl.glClearColor(0,0,0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 
@@ -200,18 +186,7 @@ public class GameScreen implements Screen {
         viewport.update(width, height, false);
         debugHud.update(width, height, true);
 
-        float coveragePercentX = (float) width / Gdx.app.getGraphics().getDisplayMode().width * 100f;
-        float coveragePercentY = (float) height / Gdx.app.getGraphics().getDisplayMode().height * 100f;
 
-        if (coveragePercentX >= 80 && coveragePercentY >= 80) {
-            viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER /4);
-        } else if (coveragePercentX >= 50 && coveragePercentY >= 50) {
-            viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER /2);
-        }else {
-            viewport.setUnitsPerPixel(1/Constants.PIXELS_PER_METER * 1);
-        }
-
-        viewport.update(viewport.getScreenWidth(), viewport.getScreenHeight(), false);
 
     }
 

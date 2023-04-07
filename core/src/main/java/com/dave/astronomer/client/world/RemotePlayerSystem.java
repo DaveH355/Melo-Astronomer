@@ -9,19 +9,13 @@ import com.dave.astronomer.common.world.SingleEntitySystem;
 public class RemotePlayerSystem extends SingleEntitySystem<RemotePlayer> {
     @Override
     public void processEntity(RemotePlayer player, float delta) {
-
-
         Vector2 position = player.getPosition();
         Vector2 targetPosition = player.getDeltaMovement();
 
-        if (Math.abs(position.x - targetPosition.x) < 0.01f && Math.abs(position.y - targetPosition.y) < 0.01f) {
-            player.setVelocity(new Vector2(0, 0));
-        } else {
-            float maxSpeed = PlayerData.METERS_PER_SEC;
-            Vector2 requiredVelocity = PhysicsUtils.calculateVelocityToPosition(targetPosition, maxSpeed, delta, player.getBody());
+        float maxSpeed = PlayerData.METERS_PER_SEC;
+        Vector2 requiredVelocity = PhysicsUtils.smoothVelocityToPosition(player.getBody(), targetPosition, maxSpeed, delta);
 
-            player.setVelocity(requiredVelocity);
-        }
+        player.setVelocity(requiredVelocity);
 
         float xDiff = Math.abs(position.x - targetPosition.x);
         float yDiff = Math.abs(position.y - targetPosition.y);

@@ -1,6 +1,5 @@
 package com.dave.astronomer.client.multiplayer;
 
-import com.badlogic.gdx.math.Polygon;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.MAClient;
 import com.dave.astronomer.client.world.entity.MainPlayer;

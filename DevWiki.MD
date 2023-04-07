@@ -40,9 +40,9 @@ Systems are responsible for taking the components of an entity and creating game
 
 - `Single Entity System` Processes all entities of an _exact_ type. If this entity is a subclass, it will automatically be exempt from the relevant Broad Entity System.
 
-- `Broad Entity System` Processes all entities of a broad type, or all entities of a particular super and subclasses. Basically the same as Single Entity System but any subclasses are also covered
+- `Broad Entity System` Processes all entities of a broad type, aka all entities of particular super and subclasses. Basically the same as Single Entity System but any subclasses are also covered
 
-- `Base Entity System` Processes one or more components of all entities. Usually this is used to update the values of a single component. Defining relationships between multiple components is possible but heavy-handed as it applies to all entities.
+- `Base Entity System` Processes one or more components of all entities. Defining relationships between multiple components is possible but heavy-handed as it applies to all entities.
 
 ## Networking
 The server wraps incoming client connections for convenient storing of data.

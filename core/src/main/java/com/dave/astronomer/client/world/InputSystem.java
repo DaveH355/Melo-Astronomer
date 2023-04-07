@@ -8,7 +8,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.common.world.CoreEngine;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -15,7 +15,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
@@ -40,8 +43,6 @@ public class MapSystem extends EntitySystem {
     private String collision = "Collision";
 
 
-
-
     public MapSystem(TiledMap map, World world) {
         this.map = map;
         loadMap(map, world);
@@ -52,7 +53,7 @@ public class MapSystem extends EntitySystem {
     @CheckForNull
     public MapCell getCellAt(Vector2 position, TiledMapTileLayer layer) {
 
-        //position should be in meters, conveniently each meter is 16px, same as tile size
+        //position should be in meters, conveniently each meter is same as tile size
         //no modify on position needed
         int y = Math.round(position.y);
         int x = Math.round(position.x);
@@ -118,7 +119,7 @@ public class MapSystem extends EntitySystem {
         if (mapObject instanceof RectangleMapObject object) {
             Rectangle rectangle = object.getRectangle();
 
-            Polygon polygon = PhysicsUtils.bevelRectangle(rectangle, 2);
+            Polygon polygon = PhysicsUtils.bevelRectangle(rectangle, 3);
             shape = PhysicsUtils.toShape(polygon);
 
         } else if (mapObject instanceof PolygonMapObject object) {

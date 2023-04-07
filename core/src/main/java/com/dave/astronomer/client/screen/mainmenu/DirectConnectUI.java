@@ -1,9 +1,10 @@
 package com.dave.astronomer.client.screen.mainmenu;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.dave.astronomer.MeloAstronomer;
@@ -13,6 +14,7 @@ import com.dave.astronomer.client.screen.UIState;
 
 
 public class DirectConnectUI extends UIState {
+    TextField address;
     public DirectConnectUI(Stage stage, MainMenuScreen screen) {
         super(stage);
         Skin skin = MeloAstronomer.getInstance().getSkin();
@@ -29,7 +31,7 @@ public class DirectConnectUI extends UIState {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 GameScreenConfig config = new GameScreenConfig();
-                config.address = label.getText().toString();
+                config.address = address.getText();
                 config.startServer = false;
 
                 MeloAstronomer.getInstance().setScreen(new GameScreen(config));
@@ -46,15 +48,13 @@ public class DirectConnectUI extends UIState {
         });
 
 
-        TextField address = new TextField("", skin);
+        address = new TextField("", skin);
         address.setAlignment(Align.center);
-        address.addListener(new InputListener() {
+        address.addListener(new ChangeListener() {
             @Override
-            public boolean keyTyped(InputEvent event, char character) {
+            public void changed(ChangeEvent event, Actor actor) {
                 int length = address.getText().length();
                 join.setDisabled(length == 0);
-
-                return false;
             }
         });
 

@@ -41,20 +41,19 @@ public class ServerGamePacketHandler implements PacketHandler {
     public void onUpdatePlayerState(ServerboundPlayerUpdateStatePacket packet) {
 
         Player.State clientState = packet.state;
-        int id = clientState.stateID;
+
 
         BaseEntity entity = engine.getEntityByUUID(clientState.uuid);
-        if (entity instanceof ServerPlayer player) {
-            player.setClientPosition(clientState.position);
-        } else {
+        if (!(entity instanceof ServerPlayer player)) {
             return;
         }
         //save server and client state for later comparison
-        Player.State serverState = player.captureState();
+        Player.State serverState = player.captureState(clientState.id);
 
 
-        player.getServerState().put(id, serverState);
-        player.getClientState().put(id, clientState);
+
+        player.getServerState().push(serverState);
+        player.getClientState().push(clientState);
 
     }
 
@@ -107,7 +106,7 @@ public class ServerGamePacketHandler implements PacketHandler {
     private ServerPlayer createMainPlayer(PlayerConnection connection) {
 
         //TODO: load pos from save file or default spawn location if player is new
-        Vector2 position = new Vector2(30, 20);
+        Vector2 position = new Vector2(25, 20);
 
         ServerPlayer player = new ServerPlayer(engine, connection);
         player.forcePosition(position, 0);

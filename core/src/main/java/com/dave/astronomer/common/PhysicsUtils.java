@@ -8,7 +8,10 @@ import com.badlogic.gdx.maps.objects.CircleMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -88,16 +91,7 @@ public class PhysicsUtils {
         return shape;
     }
 
-    public static Vector2 calculateVelocityToPosition(Vector2 targetPosition, float maxSpeed, float delta, Body body) {
-        Vector2 position = body.getPosition();
 
-        //point from current direction to target
-        Vector2 targetDirection = targetPosition.cpy().sub(position);
-
-
-        Vector2 velocity = targetDirection.scl(delta * maxSpeed * PhysicsSystem.STEP_FREQUENCY);
-        return velocity;
-    }
 
     private static Pixmap getVisiblePixmap(Sprite sprite) {
         Texture texture = sprite.getTexture();
@@ -215,4 +209,42 @@ public class PhysicsUtils {
             rect.x, rect.y + rect.height - bevelSize
         });
     }
-}
+    public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float maxSpeed) {
+        Vector2 position = body.getPosition();
+        Vector2 velocity = body.getLinearVelocity();
+
+        // point in target direction
+        Vector2 targetDirection = targetPosition.cpy().sub(position);
+
+        float distance = targetDirection.len();
+
+        if (distance == 0) {
+            return new Vector2();
+        }
+
+        // Calculate distance that can be covered in one frame
+        float maxDistance = maxSpeed / PhysicsSystem.STEP_FREQUENCY;
+
+        if (distance <= maxDistance) {
+            velocity.set(targetDirection);
+        }
+        else {
+            velocity.set(targetDirection.scl(maxSpeed / distance));
+        }
+
+        // If passed target position, zero velocity
+        if (velocity.dot(targetDirection) < 0) {
+            velocity.setZero();
+        }
+        return velocity;
+    }
+    public static Vector2 smoothVelocityToPosition(Body body, Vector2 targetPosition, float maxSpeed, float delta) {
+        Vector2 position = body.getPosition();
+
+        //point from current direction to target
+        Vector2 targetDirection = targetPosition.cpy().sub(position);
+
+
+        Vector2 velocity = targetDirection.scl(delta * maxSpeed * PhysicsSystem.STEP_FREQUENCY);
+        return velocity;
+    }}
