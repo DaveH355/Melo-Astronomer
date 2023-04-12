@@ -52,7 +52,7 @@ public class ClientGamePacketHandler implements PacketHandler {
         BaseEntity entity = engine.getEntityByUUID(packet.uuid);
         if (entity == null) return;
 
-        entity.lerpPosition(packet.deltaPosition.x, packet.deltaPosition.y);
+        entity.lerpPosition(packet.position.x, packet.position.y);
     }
 
     public void onForceState(ClientboundPlayerForceStatePacket packet) {

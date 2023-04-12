@@ -3,8 +3,8 @@ package com.dave.astronomer.server.system;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.dave.astronomer.common.DeltaTimer;
 import com.dave.astronomer.common.PhysicsUtils;
-import com.dave.astronomer.common.PolledTimer;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.ClientboundPlayerForceStatePacket;
@@ -19,7 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
     private static final float POSITION_TOLERANCE = 0.5f;
-    private PolledTimer timer = new PolledTimer(50, TimeUnit.MILLISECONDS);
+    private static final int STATEBUFFER_TOLERANCE = 10;
+    private DeltaTimer timer = new DeltaTimer(50, TimeUnit.MILLISECONDS);
     private MAServer server;
     public ServerPlayerSystem(MAServer server) {
         this.server = server;
@@ -27,7 +28,7 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
 
     @Override
     public void update(float deltaTime) {
-        if (timer.update()) super.update(deltaTime);
+        if (timer.update(deltaTime)) super.update(deltaTime);
     }
 
     @Override
@@ -36,27 +37,30 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
         Body body = player.getBody();
 
         if (player.getClientState().isEmpty()) return;
-        Vector2 current = player.getPosition();
-        Vector2 target = player.getClientState().getLast().position;
+        Vector2 clientPos = player.getClientState().getLast().position;
 
-        Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, maxSpeed);
 
-        //stop velocity at a threshold to prevent oscillation at the cost of some accuracy
-        if (current.dst(target) < 0.05f) {
-            velocity.set(0, 0);
-        }
-
+        Vector2 velocity = PhysicsUtils.velocityToPosition(body, clientPos, maxSpeed, 0.2f);
         body.setLinearVelocity(velocity);
 
-        if (Math.abs(target.x - player.getPosition().x) <= POSITION_TOLERANCE &&
-            Math.abs(target.y - player.getPosition().y) <= POSITION_TOLERANCE) {
+        if (player.getPosition().dst(clientPos) <= POSITION_TOLERANCE) {
             validateState(player);
-
         }
+        //if the client state buffer gets too large it may be network throttling or cheating
+        //TODO: a way to process large buffers
+        boolean trustClient = false;
+        if (player.getClientState().size() < STATEBUFFER_TOLERANCE) {
+            trustClient = true;
+        }
+
+
+
 
 
         PlayerConnection connection = player.getConnection();
-        ClientboundUpdateEntityPosPacket packet = new ClientboundUpdateEntityPosPacket(player);
+        ClientboundUpdateEntityPosPacket packet = new ClientboundUpdateEntityPosPacket();
+        packet.position = trustClient ? clientPos : player.getPosition();
+        packet.uuid = player.getUuid();
 
 
         server.sendToAllExceptUDP(connection.getID(), packet);
@@ -81,27 +85,26 @@ public class ServerPlayerSystem extends SingleEntitySystem<ServerPlayer> {
         //validation end
 
         if (flag) {
-            player.setState(serverState);
-
-            ClientboundPlayerForceStatePacket packet = new ClientboundPlayerForceStatePacket(serverState);
-            player.getConnection().sendTCP(packet);
-
-            player.getClientState().clear();
-            player.getServerState().clear();
+            invalidateState(player);
         } else {
             //remove last state, it has been validated
             player.getClientState().removeLast();
             player.getServerState().removeLast();
         }
     }
+    private void invalidateState(ServerPlayer player) {
+        Player.State serverState = player.getServerState().getFirst();
+        player.setState(serverState);
+
+        ClientboundPlayerForceStatePacket packet = new ClientboundPlayerForceStatePacket(serverState);
+        player.getConnection().sendTCP(packet);
+
+        player.getClientState().clear();
+        player.getServerState().clear();
+    }
     private boolean validatePosition(Player.State clientState, Player.State serverState) {
-        float xDiff = Math.abs(serverState.position.x - clientState.position.x);
-        float yDiff = Math.abs(serverState.position.y - clientState.position.y);
 
-
-        if (xDiff > POSITION_TOLERANCE || yDiff > POSITION_TOLERANCE) {
-            return false;
-        }
+        if (serverState.position.dst(clientState.position) > POSITION_TOLERANCE) return false;
         return true;
     }
 

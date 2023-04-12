@@ -25,7 +25,6 @@ public class Lwjgl3Launcher {
         configuration.setWindowSizeLimits(256, 144, -1, -1);
         configuration.setIdleFPS(30);
         //// Limits FPS to the refresh rate of the currently active monitor.
-
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be
         //// useful for testing performance, but can also be very stressful to some hardware.

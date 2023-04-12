@@ -13,6 +13,4 @@ public abstract class UIState implements Disposable {
         stage.act(delta);
         stage.draw();
     }
-
-
 }

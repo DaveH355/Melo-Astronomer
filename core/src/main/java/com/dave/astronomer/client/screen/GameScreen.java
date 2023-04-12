@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -21,6 +22,7 @@ import com.dave.astronomer.client.MAClient;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.screen.mainmenu.MainMenuScreen;
 import com.dave.astronomer.client.world.*;
+import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.world.CoreEngine;
@@ -32,7 +34,6 @@ import java.io.IOException;
 
 public class GameScreen implements Screen {
     private Viewport viewport;
-    private ShaderProgram shader;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private CoreEngine engine;
@@ -41,14 +42,14 @@ public class GameScreen implements Screen {
     private DebugHud debugHud;
     private ClientPhysicsSystem physicsSytem;
     private Box2DDebugRenderer debugRenderer;
-    private Vector3 cameraTarget = new Vector3();
+
     //TODO: fix pixel wobble when rendering
     public GameScreen(GameScreenConfig config) {
         batch = new SpriteBatch(2000);
 
 
         camera = new OrthographicCamera();
-        camera.zoom = 0.5f;
+        camera.zoom = 1/Constants.PIXELS_PER_METER *15;
         viewport = new FillViewport(Constants.DEFAULT_WIDTH / Constants.PIXELS_PER_METER, Constants.DEFAULT_HEIGHT / Constants.PIXELS_PER_METER, camera);
 
 
@@ -64,14 +65,15 @@ public class GameScreen implements Screen {
 
         engine = new CoreEngine();
 
+        engine.addPriortiySystems(
+            physicsSytem
+        );
         engine.addSystems(
-                new InputSystem(),
-                mapSystem,
-                new SpriteRenderSystem(),
-                mapSystem.new AlwaysFrontMapRenderer(),
-                physicsSytem,
-                new MainPlayerSystem(),
-                new RemotePlayerSystem()
+            new InputSystem(),
+            new MainPlayerSystem(),
+            mapSystem,
+            new SpriteRenderSystem(),
+            mapSystem.new AlwaysFrontMapRenderer()
         );
 
 
@@ -104,6 +106,7 @@ public class GameScreen implements Screen {
         GameState.getInstance().setGameCamera(camera);
         GameState.getInstance().setGameBatch(batch);
         GameState.getInstance().setMapSystem(mapSystem);
+        GameState.getInstance().setDebugHud(debugHud);
 
 
         client.requestGameStart();
@@ -141,6 +144,7 @@ public class GameScreen implements Screen {
         client.update();
         if (!client.isReadyForGame()) return;
 
+        viewport.apply();
         camera.update();
 
 
@@ -160,23 +164,26 @@ public class GameScreen implements Screen {
         MainPlayer player = GameState.getInstance().getMainPlayer();
         Vector3 target = new Vector3(player.getPosition(), 0);
 
-        cameraTarget = cameraTarget.lerp(target, delta * 4);
 
-        // snap camera position to full pixels
-        float snappedX = cameraTarget.x;
-        float snappedY = cameraTarget.y;
-
-        snappedX = MathUtils.floor(snappedX * Constants.PIXELS_PER_METER) / Constants.PIXELS_PER_METER;
-        snappedY = MathUtils.floor(snappedY * Constants.PIXELS_PER_METER) / Constants.PIXELS_PER_METER;
+        camera.position.lerp(target, delta * 4);
 
 
-//        camera.position.set(snappedX, snappedY, 0);
-        camera.position.set(cameraTarget);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            float screenX = Gdx.input.getX();
+            float screenY = Gdx.input.getY();
 
+            Vector3 worldCoords = new Vector3(screenX, screenY, 0);
+            camera.unproject(worldCoords);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
-            camera.zoom -= 0.05f;
+            Knife knife = new Knife(null, engine);;
+            Vector2 relativePos = new Vector2(worldCoords.x, worldCoords.y).sub(player.getPosition());
+            knife.angleDeg = relativePos.angleDeg();
+            knife.forcePosition(worldCoords.x, worldCoords.y, MathUtils.degreesToRadians * knife.angleDeg);
+
+            engine.addEntity(knife);
         }
+
+
 
 
     }
@@ -215,9 +222,6 @@ public class GameScreen implements Screen {
 
         if (debugHud != null) {
             debugHud.dispose();
-        }
-        if (shader != null) {
-            shader.dispose();
         }
 
 

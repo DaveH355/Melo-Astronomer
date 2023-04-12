@@ -21,8 +21,7 @@ public class LanManager implements Disposable {
     private InetAddress address;
     private Serialization serialization;
     @Getter @Setter private boolean openToLan = true;
-    private PolledTimer timer = new PolledTimer(2, TimeUnit.SECONDS);
-
+    private PolledTimer timer = new PolledTimer(1.5f, TimeUnit.SECONDS);
     public LanManager(MAServer server) throws IOException {
 
         serialization = server.getSerialization();

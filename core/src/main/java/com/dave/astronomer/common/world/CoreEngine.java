@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Disposable;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
+import org.reflections.ReflectionUtils;
 
 import java.util.*;
 
@@ -21,10 +22,18 @@ public class CoreEngine extends Engine implements Disposable {
     //list of entities managed by single entity systems
     //broad systems need to know, so they can exclude processing
     @Getter private List<Class<?>> singleEntityList = new ArrayList<>();
+    private Map<Class<? extends EntitySystem>,EntitySystem> prioritySystems = new HashMap<>();
+
+    private List<BaseEntity> removeQueue = new ArrayList<>();
 
     public void addSystems(EntitySystem... systems) {
         for (EntitySystem system : systems) {
             addSystem(system);
+        }
+    }
+    public void addPriortiySystems(EntitySystem... systems) {
+        for (EntitySystem system : systems) {
+            prioritySystems.put(system.getClass(), system);
         }
     }
 
@@ -49,6 +58,15 @@ public class CoreEngine extends Engine implements Disposable {
         return uuidToEntity.get(id);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends EntitySystem> T getSystem(Class<T> systemType) {
+        if (prioritySystems.containsKey(systemType)) {
+            return (T) prioritySystems.get(systemType);
+        }
+        return super.getSystem(systemType);
+    }
+
     @Override
     public void addEntity(Entity e) {
         super.addEntity(e);
@@ -63,8 +81,9 @@ public class CoreEngine extends Engine implements Disposable {
             List<BaseEntity> list = entitiesByType.computeIfAbsent(type, k -> new ArrayList<>());
             list.add(entity);
 
+            Set<Class<?>> set = ReflectionUtils.getAllSuperTypes(type);
             //add to broad
-            for (Class<?> superType : getAllSuperClasses(type)) {
+            for (Class<?> superType : set) {
                 list = entitiesByTypeBroad.computeIfAbsent(superType, k -> new ArrayList<>());
                 list.add(entity);
                 Log.debug("Added " + entity.getClass().getSimpleName() + " to broad " + superType.getSimpleName());
@@ -73,35 +92,39 @@ public class CoreEngine extends Engine implements Disposable {
 
     }
 
-    private <T> List<Class<? super T>> getAllSuperClasses(Class<T> type) {
-        List<Class<? super T>> list = new ArrayList<>();
-        Class<? super T> superClass = type.getSuperclass();
-
-        while (superClass != null && superClass != Object.class) {
-            list.add(superClass);
-
-            superClass = superClass.getSuperclass();
+    @Override
+    public void update(float delta) {
+        for (BaseEntity entity : removeQueue) {
+            internalRemove(entity);
         }
-        return list;
+        removeQueue.clear();
+
+        for (EntitySystem system : prioritySystems.values()){
+            system.update(delta);
+        }
+        for (List<BaseEntity> list : entitiesByType.values()) {
+            for (BaseEntity baseEntity : list) {
+                baseEntity.update(delta);
+            }
+        }
+
+        super.update(delta);
     }
-
-
-
 
     @Override
     public void removeEntity(Entity e) {
-        super.removeEntity(e);
         if (e instanceof BaseEntity baseEntity) {
-            internalRemove(baseEntity);
+            removeQueue.add(baseEntity);
         }
     }
 
 
     public void removeEntity(UUID uuid) {
         BaseEntity entity = getEntityByUUID(uuid);
-        removeEntity(entity);
+        removeQueue.add(entity);
     }
     private void internalRemove(BaseEntity entity) {
+        super.removeEntity(entity);
         uuidToEntity.remove(entity.getUuid(), entity);
 
         entitiesByType.get(entity.getClass()).remove(entity);
@@ -123,13 +146,11 @@ public class CoreEngine extends Engine implements Disposable {
     public void dispose() {
         dispose(getEntities());
         dispose(getSystems());
+        dispose(prioritySystems);
     }
     private <T> void dispose(Iterable<T> iterable) {
         for (T t : iterable) {
-            if (t instanceof Disposable disposable) {
-
-                disposable.dispose();
-            }
+            dispose(t);
         }
     }
     private void dispose(Object o) {

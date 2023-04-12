@@ -12,7 +12,6 @@ import com.dave.astronomer.common.world.BaseEntitySystem;
 
 
 public class SpriteRenderSystem extends BaseEntitySystem {
-
     private ComponentMapper<SpriteComponent> mapper = ComponentMapper.getFor(SpriteComponent.class);
 
     public SpriteRenderSystem() {
@@ -20,6 +19,11 @@ public class SpriteRenderSystem extends BaseEntitySystem {
 
     }
 
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+
+    }
 
     @Override
     public void processEntity(BaseEntity entity, float deltaTime) {
@@ -51,5 +55,7 @@ public class SpriteRenderSystem extends BaseEntitySystem {
 
         //draw normal
         sprite.draw(batch);
+
     }
+
 }

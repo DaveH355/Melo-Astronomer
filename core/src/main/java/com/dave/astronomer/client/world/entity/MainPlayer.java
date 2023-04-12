@@ -6,6 +6,7 @@ import com.dave.astronomer.client.temp.TempPlayerAnimation;
 import com.dave.astronomer.client.world.ClientPhysicsSystem;
 import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.client.world.component.SpriteComponent;
+import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.world.CoreEngine;
 import lombok.Getter;
@@ -13,7 +14,6 @@ import lombok.Getter;
 import java.util.UUID;
 
 public class MainPlayer extends AbstractClientPlayer {
-
     @Getter private SpriteComponent spriteComponent;
     @Getter private Body body;
     @Getter private InputComponent inputComponent;
@@ -27,15 +27,22 @@ public class MainPlayer extends AbstractClientPlayer {
         inputComponent = createInputComponent();
         body = PlayerData.createBody(engine.getSystem(ClientPhysicsSystem.class).getWorld());
 
+        PhysicsUtils.centerSprite(spriteComponent.getSprite(), body);
+
         addComponents(
                 inputComponent,
                 spriteComponent
         );
 
     }
+
+    @Override
+    public void update(float delta) {
+
+    }
+
     public static SpriteComponent createSpriteComponent() {
         return TempPlayerAnimation.createSpriteComponent();
-
     }
     private InputComponent createInputComponent() {
         InputComponent inputComponent = new InputComponent();

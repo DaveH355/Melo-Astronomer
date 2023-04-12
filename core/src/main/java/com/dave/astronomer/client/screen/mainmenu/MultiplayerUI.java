@@ -12,22 +12,16 @@ import com.dave.astronomer.client.multiplayer.LanServer;
 import com.dave.astronomer.client.multiplayer.LanServerDetector;
 import com.dave.astronomer.client.screen.GameScreen;
 import com.dave.astronomer.client.screen.UIState;
-import com.dave.astronomer.common.PolledTimer;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
 import com.github.tommyettinger.textra.TypingLabel;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 
 public class MultiplayerUI extends UIState {
-
     private Table scrollTable;
-
     private LanServerDetector lanDetector;
-    private PolledTimer timer = new PolledTimer(2, TimeUnit.SECONDS);
-
 
     public MultiplayerUI(Stage stage, MainMenuScreen screen) {
         super(stage);
@@ -48,7 +42,6 @@ public class MultiplayerUI extends UIState {
         table.setFillParent(true);
 
         stage.addActor(table);
-
 
 
         //UI BEGIN
@@ -103,12 +96,12 @@ public class MultiplayerUI extends UIState {
     public void render(float delta) {
         super.render(delta);
 
-        if (timer.update()) {
+        if (lanDetector.dirty) {
             scrollTable.clear();
-
             lanDetector.getServerList().forEach(this::listServer);
-        }
 
+            lanDetector.dirty = false;
+        }
     }
 
     public void listServer(LanServer server) {
@@ -133,7 +126,7 @@ public class MultiplayerUI extends UIState {
         });
 
 
-        Image image = new Image(assetManager.get("unknown_os.png", Texture.class));
+        Image image = new Image(assetManager.get("unknown.png", Texture.class));
         imageTable.add(image).expand().fill();
 
 

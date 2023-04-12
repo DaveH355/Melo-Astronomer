@@ -1,12 +1,12 @@
 package com.dave.astronomer.common.world.entity;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
+import lombok.ToString;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,22 +18,12 @@ public abstract class Player extends BaseEntity implements Disposable {
        super(EntityType.PLAYER, engine);
        setUuid(uuid);
     }
-
-
-    public void forcePosition(Vector2 position, float angle) {
-        getBody().setTransform(position, angle);
-
-    }
     public Vector2 getExactVelocity() {
         return getBody().getLinearVelocity();
     }
 
-    @Override
-    public void setVelocity(Vector2 velocity) {
-        super.setVelocity(velocity);
-        getBody().setLinearVelocity(velocity);
-    }
 
+    @ToString
     public static class State {
         public Vector2 position;
 
@@ -61,9 +51,4 @@ public abstract class Player extends BaseEntity implements Disposable {
         setUuid(state.uuid);
     }
 
-    @Override
-    public void dispose() {
-        World world = getBody().getWorld();
-        world.destroyBody(getBody());
-    }
 }

@@ -22,4 +22,5 @@ public class GameState {
     @Getter @Setter private OrthographicCamera gameCamera;
     @Getter @Setter private SpriteBatch gameBatch;
     @Getter @Setter private ClientMapSystem mapSystem;
+    @Getter @Setter private DebugHud debugHud;
 }

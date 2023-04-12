@@ -20,7 +20,6 @@ import com.dave.astronomer.common.Constants;
 public class DebugHud implements Disposable {
     private Stage stage;
     private Table table;
-
     public DebugHud(SpriteBatch batch) {
         stage = new Stage(new ExtendViewport(Constants.UI_WIDTH, Constants.UI_HEIGHT), batch);
         table = new Table();
@@ -30,7 +29,7 @@ public class DebugHud implements Disposable {
             MainPlayer player = GameState.getInstance().getMainPlayer();
             return String.format("%f / %f", player.getPosition().x, player.getPosition().y);
         });
-        addMetric("Camera width/height/zoom", () -> {
+        addMetric("Camera w/h/zoom", () -> {
             OrthographicCamera camera = GameState.getInstance().getGameCamera();
             return String.format("%f / %f / %f", camera.viewportWidth, camera.viewportHeight, camera.zoom);
         });
@@ -76,7 +75,7 @@ public class DebugHud implements Disposable {
 
 
     public void render(float delta) {
-
+        stage.getViewport().apply();
 
         stage.act(delta);
         stage.draw();

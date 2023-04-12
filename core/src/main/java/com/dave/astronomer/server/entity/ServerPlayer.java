@@ -16,7 +16,6 @@ import java.util.Deque;
 public class ServerPlayer extends Player {
     @Getter @Setter private Body body;
     @Getter private PlayerConnection connection;
-    @Getter @Setter private boolean isReady = false;
     @Getter private Deque<State> serverState = new ArrayDeque<>();
     @Getter private Deque<State> clientState = new ArrayDeque<>();
 
@@ -27,8 +26,10 @@ public class ServerPlayer extends Player {
         body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());
     }
 
+    @Override
+    public void update(float delta) {
 
-
+    }
 
     @Override
     public void forcePosition(Vector2 position, float angle) {

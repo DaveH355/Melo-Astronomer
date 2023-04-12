@@ -1,5 +1,6 @@
 package com.dave.astronomer.common;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
@@ -12,11 +13,9 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.common.world.PhysicsSystem;
+import com.esotericsoftware.minlog.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,7 +207,34 @@ public class PhysicsUtils {
             rect.x + bevelSize, rect.y + rect.height,
             rect.x, rect.y + rect.height - bevelSize
         });
+
     }
+
+    public static void centerSprite(Sprite sprite, Body body) {
+        Vector2 bodyPos = body.getPosition();
+
+        sprite.setOrigin(bodyPos.x, bodyPos.y);
+    }
+
+    /**
+     * @param maxSpeed radians per second
+     */
+    public static float angularVelocityToAngle(Body body, float angleRad, float maxSpeed, float deltaTime) {
+        float currentAngleRad = body.getAngle();
+        float angleDiffRad = angleRad - currentAngleRad;
+
+        float angularVelocity = angleDiffRad / deltaTime;
+
+        if (Math.abs(angularVelocity) > maxSpeed) {
+            angularVelocity = Math.signum(angularVelocity) * maxSpeed;
+        }
+
+        return angularVelocity;
+    }
+
+    /**
+     * @param maxSpeed meters per second
+     */
     public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float maxSpeed) {
         Vector2 position = body.getPosition();
         Vector2 velocity = body.getLinearVelocity();
@@ -237,6 +263,12 @@ public class PhysicsUtils {
             velocity.setZero();
         }
         return velocity;
+    }
+    public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float maxSpeed, float arrivalRadius) {
+        Vector2 position = body.getPosition();
+        if (position.dst(targetPosition) < arrivalRadius) {
+            return smoothVelocityToPosition(body, targetPosition, maxSpeed, Gdx.graphics.getDeltaTime());
+        } else return velocityToPosition(body, targetPosition, maxSpeed);
     }
     public static Vector2 smoothVelocityToPosition(Body body, Vector2 targetPosition, float maxSpeed, float delta) {
         Vector2 position = body.getPosition();

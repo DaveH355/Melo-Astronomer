@@ -23,7 +23,7 @@ public class LanServerDetector extends Thread implements Disposable {
     private final InetAddress pingGroup;
     private final MulticastSocket socket;
     private Input input = new Input();
-
+    public boolean dirty = false;
     private Client client;
 
     public LanServerDetector(Client client) throws IOException {
@@ -82,7 +82,10 @@ public class LanServerDetector extends Thread implements Disposable {
             }
         }
 
-        if (isNewServer) serverList.add(server);
+        if (isNewServer) {
+            serverList.add(server);
+            dirty = true;
+        }
     }
 
 

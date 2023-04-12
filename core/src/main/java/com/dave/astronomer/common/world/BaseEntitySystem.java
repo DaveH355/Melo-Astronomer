@@ -8,7 +8,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import lombok.Getter;
 
 public abstract class BaseEntitySystem extends EntitySystem {
-    private Family family;
+    @Getter private Family family;
     @Getter private CoreEngine engine;
 
     public BaseEntitySystem(Family family) {

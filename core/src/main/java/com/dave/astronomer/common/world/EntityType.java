@@ -31,9 +31,7 @@ public class EntityType<T extends BaseEntity> {
         }
 
         public static <T extends BaseEntity> Builder<T> createNothing() {
-            return new Builder<>((type, coreEngine) -> {
-                return null;
-            });
+            return new Builder<>((type, coreEngine) -> null);
         }
         public EntityType<T> build() {
             return new EntityType<>(this.factory);

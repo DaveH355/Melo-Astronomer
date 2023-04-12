@@ -14,6 +14,7 @@ public class PlayerData {
     private static final Circle boundingCircle;
     public static final float METERS_PER_SEC = 3.5f;
 
+
     static {
         Sprite sprite = MainPlayer.createSpriteComponent().getSprite();
         boundingCircle = PhysicsUtils.traceCircle(sprite, true);
@@ -25,6 +26,7 @@ public class PlayerData {
 
         Body b = world.createBody(bodyDef);
         FixtureDef fdef = new FixtureDef();
+
 
         fdef.shape = PhysicsUtils.toShape(getBoundingCircle());
 

@@ -30,6 +30,7 @@ public class MainMenuUI extends UIState {
         center.setFillParent(true);
         bottomRight.setFillParent(true);
 
+
         stage.addActor(center);
         stage.addActor(bottomRight);
 

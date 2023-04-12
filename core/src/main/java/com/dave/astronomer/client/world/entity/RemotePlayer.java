@@ -2,6 +2,7 @@ package com.dave.astronomer.client.world.entity;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.dave.astronomer.client.world.ClientPhysicsSystem;
+import com.dave.astronomer.client.world.MainPlayerSystem;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.world.CoreEngine;
@@ -15,18 +16,26 @@ public class RemotePlayer extends AbstractClientPlayer {
     @Getter
     private Body body;
 
+
     public RemotePlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
-
-
 
         spriteComponent = MainPlayer.createSpriteComponent();
         body = PlayerData.createBody(engine.getSystem(ClientPhysicsSystem.class).getWorld());
 
+
         addComponents(
                 spriteComponent
         );
-
     }
 
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+
+        spriteComponent.getSprite().setPosition(getPosition().x, getPosition().y);
+
+
+        MainPlayerSystem.determineAnimation(this);
+    }
 }

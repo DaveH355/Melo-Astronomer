@@ -141,7 +141,7 @@ public class MapSystem extends EntitySystem {
         Body body = world.createBody(bdef);
 
 
-        body.createFixture(shape, 0);
+        body.createFixture(shape, 550);
         shape.dispose();
     }
 
