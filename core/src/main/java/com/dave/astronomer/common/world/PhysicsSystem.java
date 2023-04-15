@@ -45,8 +45,7 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
                         Vector2 reflection = new Vector2(contactNormal).scl(2 * dot);
                         Vector2 newVelocity = new Vector2(knife.getBody().getLinearVelocity()).sub(reflection);
 
-                        float ranScale = MathUtils.random(0, 1);
-                        knife.getBody().setLinearVelocity(newVelocity.scl(ranScale));
+                        knife.getBody().setLinearVelocity(newVelocity.scl(0.8f));
                         knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.scl(0.8f).angleDeg();
                         if (knife.speed > 5) {
                             knife.speed -= 1;

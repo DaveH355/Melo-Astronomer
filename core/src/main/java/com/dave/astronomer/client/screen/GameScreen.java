@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -25,7 +24,7 @@ import com.dave.astronomer.client.world.*;
 import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import com.dave.astronomer.server.MAServer;
 import com.dave.astronomer.server.WorldData;
 import com.esotericsoftware.minlog.Log;
@@ -47,9 +46,8 @@ public class GameScreen implements Screen {
     public GameScreen(GameScreenConfig config) {
         batch = new SpriteBatch(2000);
 
-
         camera = new OrthographicCamera();
-        camera.zoom = 1/Constants.PIXELS_PER_METER *15;
+        camera.zoom = 0.5f;
         viewport = new FillViewport(Constants.DEFAULT_WIDTH / Constants.PIXELS_PER_METER, Constants.DEFAULT_HEIGHT / Constants.PIXELS_PER_METER, camera);
 
 
@@ -65,7 +63,7 @@ public class GameScreen implements Screen {
 
         engine = new CoreEngine();
 
-        engine.addPriortiySystems(
+        engine.addPrioritySystems(
             physicsSytem
         );
         engine.addSystems(
@@ -78,6 +76,7 @@ public class GameScreen implements Screen {
 
 
         debugRenderer = new Box2DDebugRenderer();
+
         debugHud = new DebugHud(batch);
 
 
@@ -106,7 +105,6 @@ public class GameScreen implements Screen {
         GameState.getInstance().setGameCamera(camera);
         GameState.getInstance().setGameBatch(batch);
         GameState.getInstance().setMapSystem(mapSystem);
-        GameState.getInstance().setDebugHud(debugHud);
 
 
         client.requestGameStart();
@@ -154,6 +152,7 @@ public class GameScreen implements Screen {
         batch.begin();
         engine.update(delta);
         batch.end();
+
 
         //debug
         debugRenderer.render(physicsSytem.getWorld(), camera.combined);

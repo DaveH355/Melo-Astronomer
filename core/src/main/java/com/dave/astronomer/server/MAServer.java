@@ -4,7 +4,7 @@ import com.dave.astronomer.common.network.BufferedListener;
 import com.dave.astronomer.common.network.NetworkUtils;
 import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.PlayerConnection;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import com.dave.astronomer.common.world.MapSystem;
 import com.dave.astronomer.common.world.PhysicsSystem;
 import com.dave.astronomer.server.system.ServerPlayerSystem;

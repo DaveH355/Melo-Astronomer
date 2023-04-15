@@ -2,6 +2,7 @@ package com.dave.astronomer.common.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import lombok.Getter;
 
 import java.util.List;

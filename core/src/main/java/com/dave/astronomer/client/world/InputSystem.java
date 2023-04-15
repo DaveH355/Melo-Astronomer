@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.dave.astronomer.client.world.component.InputComponent;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 
 import java.util.ArrayList;
 import java.util.List;

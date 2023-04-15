@@ -45,7 +45,6 @@ public class NetworkUtils {
         Set<Class<? extends Packet>> packets = getSetFor(Packet.class.getPackageName(), Packet.class);
 
         Kryo kryo = endPoint.getKryo();
-
         packets.forEach(kryo::register);
 
         registerMisc(kryo);
@@ -61,7 +60,4 @@ public class NetworkUtils {
         Reflections reflections = new Reflections(packageName, Scanners.SubTypes.filterResultsBy(c -> true));
         return reflections.getSubTypesOf(type);
     }
-
-
-
 }

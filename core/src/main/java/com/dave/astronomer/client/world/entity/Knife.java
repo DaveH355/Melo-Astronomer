@@ -13,7 +13,7 @@ import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.world.BaseEntity;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
 
 public class Knife extends BaseEntity {

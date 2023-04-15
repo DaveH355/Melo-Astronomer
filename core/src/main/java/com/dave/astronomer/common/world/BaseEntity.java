@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import lombok.Getter;
 import lombok.Setter;
 

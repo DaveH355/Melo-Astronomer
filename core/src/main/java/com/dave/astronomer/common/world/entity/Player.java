@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.dave.astronomer.common.world.BaseEntity;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
 import lombok.ToString;
 

@@ -1,7 +1,8 @@
 package com.dave.astronomer.client.world;
 
+
 import com.badlogic.ashley.core.Engine;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
 
 

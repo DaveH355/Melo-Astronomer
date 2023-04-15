@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dave.astronomer.client.world.ClientMapSystem;
 import com.dave.astronomer.client.world.entity.MainPlayer;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.ecs.CoreEngine;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +22,4 @@ public class GameState {
     @Getter @Setter private OrthographicCamera gameCamera;
     @Getter @Setter private SpriteBatch gameBatch;
     @Getter @Setter private ClientMapSystem mapSystem;
-    @Getter @Setter private DebugHud debugHud;
 }

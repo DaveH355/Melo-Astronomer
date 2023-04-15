@@ -1,17 +1,18 @@
 package com.dave.astronomer.client.world;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.world.BaseEntity;
-import com.dave.astronomer.common.world.BaseEntitySystem;
 
 
-public class SpriteRenderSystem extends BaseEntitySystem {
+public class SpriteRenderSystem extends IteratingSystem {
     private ComponentMapper<SpriteComponent> mapper = ComponentMapper.getFor(SpriteComponent.class);
 
     public SpriteRenderSystem() {
@@ -26,7 +27,7 @@ public class SpriteRenderSystem extends BaseEntitySystem {
     }
 
     @Override
-    public void processEntity(BaseEntity entity, float deltaTime) {
+    protected void processEntity(Entity entity, float deltaTime) {
         SpriteBatch batch = GameState.getInstance().getGameBatch();
 
         SpriteComponent component = mapper.get(entity);
@@ -55,7 +56,8 @@ public class SpriteRenderSystem extends BaseEntitySystem {
 
         //draw normal
         sprite.draw(batch);
-
     }
+
+
 
 }

@@ -9,10 +9,7 @@ import com.badlogic.gdx.maps.objects.CircleMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.common.world.PhysicsSystem;
 import com.esotericsoftware.minlog.Log;
@@ -223,7 +220,10 @@ public class PhysicsUtils {
         float currentAngleRad = body.getAngle();
         float angleDiffRad = angleRad - currentAngleRad;
 
-        float angularVelocity = angleDiffRad / deltaTime;
+        // Calculate the shortest angle difference
+        float shortestAngleDiffRad = (angleDiffRad + MathUtils.PI) % MathUtils.PI2 - MathUtils.PI;
+
+        float angularVelocity = shortestAngleDiffRad / deltaTime;
 
         if (Math.abs(angularVelocity) > maxSpeed) {
             angularVelocity = Math.signum(angularVelocity) * maxSpeed;

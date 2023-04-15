@@ -1,9 +1,11 @@
-package com.dave.astronomer.common.world;
+package com.dave.astronomer.common.world.ecs;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Disposable;
+import com.dave.astronomer.common.world.BaseEntity;
+import com.dave.astronomer.common.world.SingleEntitySystem;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
 import org.reflections.ReflectionUtils;
@@ -31,7 +33,7 @@ public class CoreEngine extends Engine implements Disposable {
             addSystem(system);
         }
     }
-    public void addPriortiySystems(EntitySystem... systems) {
+    public void addPrioritySystems(EntitySystem... systems) {
         for (EntitySystem system : systems) {
             prioritySystems.put(system.getClass(), system);
         }
@@ -114,13 +116,16 @@ public class CoreEngine extends Engine implements Disposable {
     @Override
     public void removeEntity(Entity e) {
         if (e instanceof BaseEntity baseEntity) {
-            removeQueue.add(baseEntity);
+            queueEntityRemove(baseEntity);
         }
     }
 
 
     public void removeEntity(UUID uuid) {
         BaseEntity entity = getEntityByUUID(uuid);
+        queueEntityRemove(entity);
+    }
+    private void queueEntityRemove(BaseEntity entity) {
         removeQueue.add(entity);
     }
     private void internalRemove(BaseEntity entity) {
