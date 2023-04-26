@@ -7,7 +7,7 @@ import com.dave.astronomer.client.world.entity.RemotePlayer;
 import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.packet.*;
 import com.dave.astronomer.common.world.BaseEntity;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.entity.Player;
 import com.esotericsoftware.minlog.Log;
 

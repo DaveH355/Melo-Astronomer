@@ -1,11 +1,10 @@
 package com.dave.astronomer.common.world;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.common.PhysicsUtils;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+import com.dave.astronomer.common.ashley.core.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -73,11 +72,4 @@ public abstract class BaseEntity extends Entity implements Disposable {
     public void dispose() {
         getBody().getWorld().destroyBody(getBody());
     }
-
-    public void addComponents(BaseComponent... components) {
-        for (BaseComponent component : components) {
-            add(component);
-        }
-    }
-
 }

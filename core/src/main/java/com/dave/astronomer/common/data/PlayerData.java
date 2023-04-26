@@ -9,6 +9,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.PhysicsUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayerData {
     private PlayerData(){}
     private static final Circle boundingCircle;
@@ -26,6 +29,7 @@ public class PlayerData {
 
         Body b = world.createBody(bodyDef);
         FixtureDef fdef = new FixtureDef();
+
 
 
         fdef.shape = PhysicsUtils.toShape(getBoundingCircle());

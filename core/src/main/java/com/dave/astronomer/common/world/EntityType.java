@@ -1,7 +1,6 @@
 package com.dave.astronomer.common.world;
 
 
-import com.dave.astronomer.common.world.ecs.CoreEngine;
 import com.dave.astronomer.common.world.entity.Player;
 
 //allow for easy creation of entities from a type

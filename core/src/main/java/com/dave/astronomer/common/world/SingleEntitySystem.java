@@ -1,8 +1,8 @@
 package com.dave.astronomer.common.world;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.EntitySystem;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.ashley.core.EntitySystem;
 import lombok.Getter;
 
 import java.util.List;
@@ -10,6 +10,10 @@ import java.util.List;
 public abstract class SingleEntitySystem<T extends BaseEntity> extends EntitySystem {
     @Getter
     private CoreEngine engine;
+
+    public SingleEntitySystem() {
+    }
+
     @Override
     public void addedToEngine(Engine engine) {
         this.engine = (CoreEngine) engine;

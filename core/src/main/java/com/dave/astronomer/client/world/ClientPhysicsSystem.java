@@ -1,8 +1,9 @@
 package com.dave.astronomer.client.world;
 
 
-import com.badlogic.ashley.core.Engine;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
 
 
@@ -11,6 +12,7 @@ public class ClientPhysicsSystem extends PhysicsSystem {
 
     @Override
     public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
         this.engine = (CoreEngine) engine;
     }
 

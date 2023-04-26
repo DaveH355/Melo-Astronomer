@@ -8,7 +8,7 @@ import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.data.PlayerData;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+import com.dave.astronomer.common.world.CoreEngine;
 import lombok.Getter;
 
 import java.util.UUID;

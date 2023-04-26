@@ -1,19 +1,21 @@
 package com.dave.astronomer.client.world;
 
-import com.badlogic.ashley.core.ComponentMapper;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.component.SpriteComponent;
-import com.dave.astronomer.common.world.BaseEntity;
+import com.dave.astronomer.common.ashley.core.ComponentMapper;
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.ashley.core.Entity;
+import com.dave.astronomer.common.ashley.core.Family;
+import com.dave.astronomer.common.ashley.core.IteratingSystem;
 
 
 public class SpriteRenderSystem extends IteratingSystem {
     private ComponentMapper<SpriteComponent> mapper = ComponentMapper.getFor(SpriteComponent.class);
+
 
     public SpriteRenderSystem() {
         super(Family.all(SpriteComponent.class).get());

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.network.PlayerConnection;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
 import com.dave.astronomer.common.world.entity.Player;
 import lombok.Getter;

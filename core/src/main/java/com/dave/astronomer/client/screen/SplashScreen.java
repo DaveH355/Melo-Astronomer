@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.Scaling;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
-import com.dave.astronomer.client.screen.mainmenu.MainMenuScreen;
 import com.dave.astronomer.client.ui.LinkedLabel;
 import com.esotericsoftware.minlog.Log;
 

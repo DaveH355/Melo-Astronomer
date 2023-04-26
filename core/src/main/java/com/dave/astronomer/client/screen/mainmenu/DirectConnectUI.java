@@ -10,11 +10,12 @@ import com.badlogic.gdx.utils.Align;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.GameScreenConfig;
 import com.dave.astronomer.client.screen.GameScreen;
+import com.dave.astronomer.client.screen.MainMenuScreen;
 import com.dave.astronomer.client.screen.UIState;
 
 
 public class DirectConnectUI extends UIState {
-    TextField address;
+
     public DirectConnectUI(Stage stage, MainMenuScreen screen) {
         super(stage);
         Skin skin = MeloAstronomer.getInstance().getSkin();
@@ -26,10 +27,12 @@ public class DirectConnectUI extends UIState {
 
         Label label = new Label("Server Address", skin);
 
+        TextField address = new TextField("", skin);
         TextButton join = new TextButton("Join Server", skin);
         join.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (join.isDisabled()) return;
                 GameScreenConfig config = new GameScreenConfig();
                 config.address = address.getText();
                 config.startServer = false;
@@ -39,16 +42,6 @@ public class DirectConnectUI extends UIState {
         });
         join.setDisabled(true);
 
-        TextButton back = new TextButton("Back", skin);
-        back.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                screen.setActiveUI(screen.getMultiplayerUI());
-            }
-        });
-
-
-        address = new TextField("", skin);
         address.setAlignment(Align.center);
         address.addListener(new ChangeListener() {
             @Override
@@ -59,6 +52,14 @@ public class DirectConnectUI extends UIState {
         });
 
 
+        TextButton back = new TextButton("Back", skin);
+        back.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                screen.setActiveUI(screen.getMultiplayerUI());
+            }
+        });
+
 
         table.add(label).left().padBottom(10);
         table.row();
@@ -67,7 +68,6 @@ public class DirectConnectUI extends UIState {
         table.add(join).width(250).padBottom(10);
         table.row();
         table.add(back).width(250);
-
 
     }
 

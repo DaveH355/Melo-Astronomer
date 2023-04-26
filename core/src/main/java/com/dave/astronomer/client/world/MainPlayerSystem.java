@@ -7,6 +7,7 @@ import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.entity.AbstractClientPlayer;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.DeltaTimer;
+import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.network.packet.ServerboundPlayerUpdateStatePacket;
 import com.dave.astronomer.common.world.SingleEntitySystem;
@@ -20,6 +21,11 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
     private DeltaTimer timer = new DeltaTimer(50, TimeUnit.MILLISECONDS);
 
     public MainPlayerSystem() {
+
+    }
+
+    @Override
+    public void removedFromEngine(Engine engine) {
 
     }
 

@@ -12,7 +12,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.common.world.PhysicsSystem;
-import com.esotericsoftware.minlog.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +95,7 @@ public class PhysicsUtils {
 
         //this pixmap may be a texture atlas, so adjust it to only what the sprite sees
         Pixmap fullPixmap = data.consumePixmap();
-        Pixmap visible = new Pixmap(sprite.getRegionWidth(), sprite.getRegionHeight(), Pixmap.Format.RGBA8888);
+        Pixmap visible = new Pixmap(sprite.getRegionWidth(), sprite.getRegionHeight(), data.getFormat());
 
         visible.drawPixmap(fullPixmap, 0, 0, sprite.getRegionX(), sprite.getRegionY(), sprite.getRegionWidth(), sprite.getRegionHeight());
 
@@ -204,7 +203,6 @@ public class PhysicsUtils {
             rect.x + bevelSize, rect.y + rect.height,
             rect.x, rect.y + rect.height - bevelSize
         });
-
     }
 
     public static void centerSprite(Sprite sprite, Body body) {

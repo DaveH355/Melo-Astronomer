@@ -7,7 +7,7 @@ import com.dave.astronomer.common.network.BufferedListener;
 import com.dave.astronomer.common.network.NetworkUtils;
 import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.packet.ServerboundHelloPacket;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+import com.dave.astronomer.common.world.CoreEngine;
 import com.esotericsoftware.kryonet.Client;
 import lombok.Getter;
 import lombok.Setter;

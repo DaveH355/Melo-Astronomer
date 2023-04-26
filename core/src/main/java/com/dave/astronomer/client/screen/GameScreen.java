@@ -19,12 +19,11 @@ import com.dave.astronomer.client.GameScreenConfig;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.MAClient;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
-import com.dave.astronomer.client.screen.mainmenu.MainMenuScreen;
 import com.dave.astronomer.client.world.*;
 import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
-import com.dave.astronomer.common.world.ecs.CoreEngine;
+import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.server.MAServer;
 import com.dave.astronomer.server.WorldData;
 import com.esotericsoftware.minlog.Log;
@@ -113,7 +112,7 @@ public class GameScreen implements Screen {
         Log.error("", e);
 
         Gdx.app.postRunnable(() -> {
-
+            dispose();
             MainMenuScreen screen = new MainMenuScreen();
             screen.getConnectErrorUI().postError(e);
             screen.setActiveUI(screen.getConnectErrorUI());
@@ -133,6 +132,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
 
 
         //TODO move this to separate thread. Box2d doesn't like this though
