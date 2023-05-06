@@ -1,14 +1,21 @@
 package com.dave.astronomer.common.world;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.EntitySystem;
+
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.ashley.core.Entity;
+import com.dave.astronomer.common.ashley.core.EntitySystem;
+import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import lombok.Getter;
 
 import java.util.List;
 
-public abstract class SingleEntitySystem<T extends BaseEntity> extends EntitySystem {
+public abstract class SingleEntitySystem<T extends Entity> extends EntitySystem {
     @Getter
     private CoreEngine engine;
+
+    public SingleEntitySystem() {
+    }
+
     @Override
     public void addedToEngine(Engine engine) {
         this.engine = (CoreEngine) engine;
@@ -17,7 +24,7 @@ public abstract class SingleEntitySystem<T extends BaseEntity> extends EntitySys
 
     @Override
     public void update(float deltaTime) {
-        List<T> list = engine.getEntitiesByType(getGenericType());
+        ImmutableArray<T> list = engine.getEntitiesByType(getGenericType());
         for (T t : list) {
             processEntity(t, deltaTime);
         }

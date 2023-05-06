@@ -11,6 +11,7 @@ import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.multiplayer.LanServer;
 import com.dave.astronomer.client.multiplayer.LanServerDetector;
 import com.dave.astronomer.client.screen.GameScreen;
+import com.dave.astronomer.client.screen.MainMenuScreen;
 import com.dave.astronomer.client.screen.UIState;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
@@ -63,6 +64,13 @@ public class MultiplayerUI extends UIState {
             }
         });
         TextButton refreshButton = new TextButton("Refresh", skin);
+        refreshButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                message.restart();
+                scrollTable.clear();
+            }
+        });
         TextButton directConnectButton = new TextButton("Direct Connect", skin);
         directConnectButton.addListener(new ClickListener() {
             @Override

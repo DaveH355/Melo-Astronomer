@@ -24,7 +24,6 @@ public class BufferedListener implements Listener {
         serverSide = true;
     }
     public BufferedListener() {
-
     }
 
     @Override
@@ -95,9 +94,11 @@ public class BufferedListener implements Listener {
             handle(packet, handler);
 
         }
+        isProcessing = false;
+
         buffer.addAll(altBuffer);
         altBuffer.clear();
-        isProcessing = false;
+
     }
     @SuppressWarnings("unchecked")
     private static <T extends PacketHandler> void handle(Packet<T> packet, PacketHandler handler) {

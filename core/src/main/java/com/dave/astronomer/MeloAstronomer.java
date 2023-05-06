@@ -4,12 +4,16 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.dave.astronomer.client.GameSkin;
 import com.dave.astronomer.client.NonGameClient;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.screen.SplashScreen;
 import com.dave.astronomer.common.MALogger;
+import com.dave.astronomer.common.PhysicsUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
@@ -26,6 +30,7 @@ import java.io.IOException;
 public class MeloAstronomer extends Game {
     private static MeloAstronomer instance;
     @Getter private Skin skin;
+    private TextureAtlas skinRegion;
     @Getter private Client nonGameClient = new NonGameClient();
     @Getter @Setter private AssetManagerResolving assetManager;
     private MALogger logger;
@@ -53,7 +58,8 @@ public class MeloAstronomer extends Game {
             throw new RuntimeException(e);
         }
         skin = new GameSkin(Gdx.files.internal("Pixeld16/Pixeld16.json"));
-        skin.addRegions(new TextureAtlas(Gdx.files.internal("Pixeld16/Pixeld16.atlas")));
+        skinRegion = new TextureAtlas(Gdx.files.internal("Pixeld16/Pixeld16.atlas"));
+        skin.addRegions(skinRegion);
 
         this.setScreen(new SplashScreen());
     }
@@ -77,6 +83,7 @@ public class MeloAstronomer extends Game {
 
         assetManager.dispose();
         skin.dispose();
+        skinRegion.dispose();
         logger.dispose();
 
         Gdx.app.exit();

@@ -1,11 +1,13 @@
 package com.dave.astronomer.common.world;
 
-import com.badlogic.ashley.core.EntitySystem;
+
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.client.world.entity.Knife;
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.ashley.core.EntitySystem;
 import lombok.Getter;
 
 
@@ -16,7 +18,7 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
     public static final float TIME_STEP = 1f / STEP_FREQUENCY;
 
     public PhysicsSystem() {
-        //TODO: remove this temp code
+        //TODO: remove this temp contact filter
         world.setContactFilter((fixtureA, fixtureB) -> {
             if (fixtureA.getBody().getUserData() != null &&
                 fixtureB.getBody().getUserData() != null) {
@@ -45,12 +47,9 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
                         Vector2 reflection = new Vector2(contactNormal).scl(2 * dot);
                         Vector2 newVelocity = new Vector2(knife.getBody().getLinearVelocity()).sub(reflection);
 
-                        float ranScale = MathUtils.random(0, 1);
-                        knife.getBody().setLinearVelocity(newVelocity.scl(ranScale));
+                        knife.getBody().setLinearVelocity(newVelocity.scl(0.8f));
                         knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.scl(0.8f).angleDeg();
-                        if (knife.speed > 5) {
-                            knife.speed -= 1;
-                        }
+                        knife.bounces++;
                     }
                 }
                 if (body2.getUserData() != null && body2.getUserData() instanceof Knife knife && body1.getType() == BodyDef.BodyType.StaticBody) {
@@ -63,11 +62,7 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
 
                         knife.getBody().setLinearVelocity(newVelocity.scl(0.8f));
                         knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.scl(0.8f).angleDeg();
-                        if (knife.speed > 5) {
-                            knife.speed -= 1;
-                        } else {
-                            knife.dispose = true;
-                        }
+                        knife.bounces++;
                     }
                 }
             }

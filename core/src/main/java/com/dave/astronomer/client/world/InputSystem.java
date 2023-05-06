@@ -1,26 +1,30 @@
 package com.dave.astronomer.client.world;
 
-import com.badlogic.ashley.core.*;
-import com.badlogic.ashley.utils.ImmutableArray;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.dave.astronomer.client.world.component.InputComponent;
-import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.ashley.core.*;
+import com.dave.astronomer.common.ashley.core.IteratingSystem;
+import com.dave.astronomer.common.world.MockableSystem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputSystem extends EntitySystem implements InputProcessor {
+public class InputSystem extends IteratingSystem implements InputProcessor, MockableSystem {
     private InputMultiplexer multiplexer;
     private List<InputProcessor> processorList = new ArrayList<>();
-    private CoreEngine engine;
+
     private ComponentMapper<InputComponent> mapper = ComponentMapper.getFor(InputComponent.class);
+
+    public InputSystem() {
+        super(Family.all(InputComponent.class).get());
+    }
 
 
     @Override
     public void addedToEngine(Engine engine) {
-        this.engine = (CoreEngine) engine;
 
         multiplexer = new InputMultiplexer(
                 this
@@ -29,14 +33,10 @@ public class InputSystem extends EntitySystem implements InputProcessor {
     }
 
     @Override
-    public void update(float delta) {
-        ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(InputComponent.class).get());
-
-        for (Entity entity : entities) {
-            InputComponent inputComponent = mapper.get(entity);
-            if (!processorList.contains(inputComponent)) {
-                processorList.add(inputComponent);
-            }
+    protected void processEntity(Entity entity, float deltaTime) {
+        InputComponent inputComponent = mapper.get(entity);
+        if (!processorList.contains(inputComponent)) {
+            processorList.add(inputComponent);
         }
     }
 

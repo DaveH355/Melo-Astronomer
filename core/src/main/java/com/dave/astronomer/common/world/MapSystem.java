@@ -1,6 +1,5 @@
 package com.dave.astronomer.common.world;
 
-import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObject;
@@ -20,6 +19,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.ashley.core.EntitySystem;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
 
@@ -50,20 +51,6 @@ public class MapSystem extends EntitySystem {
     }
 
 
-    @CheckForNull
-    public MapCell getCellAt(Vector2 position, TiledMapTileLayer layer) {
-
-        //position should be in meters, conveniently each meter is same as tile size
-        //no modify on position needed
-        int y = Math.round(position.y);
-        int x = Math.round(position.x);
-
-
-        TiledMapTileLayer.Cell cell = layer.getCell(x, y);
-        if (cell == null) return null;
-
-        return new MapCell(layer,cell, x, y);
-    }
 
 
     private void loadMap(TiledMap map, World world) {
@@ -141,8 +128,9 @@ public class MapSystem extends EntitySystem {
         Body body = world.createBody(bdef);
 
 
-        body.createFixture(shape, 550);
+        body.createFixture(shape, 0);
         shape.dispose();
     }
+
 
 }

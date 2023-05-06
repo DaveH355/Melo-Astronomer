@@ -13,6 +13,7 @@ import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.GameScreenConfig;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.screen.GameScreen;
+import com.dave.astronomer.client.screen.MainMenuScreen;
 import com.dave.astronomer.client.screen.UIState;
 
 
@@ -35,11 +36,10 @@ public class MainMenuUI extends UIState {
         stage.addActor(bottomRight);
 
         //UI BEGIN
-        //UI BEGIN
         Image logo = new Image(assetManager.get("game_logo.png", Texture.class));
         logo.setOrigin(Align.center);
         logo.setScale(3f);
-        center.add(logo).pad(20).padBottom(50);
+        center.add(logo).pad(10);
         center.row();
 
         TextButton singlePlayerButton = new TextButton("Singleplayer", skin);

@@ -9,13 +9,9 @@ import com.badlogic.gdx.maps.objects.CircleMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.common.world.PhysicsSystem;
-import com.esotericsoftware.minlog.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +72,6 @@ public class PhysicsUtils {
     }
 
     public static PolygonShape toShape(Polygon polygon) {
-
         PolygonShape shape = new PolygonShape();
         float[] vertices = polygon.getTransformedVertices();
 
@@ -99,7 +94,7 @@ public class PhysicsUtils {
 
         //this pixmap may be a texture atlas, so adjust it to only what the sprite sees
         Pixmap fullPixmap = data.consumePixmap();
-        Pixmap visible = new Pixmap(sprite.getRegionWidth(), sprite.getRegionHeight(), Pixmap.Format.RGBA8888);
+        Pixmap visible = new Pixmap(sprite.getRegionWidth(), sprite.getRegionHeight(), data.getFormat());
 
         visible.drawPixmap(fullPixmap, 0, 0, sprite.getRegionX(), sprite.getRegionY(), sprite.getRegionWidth(), sprite.getRegionHeight());
 
@@ -207,12 +202,10 @@ public class PhysicsUtils {
             rect.x + bevelSize, rect.y + rect.height,
             rect.x, rect.y + rect.height - bevelSize
         });
-
     }
 
     public static void centerSprite(Sprite sprite, Body body) {
         Vector2 bodyPos = body.getPosition();
-
         sprite.setOrigin(bodyPos.x, bodyPos.y);
     }
 
@@ -223,7 +216,10 @@ public class PhysicsUtils {
         float currentAngleRad = body.getAngle();
         float angleDiffRad = angleRad - currentAngleRad;
 
-        float angularVelocity = angleDiffRad / deltaTime;
+        // Calculate the shortest angle difference
+        float shortestAngleDiffRad = (angleDiffRad + MathUtils.PI) % MathUtils.PI2 - MathUtils.PI;
+
+        float angularVelocity = shortestAngleDiffRad / deltaTime;
 
         if (Math.abs(angularVelocity) > maxSpeed) {
             angularVelocity = Math.signum(angularVelocity) * maxSpeed;
@@ -243,10 +239,6 @@ public class PhysicsUtils {
         Vector2 targetDirection = targetPosition.cpy().sub(position);
 
         float distance = targetDirection.len();
-
-        if (distance == 0) {
-            return new Vector2();
-        }
 
         // Calculate distance that can be covered in one frame
         float maxDistance = maxSpeed / PhysicsSystem.STEP_FREQUENCY;
@@ -279,4 +271,5 @@ public class PhysicsUtils {
 
         Vector2 velocity = targetDirection.scl(delta * maxSpeed * PhysicsSystem.STEP_FREQUENCY);
         return velocity;
-    }}
+    }
+}

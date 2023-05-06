@@ -21,16 +21,18 @@ public class TempPlayerAnimation {
 
         Texture texture = assetManager.get("temp_player.png", Texture.class);
 
-        int size = 32;
+
+        int width = 32;
+        int height = 32;
         //cut idle, no blink
         int idleDuration = 200;
-        Animation<TextureRegion> idle = AnimationUtils.loadFromTexture(texture, size,2, 0, 0, idleDuration);
+        Animation<TextureRegion> idle = AnimationUtils.loadFromTexture(texture, width, height,2, 0, 0, idleDuration);
 
         int walkDuration = 150;
-        Animation<TextureRegion> walk = AnimationUtils.loadFromTexture(texture, size, 4, 2, 0, walkDuration);
+        Animation<TextureRegion> walk = AnimationUtils.loadFromTexture(texture, width, height, 4, 2, 0, walkDuration);
 
         int dashDuration = 75;
-        Animation<TextureRegion> dash = AnimationUtils.loadFromTexture(texture, size, 8, 3, 0, dashDuration);
+        Animation<TextureRegion> dash = AnimationUtils.loadFromTexture(texture, width, height, 8, 3, 0, dashDuration);
 
         Map<String, Animation<TextureRegion>> map = new HashMap<>();
         map.put("idle", idle);

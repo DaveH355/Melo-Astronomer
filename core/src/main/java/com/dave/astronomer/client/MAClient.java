@@ -38,7 +38,6 @@ public class MAClient extends Client {
         ServerboundHelloPacket helloPacket = new ServerboundHelloPacket();
         helloPacket.message = "Hello from the client!";
 
-
         sendTCP(helloPacket);
     }
     private void addHandler(PacketHandler handler) {

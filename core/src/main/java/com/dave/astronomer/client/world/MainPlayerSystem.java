@@ -7,15 +7,17 @@ import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.entity.AbstractClientPlayer;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.DeltaTimer;
-import com.dave.astronomer.common.data.PlayerData;
-import com.dave.astronomer.common.network.packet.ServerboundPlayerUpdateStatePacket;
+import com.dave.astronomer.common.ashley.core.Engine;
+import com.dave.astronomer.common.network.packet.ServerboundEntityUpdateStatePacket;
+import com.dave.astronomer.common.world.BaseEntity;
+import com.dave.astronomer.common.world.MockableSystem;
 import com.dave.astronomer.common.world.SingleEntitySystem;
 import com.dave.astronomer.common.world.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 
 
-public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
+public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements MockableSystem {
 
     private DeltaTimer timer = new DeltaTimer(50, TimeUnit.MILLISECONDS);
 
@@ -33,7 +35,7 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
         if (p.getWalkDownKey().isDown()) velocity.y -= 1;
 
         velocity.nor();
-        velocity.scl(PlayerData.METERS_PER_SEC);
+        velocity.scl(p.getEntityType().speed);
 
 
         p.getBody().setLinearVelocity(velocity);
@@ -73,8 +75,8 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> {
 
         p.getSpriteComponent().selectAnimationIfAbsent(animation, true);
     }
-    private void sendUpdateToServer(Player.State state) {
-        ServerboundPlayerUpdateStatePacket packet = new ServerboundPlayerUpdateStatePacket(state);
+    private void sendUpdateToServer(BaseEntity.State state) {
+        ServerboundEntityUpdateStatePacket packet = new ServerboundEntityUpdateStatePacket(state);
 
         GameState.getInstance().getClient().sendUDP(packet);
     }

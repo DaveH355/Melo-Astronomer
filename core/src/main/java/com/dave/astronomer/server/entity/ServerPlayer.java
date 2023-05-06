@@ -7,6 +7,7 @@ import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
 import com.dave.astronomer.common.world.entity.Player;
+import com.dave.astronomer.common.world.movement.MovementBehavior;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,15 +22,13 @@ public class ServerPlayer extends Player {
 
     public ServerPlayer(CoreEngine engine, PlayerConnection connection) {
         super(engine, connection.uuid);
+        setMovementBehavior(MovementBehavior.BASIC_LERP);
         this.connection = connection;
 
         body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());
     }
 
-    @Override
-    public void update(float delta) {
 
-    }
 
     @Override
     public void forcePosition(Vector2 position, float angle) {

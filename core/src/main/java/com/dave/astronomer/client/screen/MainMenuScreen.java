@@ -1,4 +1,4 @@
-package com.dave.astronomer.client.screen.mainmenu;
+package com.dave.astronomer.client.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -11,6 +11,10 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.screen.UIState;
+import com.dave.astronomer.client.screen.mainmenu.ConnectErrorUI;
+import com.dave.astronomer.client.screen.mainmenu.DirectConnectUI;
+import com.dave.astronomer.client.screen.mainmenu.MainMenuUI;
+import com.dave.astronomer.client.screen.mainmenu.MultiplayerUI;
 import com.dave.astronomer.common.Constants;
 import lombok.Getter;
 
@@ -26,7 +30,7 @@ public class MainMenuScreen implements Screen {
     //batch shared with all stages
     @Getter private SpriteBatch batch = new SpriteBatch();
     @Getter private OrthographicCamera camera = new OrthographicCamera();
-    @Getter private ExtendViewport viewport = new ExtendViewport(Constants.UI_WIDTH, Constants.UI_HEIGHT, camera);
+    @Getter private ExtendViewport viewport = new ExtendViewport(Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT, camera);
 
 
     //background

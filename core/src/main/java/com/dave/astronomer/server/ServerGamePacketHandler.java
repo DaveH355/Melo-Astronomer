@@ -1,6 +1,7 @@
 package com.dave.astronomer.server;
 
 import com.badlogic.gdx.math.Vector2;
+import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.*;
@@ -10,14 +11,17 @@ import com.dave.astronomer.common.world.entity.Player;
 import com.dave.astronomer.server.entity.ServerPlayer;
 import com.esotericsoftware.minlog.Log;
 
-import java.util.List;
+import java.util.UUID;
+
+import static com.dave.astronomer.common.world.BaseEntity.State;
+
 
 public class ServerGamePacketHandler implements PacketHandler {
 
-    private CoreEngine engine;
+    private ServerEngine engine;
     private MAServer server;
 
-    public ServerGamePacketHandler(CoreEngine engine, MAServer server) {
+    public ServerGamePacketHandler(ServerEngine engine, MAServer server) {
         this.engine = engine;
         this.server = server;
     }
@@ -38,22 +42,17 @@ public class ServerGamePacketHandler implements PacketHandler {
         }
     }
 
-    public void onUpdatePlayerState(ServerboundPlayerUpdateStatePacket packet) {
+    public void onUpdateEntityState(ServerboundEntityUpdateStatePacket packet) {
+        UUID uuid = packet.state.uuid;
+        BaseEntity entity = engine.getEntityByUUID(uuid);
+        if (entity == null) return;
 
-        Player.State clientState = packet.state;
+        State clientState = packet.state;
+        State serverState = entity.captureState(clientState.id);
 
-
-        BaseEntity entity = engine.getEntityByUUID(clientState.uuid);
-        if (!(entity instanceof ServerPlayer player)) {
-            return;
-        }
-        //save server and client state for later comparison
-        Player.State serverState = player.captureState(clientState.id);
-
-
-
-        player.getServerState().push(serverState);
-        player.getClientState().push(clientState);
+        ServerEntityWrapper wrapper = engine.getEntityWrapper(uuid);
+        wrapper.getServerStateBuffer().push(serverState);
+        wrapper.getClientStateBuffer().push(clientState);
 
     }
 
@@ -75,8 +74,7 @@ public class ServerGamePacketHandler implements PacketHandler {
         connection.sendTCP(mainPlayerPacket);
 
 
-
-        List<ServerPlayer> list = engine.getEntitiesByType(ServerPlayer.class);
+        ImmutableArray<ServerPlayer> list = engine.getEntitiesByType(ServerPlayer.class);
 
         for (ServerPlayer p : list) {
             //tell existing players about new guy
@@ -95,12 +93,11 @@ public class ServerGamePacketHandler implements PacketHandler {
             connection.sendTCP(existingPlayerPacket);
         }
 
-        engine.addEntity(newPlayer);
+        engine.addEntity(newPlayer, connection);
 
 
 
         connection.sendTCP(new ClientboundConfirmLoginPacket());
-
     }
 
     private ServerPlayer createMainPlayer(PlayerConnection connection) {

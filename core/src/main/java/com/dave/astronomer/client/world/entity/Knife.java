@@ -8,25 +8,26 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
-import com.dave.astronomer.client.world.ClientPhysicsSystem;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
+import com.dave.astronomer.common.world.PhysicsSystem;
 
 public class Knife extends BaseEntity {
-    public boolean dispose;
+
     private Body body;
     private SpriteComponent spriteComponent;
     public float angleDeg;
-    public float speed = 8;
+
+    public int bounces = 0;
     boolean applied = false;
 
     public float targetAngleRad = -1;
-    public Knife(EntityType<?> entityType, CoreEngine engine) {
-        super(entityType, engine);
+    public Knife(CoreEngine engine) {
+        super(EntityType.KNIFE, engine);
 
         spriteComponent = createSpriteComponent();
         body = createBody();
@@ -40,8 +41,7 @@ public class Knife extends BaseEntity {
     @Override
     public void update(float delta) {
 
-        if (dispose) {
-            dispose = false;
+        if (bounces > 3) {
             getEngine().removeEntity(this);
             return;
         }
@@ -49,6 +49,7 @@ public class Knife extends BaseEntity {
 
         float angleRad = MathUtils.degreesToRadians * angleDeg;
 
+        float speed = getEntityType().speed;
         float velocityX = speed * MathUtils.cos(angleRad);
         float velocityY = speed * MathUtils.sin(angleRad);
 
@@ -60,9 +61,6 @@ public class Knife extends BaseEntity {
         if (targetAngleRad != -1) {
             body.setAngularVelocity(PhysicsUtils.angularVelocityToAngle(body, targetAngleRad, 10, delta));
         }
-
-
-
 
 
         spriteComponent.getSprite().setPosition(getPosition().x, getPosition().y);
@@ -95,7 +93,7 @@ public class Knife extends BaseEntity {
         bdef.type = BodyDef.BodyType.DynamicBody;
         bdef.angularDamping = 0.25f;
 
-        World world = getEngine().getSystem(ClientPhysicsSystem.class).getWorld();
+        World world = getEngine().getSystem(PhysicsSystem.class).getWorld();
         Body b = world.createBody(bdef);
         b.setUserData(this);
 
@@ -113,10 +111,9 @@ public class Knife extends BaseEntity {
 
 
         b.createFixture(fixtureDef);
-
+        shape.dispose();
 
         PhysicsUtils.centerSprite(spriteComponent.getSprite(), b);
-
         return b;
     }
 }

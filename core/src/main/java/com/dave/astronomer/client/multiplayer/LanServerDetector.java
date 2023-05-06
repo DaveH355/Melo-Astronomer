@@ -78,7 +78,7 @@ public class LanServerDetector extends Thread implements Disposable {
         for (LanServer s : serverList) {
             if (s.equals(server)) {
                 isNewServer = false;
-                //TODO: update ping
+                //TODO: ping server
             }
         }
 
