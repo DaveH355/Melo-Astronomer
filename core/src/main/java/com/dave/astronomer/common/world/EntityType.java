@@ -1,45 +1,40 @@
 package com.dave.astronomer.common.world;
 
 
+import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.world.entity.Player;
 
-//allow for easy creation of entities from a type
+//easily access entity specific data
 public class EntityType<T extends BaseEntity> {
-    public static final EntityType<Player> PLAYER = register("player", Builder.createNothing());
+    public static final EntityType<Player> PLAYER = register(Builder.<Player>begin().speed(3.5f));
+    public static final EntityType<Knife> KNIFE = register(Builder.<Knife>begin().speed(8f));
 
-    private EntityFactory<T> factory;
-    private EntityType(EntityFactory<T> factory) {
-        this.factory = factory;
+    public final float speed;
+
+    private EntityType(float speed) {
+        this.speed = speed;
     }
 
-    private static <T extends BaseEntity> EntityType<T> register(String name, Builder<T> builder) {
-        //TODO: register name
+    private static <T extends BaseEntity> EntityType<T> register(Builder<T> builder) {
         return builder.build();
+    }
 
-    }
-    public T create(CoreEngine engine) {
-        return this.factory.create(this, engine);
-    }
 
     public static class Builder<T extends BaseEntity> {
-        private final EntityFactory<T> factory;
-        private Builder(EntityFactory<T> factory) {
-            this.factory = factory;
-        }
-        public static <T extends BaseEntity> Builder<T> of(EntityFactory<T> factory) {
-            return new Builder<>(factory);
+        private float maxSpeed;
+
+        public static <T extends BaseEntity> Builder<T> begin() {
+            return new Builder<>();
         }
 
-        public static <T extends BaseEntity> Builder<T> createNothing() {
-            return new Builder<>((type, coreEngine) -> null);
+        public EntityType.Builder<T> speed(float speed) {
+            this.maxSpeed = speed;
+            return this;
         }
+
+
         public EntityType<T> build() {
-            return new EntityType<>(this.factory);
+            return new EntityType<>(maxSpeed);
         }
-    }
-
-    //factory is fancy interface for the entity constructor
-    public interface EntityFactory<T extends BaseEntity> {
-        T create(EntityType<T> type, CoreEngine engine);
     }
 }

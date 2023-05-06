@@ -65,7 +65,13 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	}
 
     @Override
-    protected void addedToEngineInternal(Engine engine) {
+    protected boolean addedToEngineInternal(Engine engine) {
+        boolean success = super.addedToEngineInternal(engine);
+
+        if (!success) {
+            return false;
+        }
+
         if (family.isOptInOnly()) {
             family.setSystemType(this.getClass());
         }
@@ -82,16 +88,23 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
         shouldSort = false;
         engine.addEntityListener(family, this);
 
-        super.addedToEngineInternal(engine);
+        return true;
     }
 
     @Override
-    protected void removedFromEngineInternal(Engine engine) {
+    protected boolean removedFromEngineInternal(Engine engine) {
+        boolean success = super.addedToEngineInternal(engine);
+
+        if (!success) {
+            return false;
+        }
+
+
         engine.removeEntityListener(this);
         sortedEntities.clear();
         shouldSort = false;
 
-        super.removedFromEngineInternal(engine);
+        return true;
     }
 
 

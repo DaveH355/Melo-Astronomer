@@ -7,11 +7,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.common.ashley.core.*;
 import com.dave.astronomer.common.ashley.core.IteratingSystem;
+import com.dave.astronomer.common.world.MockableSystem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputSystem extends IteratingSystem implements InputProcessor {
+public class InputSystem extends IteratingSystem implements InputProcessor, MockableSystem {
     private InputMultiplexer multiplexer;
     private List<InputProcessor> processorList = new ArrayList<>();
 

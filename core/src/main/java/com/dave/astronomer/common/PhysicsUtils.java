@@ -72,7 +72,6 @@ public class PhysicsUtils {
     }
 
     public static PolygonShape toShape(Polygon polygon) {
-
         PolygonShape shape = new PolygonShape();
         float[] vertices = polygon.getTransformedVertices();
 
@@ -207,7 +206,6 @@ public class PhysicsUtils {
 
     public static void centerSprite(Sprite sprite, Body body) {
         Vector2 bodyPos = body.getPosition();
-
         sprite.setOrigin(bodyPos.x, bodyPos.y);
     }
 
@@ -242,10 +240,6 @@ public class PhysicsUtils {
 
         float distance = targetDirection.len();
 
-        if (distance == 0) {
-            return new Vector2();
-        }
-
         // Calculate distance that can be covered in one frame
         float maxDistance = maxSpeed / PhysicsSystem.STEP_FREQUENCY;
 
@@ -277,4 +271,5 @@ public class PhysicsUtils {
 
         Vector2 velocity = targetDirection.scl(delta * maxSpeed * PhysicsSystem.STEP_FREQUENCY);
         return velocity;
-    }}
+    }
+}

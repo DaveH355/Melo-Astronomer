@@ -16,42 +16,31 @@ public class AnimationUtils {
      * @param frameDuration the duration of each frame in milliseconds
      */
     public static Animation<TextureRegion> loadAllFromTexture(Texture texture, int frameWidth, int frameHeight, float frameDuration) {
-        int rows = texture.getHeight() / frameHeight;
         int cols = texture.getWidth() / frameWidth;
-        int frameCount = rows * cols;
-
-        TextureRegion[] frames = new TextureRegion[frameCount];
-        int index = 0;
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                frames[index] = new TextureRegion(texture, col * frameWidth, row * frameHeight, frameWidth, frameHeight);
-                index++;
-            }
-        }
-        return new Animation<>(frameDuration / 1000f, frames);
+        int rows = (int) Math.ceil((float) texture.getHeight() / frameHeight);
+        int numFrames = rows * cols;
+        return loadFromTexture(texture, frameWidth, frameHeight, numFrames, 0, 0, frameDuration);
     }
     /**
      * @param frameDuration the duration of each frame in milliseconds
      */
     public static Animation<TextureRegion> loadFromTexture(Texture texture, int frameWidth, int frameHeight, int numFrames, int startRow, int startCol, float frameDuration) {
         int cols = texture.getWidth() / frameWidth;
-        int rows = (int) Math.ceil((float) numFrames / cols);
 
         TextureRegion[][] regions = TextureRegion.split(texture, frameWidth, frameHeight);
+        int row = startRow;
+        int col = startCol;
         TextureRegion[] frames = new TextureRegion[numFrames];
-        int index = 0;
 
-        for (int row = startRow; row < startRow + rows && index < numFrames; row++) {
-            for (int col = startCol; col < startCol + cols && index < numFrames; col++) {
-                frames[index] = regions[row][col];
-                index++;
+        for (int i = 0; i < numFrames; i++) {
+            frames[i] = regions[row][col];
+            col++;
+            if (col >= startCol + cols) {
+                col = startCol;
+                row++;
             }
         }
-
         return new Animation<>(frameDuration / 1000f, frames);
-    }
-    public static Animation<TextureRegion> loadFromTexture(Texture texture, int frameSize, int numFrames, int startRow, int startCol, float frameDuration) {
-        return loadFromTexture(texture, frameSize, frameSize, numFrames, startRow, startCol, frameDuration);
     }
 
     public static Map<String, Animation<TextureRegion>> loadFromAseprite(Texture texture, FileHandle json) {

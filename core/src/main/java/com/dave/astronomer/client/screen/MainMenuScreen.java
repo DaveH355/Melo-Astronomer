@@ -30,7 +30,7 @@ public class MainMenuScreen implements Screen {
     //batch shared with all stages
     @Getter private SpriteBatch batch = new SpriteBatch();
     @Getter private OrthographicCamera camera = new OrthographicCamera();
-    @Getter private ExtendViewport viewport = new ExtendViewport(Constants.UI_WIDTH, Constants.UI_HEIGHT, camera);
+    @Getter private ExtendViewport viewport = new ExtendViewport(Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT, camera);
 
 
     //background

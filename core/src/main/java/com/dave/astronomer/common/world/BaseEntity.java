@@ -3,50 +3,75 @@ package com.dave.astronomer.common.world;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
-import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.ashley.core.Entity;
+import com.dave.astronomer.common.world.movement.MovementBehavior;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BaseEntity extends Entity implements Disposable {
+    private static final AtomicInteger STATE_ID_POOL = new AtomicInteger(1);
+
     @Getter @Setter private UUID uuid = UUID.randomUUID();
     @Getter private final CoreEngine engine;
     @Getter private final EntityType<?> entityType;
-    @Getter @Setter private float speed = 1;
-    public float arrivalRadius = 0.2f;
-    public float positionTolerance = 0.5f;
+    @Setter MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
 
-    private Deque<Vector2> deltaMovementBuffer = new ArrayDeque<>();
+    @Getter private Deque<Vector2> deltaMovementBuffer = new ArrayDeque<>();
 
     public void lerpPosition(float x, float y) {
+        if (movementBehavior == MovementBehavior.CUSTOM) return;
         deltaMovementBuffer.push(new Vector2(x, y));
     }
     public void lerpPosition(Vector2 vector2) {
+        if (movementBehavior == MovementBehavior.CUSTOM) return;
+
         deltaMovementBuffer.push(new Vector2(vector2));
     }
     public Vector2 getDeltaMovement() {
         return deltaMovementBuffer.getLast();
     }
 
+    @Override
     public void update(float delta) {
-        if (deltaMovementBuffer.isEmpty()) return;
-        Vector2 target = getDeltaMovement();
+        movementBehavior.apply(this);
 
-        Vector2 velocity = PhysicsUtils.velocityToPosition(getBody(), target, getSpeed(), arrivalRadius);
-        getBody().setLinearVelocity(velocity);
+    }
 
-        float distance = getPosition().dst(target);
-        if (distance <= positionTolerance) deltaMovementBuffer.removeLast();
+    @ToString
+    public static class State {
+        public Vector2 position;
+        public float angleRad;
 
-        else if (distance > positionTolerance * 2) {
-            forcePosition(target, getBody().getAngle());
-            deltaMovementBuffer.clear();
-        }
+        public UUID uuid;
+        public Vector2 velocity;
+        public int id;
+    }
+    public State captureState() {
+        State state = new State();
+        state.position = getPosition();
+        state.angleRad = getBody().getAngle();
+        state.velocity = getBody().getLinearVelocity();
+        state.uuid = getUuid();
+        state.id = STATE_ID_POOL.incrementAndGet();
+        return state;
+    }
+    public State captureState(int id) {
+        State state = captureState();
+        state.id = id;
+        return state;
+    }
 
+    public void forceState(State state) {
+        getBody().setTransform(state.position, state.angleRad);
+        getBody().setLinearVelocity(state.velocity);
+        setUuid(state.uuid);
+        deltaMovementBuffer.clear();
     }
 
 
@@ -67,6 +92,11 @@ public abstract class BaseEntity extends Entity implements Disposable {
     }
 
     public abstract Body getBody();
+
+    @Override
+    public void onRemovedFromEngine() {
+        dispose();
+    }
 
     @Override
     public void dispose() {

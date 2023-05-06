@@ -29,10 +29,10 @@
         },
         "map.tmx": {
             "scale": 1,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 548,
-                "y": 1150.5
+                "x": 431,
+                "y": 905.5
             }
         },
         "map.tmx#Modern_Exteriors_Complete_Tileset": {

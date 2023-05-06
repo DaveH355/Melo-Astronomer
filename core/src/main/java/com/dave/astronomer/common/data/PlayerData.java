@@ -15,7 +15,6 @@ import java.util.List;
 public class PlayerData {
     private PlayerData(){}
     private static final Circle boundingCircle;
-    public static final float METERS_PER_SEC = 3.5f;
 
 
     static {

@@ -22,7 +22,8 @@ import com.dave.astronomer.common.ashley.signals.Listener;
 import com.dave.astronomer.common.ashley.signals.Signal;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 
-import java.util.Comparator;;
+import java.util.Comparator;
+import java.util.List;;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
@@ -135,6 +136,11 @@ public class Engine {
 		return entityManager.getEntities();
 	}
 
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> ImmutableArray<T> getEntitiesByType(Class<T> type) {
+        return (ImmutableArray<T>) entityManager.getEntitiesByType(type);
+    }
+
 	/**
 	 * Adds the {@link EntitySystem} to this Engine.
 	 * If the Engine already had a system of the same class,
@@ -143,6 +149,12 @@ public class Engine {
 	public void addSystem(EntitySystem system){
 		systemManager.addSystem(system);
 	}
+
+    public void addPrioritySystems(EntitySystem... systems) {
+        for (EntitySystem system : systems) {
+            systemManager.addPrioritySystem(system);
+        }
+    }
 
 	/**
 	 * Removes the {@link EntitySystem} from this Engine.
@@ -234,9 +246,8 @@ public class Engine {
 
 		updating = true;
 
-        for (int i = 0; i < systemManager.getPrioritySystems().size; i++) {
-            EntitySystem prioritySystem = systemManager.getPrioritySystems().get(i);
-            prioritySystem.update(deltaTime);
+        for (EntitySystem prioritySystem : systemManager.getPrioritySystems()) {
+            if (shouldProcess(prioritySystem)) prioritySystem.update(deltaTime);
         }
 
         for (int i = 0; i < entityManager.getEntities().size(); i++) {
@@ -244,9 +255,11 @@ public class Engine {
             entity.update(deltaTime);
         }
 
-        for (int i = 0; i < systemManager.getSystems().size(); ++i) {
+        for (int i = 0; i < systemManager.getSystems().size(); i++) {
             EntitySystem system = systemManager.getSystems().get(i);
-            system.update(deltaTime);
+            if (!systemManager.isPrioritySystem(system) && shouldProcess(system)) {
+                system.update(deltaTime);
+            }
         }
 
         while(componentOperationHandler.hasOperationsToProcess() || entityManager.hasPendingOperations()) {
@@ -255,6 +268,15 @@ public class Engine {
         }
         updating = false;
 	}
+
+    //allow for user override
+    public boolean shouldProcess(EntitySystem entitySystem) {
+        return true;
+    }
+
+    public boolean isPrioritySystem(EntitySystem system) {
+        return systemManager.isPrioritySystem(system);
+    }
 
 	protected void addEntityInternal(Entity entity) {
 		entity.componentAdded.add(componentAdded);

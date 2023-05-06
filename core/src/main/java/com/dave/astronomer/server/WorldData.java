@@ -1,13 +1,10 @@
 package com.dave.astronomer.server;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import lombok.Getter;
+import com.dave.astronomer.common.world.CoreEngine;
 
-public class WorldData {
-    @Getter private TiledMap map;
 
-    public WorldData(TiledMap map) {
-        this.map = map;
+public record WorldData (CoreEngine.EngineMetaData clientEngineMetaData, TiledMap map) {
 
-    }
 }
+

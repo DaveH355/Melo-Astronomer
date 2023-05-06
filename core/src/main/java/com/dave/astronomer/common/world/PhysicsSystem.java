@@ -18,7 +18,7 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
     public static final float TIME_STEP = 1f / STEP_FREQUENCY;
 
     public PhysicsSystem() {
-        //TODO: remove this temp code
+        //TODO: remove this temp contact filter
         world.setContactFilter((fixtureA, fixtureB) -> {
             if (fixtureA.getBody().getUserData() != null &&
                 fixtureB.getBody().getUserData() != null) {
@@ -49,9 +49,7 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
 
                         knife.getBody().setLinearVelocity(newVelocity.scl(0.8f));
                         knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.scl(0.8f).angleDeg();
-                        if (knife.speed > 5) {
-                            knife.speed -= 1;
-                        }
+                        knife.bounces++;
                     }
                 }
                 if (body2.getUserData() != null && body2.getUserData() instanceof Knife knife && body1.getType() == BodyDef.BodyType.StaticBody) {
@@ -64,11 +62,7 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
 
                         knife.getBody().setLinearVelocity(newVelocity.scl(0.8f));
                         knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.scl(0.8f).angleDeg();
-                        if (knife.speed > 5) {
-                            knife.speed -= 1;
-                        } else {
-                            knife.dispose = true;
-                        }
+                        knife.bounces++;
                     }
                 }
             }

@@ -11,6 +11,7 @@ class EntityManager {
 	private EntityListener listener;
 	private Array<Entity> entities = new Array<Entity>(false, 16);
     private ObjectMap<Class<?>, Array<Entity>> entitiesByType = new ObjectMap<>();
+    private ObjectMap<Class<?>, ImmutableArray<Entity>> immutableEntitiesByType = new ObjectMap<>();
 	private ObjectSet<Entity> entitySet = new ObjectSet<Entity>();
 	private ImmutableArray<Entity> immutableEntities = new ImmutableArray<Entity>(entities);
 	private Array<EntityOperation> pendingOperations = new Array<EntityOperation>(false, 16);
@@ -89,8 +90,14 @@ class EntityManager {
 	public ImmutableArray<Entity> getEntities() {
 		return immutableEntities;
 	}
-    public Array<Entity> getEntitiesByType(Class<?> type) {
-        return entitiesByType.get(type);
+    public ImmutableArray<Entity> getEntitiesByType(Class<?> type) {
+        if (!(entitiesByType.containsKey(type))) {
+            Array<Entity> array = new Array<>(false, 16);
+
+            entitiesByType.put(type, array);
+            immutableEntitiesByType.put(type, new ImmutableArray<>(array));
+        }
+        return immutableEntitiesByType.get(type);
     }
 
 	public boolean hasPendingOperations() {
@@ -130,7 +137,10 @@ class EntityManager {
             }
 			entities.removeValue(entity, true);
 			listener.entityRemoved(entity);
+
+            entity.onRemovedFromEngine();
 			entity.removing = false;
+
 		}
 	}
 
@@ -145,6 +155,7 @@ class EntityManager {
             Array<Entity> array = new Array<>(false, 16);
             array.add(entity);
             entitiesByType.put(entityType, array);
+            immutableEntitiesByType.put(entityType, new ImmutableArray<>(array));
         }
 
 		entities.add(entity);

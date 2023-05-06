@@ -2,15 +2,14 @@ package com.dave.astronomer.common.ashley.core;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import lombok.Getter;
-
-import java.util.Comparator;
-
 class SystemManager {
 	private Array<EntitySystem> systems = new Array<EntitySystem>(true, 16);
-    @Getter private Array<EntitySystem> prioritySystems = new Array<>(true, 16);
-	private ImmutableArray<EntitySystem> immutableSystems = new ImmutableArray<EntitySystem>(systems);
+    private ImmutableArray<EntitySystem> immutableSystems = new ImmutableArray<EntitySystem>(systems);
+
+    @Getter private ObjectSet<EntitySystem> prioritySystems = new ObjectSet<>(16);
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 	private SystemListener listener;
 
@@ -18,14 +17,17 @@ class SystemManager {
 		this.listener = listener;
 	}
 
+    public boolean isPrioritySystem(EntitySystem entitySystem) {
+        return prioritySystems.contains(entitySystem);
+    }
     public void addPrioritySystem(EntitySystem system) {
-        if (prioritySystems.contains(system, true)) {
-            prioritySystems.removeValue(system, true);
+        if (prioritySystems.contains(system)) {
+            prioritySystems.remove(system);
         }
 
         prioritySystems.add(system);
 
-        listener.systemAdded(system);
+        addSystem(system);
     }
 
 	public void addSystem(EntitySystem system){
@@ -42,9 +44,10 @@ class SystemManager {
 		listener.systemAdded(system);
 	}
 
+
 	public void removeSystem(EntitySystem system){
-        if (prioritySystems.contains(system, true)) {
-            prioritySystems.removeValue(system, true);
+        if (prioritySystems.contains(system)) {
+            prioritySystems.remove(system);
         }
 
 		if(systems.removeValue(system, true)) {
@@ -57,9 +60,6 @@ class SystemManager {
 		while(systems.size > 0) {
 			removeSystem(systems.first());
 		}
-        while (prioritySystems.size > 0) {
-            removeSystem(prioritySystems.first());
-        }
 	}
 
 	@SuppressWarnings("unchecked")

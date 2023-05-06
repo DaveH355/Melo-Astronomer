@@ -63,7 +63,7 @@ public class MeloAstronomer extends Game {
 
         this.setScreen(new SplashScreen());
     }
-    
+
     @Override
     public void render() {
         super.render();

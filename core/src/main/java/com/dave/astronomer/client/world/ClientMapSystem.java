@@ -12,9 +12,10 @@ import com.dave.astronomer.common.OrthogonalTiledMapRendererBleeding;
 import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.ashley.core.EntitySystem;
 import com.dave.astronomer.common.world.MapSystem;
+import com.dave.astronomer.common.world.MockableSystem;
 
 
-public class ClientMapSystem extends MapSystem implements Disposable {
+public class ClientMapSystem extends MapSystem implements Disposable, MockableSystem {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     public ClientMapSystem(TiledMap map, World world, SpriteBatch batch,OrthographicCamera camera) {

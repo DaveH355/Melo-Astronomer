@@ -57,13 +57,21 @@ public abstract class EntitySystem {
 		return engine;
 	}
 
-	protected void addedToEngineInternal(Engine engine) {
-		this.engine = engine;
-		addedToEngine(engine);
+	protected boolean addedToEngineInternal(Engine engine) {
+        if (this.engine == null) {
+            this.engine = engine;
+            addedToEngine(engine);
+            return true;
+        }
+        return false;
 	}
 
-	protected void removedFromEngineInternal(Engine engine) {
-		this.engine = null;
-		removedFromEngine(engine);
+	protected boolean removedFromEngineInternal(Engine engine) {
+        if (this.engine == engine) {
+            this.engine = null;
+            removedFromEngine(engine);
+            return true;
+        }
+        return false;
 	}
 }

@@ -4,10 +4,9 @@ import com.dave.astronomer.common.network.BufferedListener;
 import com.dave.astronomer.common.network.NetworkUtils;
 import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.PlayerConnection;
-import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.MapSystem;
 import com.dave.astronomer.common.world.PhysicsSystem;
-import com.dave.astronomer.server.system.ServerPlayerSystem;
+import com.dave.astronomer.server.system.EntityStateValidationSystem;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 public class MAServer extends Server {
 
-    private CoreEngine engine;
+    private ServerEngine engine;
     private BufferedListener bufferedListener;
     private LanManager lanManager;
     private Map<Class<? extends PacketHandler>, PacketHandler> handlers = new HashMap<>();
@@ -38,11 +37,11 @@ public class MAServer extends Server {
         }
         PhysicsSystem physicsSystem = new PhysicsSystem();
 
-        engine = new CoreEngine();
+        engine = new ServerEngine(data.clientEngineMetaData());
         engine.addSystems(
-                new ServerPlayerSystem(this),
+                new EntityStateValidationSystem(this),
                 physicsSystem,
-                new MapSystem(data.getMap(), physicsSystem.getWorld())
+                new MapSystem(data.map(), physicsSystem.getWorld())
 
         );
 

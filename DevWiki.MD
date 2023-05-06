@@ -3,14 +3,13 @@ Welcome to the Dev Wiki, a collection of core concepts to speed through understa
 
 
 
-
 ### Getters & Setters
 [Lombok](https://github.com/projectlombok/lombok "") is used to generate getters and setters with annotations. Use only the `@Getter` and `@Setter` annotations, never applied to a whole class at once.
 
 
 ### Naming
 - All references to the game should be as
-  `Melo Astronomer`, `MeloAstronomer`, `meloastronomer`, or `MA`
+  `Melo Astronomer`, `MeloAstronomer`, `astronomer`, or `MA`
 
 ### Logging
 Here's a simple example of logging.
@@ -31,22 +30,21 @@ public class Example {
 ### Entities
 Entities are purely for creating/configuring components
 
-
-
 - `Components` are bags of data, but allowed to have basic functions operating on its own data
 
 ### Systems
-Systems are responsible for taking the components of an entity and creating game logic using them. There are a couple ways to go about this.
+Systems are responsible for taking the components of an entity and processing game logic using them.
 
 - `Single Entity System` Processes all entities of an _exact_ type. If this entity is a subclass, it will automatically be exempt from the relevant Broad Entity System.
 
-- `Broad Entity System` Processes all entities of a broad type, aka all entities of particular super and subclasses. Basically the same as Single Entity System but any subclasses are also covered
-
-- `Base Entity System` Processes one or more components of all entities. Defining relationships between multiple components is possible but heavy-handed as it applies to all entities.
+### Notes
+- Systems can only be added a single engine
 
 ## Networking
-The server wraps incoming client connections for convenient storing of data.
-Note, client does not see this wrapped connection class
+The server wraps incoming client connections for convenient storing of data. Client does not see this wrapped connection class.
+
+### Packets
+Any classes extending Packet.java under `packet` package are automatically registered with kryo using reflection.
 
 
 ### Notes

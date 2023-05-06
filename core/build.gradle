@@ -12,6 +12,7 @@ dependencies {
   api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 
+
   api "com.crashinvaders.vfx:gdx-vfx-core:$gdxVfxCoreVersion"
   api "com.crashinvaders.vfx:gdx-vfx-effects:$gdxVfxEffectsVersion"
   api "com.github.crykn:kryonet:$kryoNetVersion"

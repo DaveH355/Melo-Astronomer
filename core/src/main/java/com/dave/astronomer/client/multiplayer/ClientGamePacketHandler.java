@@ -55,12 +55,12 @@ public class ClientGamePacketHandler implements PacketHandler {
         entity.lerpPosition(packet.position.x, packet.position.y);
     }
 
-    public void onForceState(ClientboundPlayerForceStatePacket packet) {
-        Player.State state = packet.state;
+    public void onForceState(ClientboundEntityForceStatePacket packet) {
+        BaseEntity.State state = packet.state;
 
-        Player player = (Player) engine.getEntityByUUID(state.uuid);
-        player.setState(state);
-        Log.debug("Player state forced");
+        BaseEntity entity = engine.getEntityByUUID(state.uuid);
+        entity.forceState(state);
+        Log.debug("Entity state forced");
     }
 
 }

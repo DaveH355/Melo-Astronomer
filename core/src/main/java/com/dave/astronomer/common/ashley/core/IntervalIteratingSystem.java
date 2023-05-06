@@ -39,14 +39,16 @@ public abstract class IntervalIteratingSystem extends IntervalSystem {
 	}
 
     @Override
-    protected void addedToEngineInternal(Engine engine) {
-        if (family.isOptInOnly()) {
-            family.setSystemType(this.getClass());
+    protected boolean addedToEngineInternal(Engine engine) {
+        boolean success = super.addedToEngineInternal(engine);
+        if (success) {
+            if (family.isOptInOnly()) {
+                family.setSystemType(this.getClass());
+            }
+
+            entities = engine.getEntitiesFor(family);
         }
-
-        entities = engine.getEntitiesFor(family);
-
-        super.addedToEngineInternal(engine);
+        return success;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -24,6 +25,7 @@ import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.PhysicsSystem;
 import com.dave.astronomer.server.MAServer;
 import com.dave.astronomer.server.WorldData;
 import com.esotericsoftware.minlog.Log;
@@ -38,7 +40,7 @@ public class GameScreen implements Screen {
     private MAClient client;
     private MAServer server;
     private DebugHud debugHud;
-    private ClientPhysicsSystem physicsSytem;
+    private PhysicsSystem physicsSytem;
     private Box2DDebugRenderer debugRenderer;
 
     //TODO: fix pixel wobble when rendering
@@ -46,12 +48,11 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch(2000);
 
         camera = new OrthographicCamera();
-        camera.zoom = 0.5f;
+        camera.zoom = 0.55f;
         viewport = new FillViewport(Constants.DEFAULT_WIDTH / Constants.PIXELS_PER_METER, Constants.DEFAULT_HEIGHT / Constants.PIXELS_PER_METER, camera);
 
 
-
-        physicsSytem = new ClientPhysicsSystem();
+        physicsSytem = new PhysicsSystem();
 
         //get tiled map
         AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
@@ -86,7 +87,8 @@ public class GameScreen implements Screen {
         try {
             //network
             if (config.startServer) {
-                WorldData data = new WorldData(map);
+                CoreEngine.EngineMetaData clientEngineMetaData = CoreEngine.getEngineMetaData(engine);
+                WorldData data = new WorldData(clientEngineMetaData, map);
                 server = new MAServer(data);
                 server.start();
             }
@@ -97,6 +99,7 @@ public class GameScreen implements Screen {
 
             return;
         }
+
 
         //set globals
         GameState.getInstance().setClient(client);
@@ -150,8 +153,10 @@ public class GameScreen implements Screen {
 
 
         batch.begin();
+
         engine.update(delta);
         batch.end();
+
 
 
         //debug
@@ -174,10 +179,14 @@ public class GameScreen implements Screen {
             Vector3 worldCoords = new Vector3(screenX, screenY, 0);
             camera.unproject(worldCoords);
 
-            Knife knife = new Knife(null, engine);;
-            Vector2 relativePos = new Vector2(worldCoords.x, worldCoords.y).sub(player.getPosition());
+            Knife knife = new Knife(engine);
+
+            Vector2 playerPos = player.getPosition();
+            Vector2 clickPos = new Vector2(worldCoords.x, worldCoords.y);
+            Vector2 relativePos = clickPos.sub(playerPos);
+
             knife.angleDeg = relativePos.angleDeg();
-            knife.forcePosition(worldCoords.x, worldCoords.y, MathUtils.degreesToRadians * knife.angleDeg);
+            knife.forcePosition(playerPos.x, playerPos.y + 1f, MathUtils.degreesToRadians * knife.angleDeg);
 
             engine.addEntity(knife);
         }

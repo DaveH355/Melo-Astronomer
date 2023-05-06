@@ -234,6 +234,10 @@ public class Entity {
 		return null;
 	}
 
+    public void onRemovedFromEngine() {
+
+    }
+
 	void notifyComponentAdded() {
 		componentAdded.dispatch(this);
 	}

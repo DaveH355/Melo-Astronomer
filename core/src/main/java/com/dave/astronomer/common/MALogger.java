@@ -11,13 +11,12 @@ import static com.esotericsoftware.minlog.Log.*;
 public class MALogger extends Logger implements Disposable {
     private final long firstLogTime = System.currentTimeMillis();
     private PrintStream printStream;
-    private PrintStream altPrintStream;
+
     public MALogger(File gameDirectory) throws FileNotFoundException {
         File logDirectory = new File(gameDirectory,"log");
         logDirectory.mkdir();
 
         printStream = new PrintStream(new File(logDirectory, "log.txt"));
-        altPrintStream = new PrintStream(new File(logDirectory, "network_log.txt"));
 
     }
 
@@ -46,14 +45,14 @@ public class MALogger extends Logger implements Disposable {
         builder.append("[");
         builder.append(Thread.currentThread().getName());
 
-        boolean altStream = false;
+        
         if (category != null) {
             builder.append("/");
             builder.append(category);
 
             //divert kryo and kryonet debug messages they are repetitive
             if (level == LEVEL_DEBUG && (category.contains("kryonet") || category.contains("kryo"))) {
-                altStream = true;
+                return;
             }
         }
 
@@ -72,12 +71,8 @@ public class MALogger extends Logger implements Disposable {
         String string = builder.toString();
 
 
-        if (altStream) {
-            writeToStream(string, altPrintStream);
-            return;
-        } else {
-            writeToStream(string, printStream);
-        }
+        writeToStream(string, printStream);
+
         if (level == LEVEL_ERROR) error(string);
         else print(string);
 
@@ -96,6 +91,6 @@ public class MALogger extends Logger implements Disposable {
     @Override
     public void dispose() {
         printStream.close();
-        altPrintStream.close();
+
     }
 }

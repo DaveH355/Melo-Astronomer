@@ -11,9 +11,10 @@ import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.ashley.core.Family;
 import com.dave.astronomer.common.ashley.core.IteratingSystem;
+import com.dave.astronomer.common.world.MockableSystem;
 
 
-public class SpriteRenderSystem extends IteratingSystem {
+public class SpriteRenderSystem extends IteratingSystem implements MockableSystem {
     private ComponentMapper<SpriteComponent> mapper = ComponentMapper.getFor(SpriteComponent.class);
 
 

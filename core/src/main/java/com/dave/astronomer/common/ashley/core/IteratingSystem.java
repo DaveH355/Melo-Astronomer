@@ -43,20 +43,27 @@ public abstract class IteratingSystem extends EntitySystem {
 
 
     @Override
-    protected void addedToEngineInternal(Engine engine) {
-        if (family.isOptInOnly()) {
-            family.setSystemType(this.getClass());
+    protected boolean addedToEngineInternal(Engine engine) {
+        boolean success = super.addedToEngineInternal(engine);
+        if (success) {
+            if (family.isOptInOnly()) {
+                family.setSystemType(this.getClass());
+            }
+            entities = engine.getEntitiesFor(family);
         }
 
-        entities = engine.getEntitiesFor(family);
-        super.addedToEngineInternal(engine);
+        return success;
     }
 
 
     @Override
-    protected void removedFromEngineInternal(Engine engine) {
-        entities = null;
-        super.removedFromEngineInternal(engine);
+    protected boolean removedFromEngineInternal(Engine engine) {
+        boolean success = super.addedToEngineInternal(engine);
+        if (success) {
+            entities = null;
+        }
+
+        return success;
     }
 
     @Override
