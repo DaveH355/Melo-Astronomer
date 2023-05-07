@@ -3,6 +3,7 @@ package com.dave.astronomer.client.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dave.astronomer.MeloAstronomer;
@@ -133,10 +135,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-
+        ScreenUtils.clear(Color.BLACK, true);
 
         //TODO move this to separate thread. Box2d doesn't like this though
         //https://stackoverflow.com/questions/24924306/box2d-on-separate-thread
@@ -150,7 +149,6 @@ public class GameScreen implements Screen {
 
 
         batch.setProjectionMatrix(camera.combined);
-
 
         batch.begin();
 
@@ -179,19 +177,18 @@ public class GameScreen implements Screen {
             Vector3 worldCoords = new Vector3(screenX, screenY, 0);
             camera.unproject(worldCoords);
 
-            Knife knife = new Knife(engine);
 
             Vector2 playerPos = player.getPosition();
             Vector2 clickPos = new Vector2(worldCoords.x, worldCoords.y);
             Vector2 relativePos = clickPos.sub(playerPos);
 
-            knife.angleDeg = relativePos.angleDeg();
-            knife.forcePosition(playerPos.x, playerPos.y + 1f, MathUtils.degreesToRadians * knife.angleDeg);
+            float angleRad = relativePos.angleDeg() * MathUtils.degreesToRadians;
+            Vector2 pos = new Vector2(playerPos.x, playerPos.y + 1);
+            Knife knife = new Knife(engine, pos, angleRad);
+
 
             engine.addEntity(knife);
         }
-
-
 
 
     }
@@ -200,8 +197,6 @@ public class GameScreen implements Screen {
     public void resize(int width, int height) {
         viewport.update(width, height, false);
         debugHud.update(width, height, true);
-
-
 
     }
 

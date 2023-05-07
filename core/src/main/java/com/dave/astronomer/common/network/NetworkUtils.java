@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.dave.astronomer.common.network.discovery.LanDiscoveryDatagram;
 import com.dave.astronomer.common.network.packet.Packet;
 import com.dave.astronomer.common.world.BaseEntity;
+import com.dave.astronomer.common.world.EntityType;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 import net.jodah.typetools.TypeResolver;
@@ -54,6 +55,7 @@ public class NetworkUtils {
         kryo.register(UUID.class, new UUIDSerializer());
         kryo.register(Vector2.class);
         kryo.register(BaseEntity.State.class);
+        kryo.register(EntityType.class);
         kryo.register(LanDiscoveryDatagram.class);
     }
     private static <T> Set<Class<? extends T>> getClassesInPackage(String packageName, Class<T> type) {

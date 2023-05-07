@@ -28,11 +28,11 @@
             "scaleInDock": 1
         },
         "map.tmx": {
-            "scale": 1,
+            "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 431,
-                "y": 905.5
+                "x": 882,
+                "y": 1117
             }
         },
         "map.tmx#Modern_Exteriors_Complete_Tileset": {

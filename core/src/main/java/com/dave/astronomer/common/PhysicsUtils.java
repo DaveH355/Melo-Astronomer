@@ -86,7 +86,6 @@ public class PhysicsUtils {
     }
 
 
-
     private static Pixmap getVisiblePixmap(Sprite sprite) {
         Texture texture = sprite.getTexture();
         TextureData data = texture.getTextureData();
@@ -209,15 +208,12 @@ public class PhysicsUtils {
         sprite.setOrigin(bodyPos.x, bodyPos.y);
     }
 
-    /**
-     * @param maxSpeed radians per second
-     */
     public static float angularVelocityToAngle(Body body, float angleRad, float maxSpeed, float deltaTime) {
         float currentAngleRad = body.getAngle();
         float angleDiffRad = angleRad - currentAngleRad;
 
         // Calculate the shortest angle difference
-        float shortestAngleDiffRad = (angleDiffRad + MathUtils.PI) % MathUtils.PI2 - MathUtils.PI;
+        float shortestAngleDiffRad = MathUtils.atan2(MathUtils.sin(angleDiffRad), MathUtils.cos(angleDiffRad));
 
         float angularVelocity = shortestAngleDiffRad / deltaTime;
 
@@ -245,8 +241,7 @@ public class PhysicsUtils {
 
         if (distance <= maxDistance) {
             velocity.set(targetDirection);
-        }
-        else {
+        } else {
             velocity.set(targetDirection.scl(maxSpeed / distance));
         }
 
@@ -256,12 +251,14 @@ public class PhysicsUtils {
         }
         return velocity;
     }
+
     public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float maxSpeed, float arrivalRadius) {
         Vector2 position = body.getPosition();
         if (position.dst(targetPosition) < arrivalRadius) {
             return smoothVelocityToPosition(body, targetPosition, maxSpeed, Gdx.graphics.getDeltaTime());
         } else return velocityToPosition(body, targetPosition, maxSpeed);
     }
+
     public static Vector2 smoothVelocityToPosition(Body body, Vector2 targetPosition, float maxSpeed, float delta) {
         Vector2 position = body.getPosition();
 

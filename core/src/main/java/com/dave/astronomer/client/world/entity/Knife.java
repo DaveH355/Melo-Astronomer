@@ -20,14 +20,12 @@ public class Knife extends BaseEntity {
 
     private Body body;
     private SpriteComponent spriteComponent;
-    public float angleDeg;
-
     public int bounces = 0;
     boolean applied = false;
 
-    public float targetAngleRad = -1;
-    public Knife(CoreEngine engine) {
-        super(EntityType.KNIFE, engine);
+    public float targetAngleRad;
+    public Knife(EntityType<?> type, CoreEngine engine) {
+        super(type, engine);
 
         spriteComponent = createSpriteComponent();
         body = createBody();
@@ -35,6 +33,14 @@ public class Knife extends BaseEntity {
         addComponents(
             spriteComponent
         );
+    }
+
+    public Knife(CoreEngine engine, Vector2 position, float targetAngleRad)  {
+        this(EntityType.KNIFE, engine);
+        this.targetAngleRad = targetAngleRad;
+
+        forcePosition(position, targetAngleRad);
+
     }
 
 
@@ -46,21 +52,19 @@ public class Knife extends BaseEntity {
             return;
         }
 
-
-        float angleRad = MathUtils.degreesToRadians * angleDeg;
-
         float speed = getEntityType().speed;
-        float velocityX = speed * MathUtils.cos(angleRad);
-        float velocityY = speed * MathUtils.sin(angleRad);
+        float velocityX = speed * MathUtils.cos(targetAngleRad);
+        float velocityY = speed * MathUtils.sin(targetAngleRad);
 
         Vector2 velocity = new Vector2(velocityX, velocityY);
         if (!applied) {
             body.setLinearVelocity(velocity);
             applied = true;
         }
-        if (targetAngleRad != -1) {
-            body.setAngularVelocity(PhysicsUtils.angularVelocityToAngle(body, targetAngleRad, 10, delta));
-        }
+
+
+        body.setAngularVelocity(PhysicsUtils.angularVelocityToAngle(body, targetAngleRad, getEntityType().speed, delta));
+
 
 
         spriteComponent.getSprite().setPosition(getPosition().x, getPosition().y);
@@ -97,17 +101,14 @@ public class Knife extends BaseEntity {
         Body b = world.createBody(bdef);
         b.setUserData(this);
 
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 2500;
-        fixtureDef.restitution = 0.75f;
-        fixtureDef.friction = 1;
-
         Rectangle rect = PhysicsUtils.traceRectangle(spriteComponent.getSprite());
-
-
         PolygonShape shape = PhysicsUtils.toShape(rect);
-        fixtureDef.shape = shape;
 
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 150;
+        fixtureDef.restitution = 0.75f;
+        fixtureDef.friction = 0.5f;
 
 
         b.createFixture(fixtureDef);

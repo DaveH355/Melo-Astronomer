@@ -5,11 +5,16 @@ package com.dave.astronomer.client.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.dave.astronomer.common.DeltaTimer;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class LinkedLabel extends Label {
     private Linkable<String> linkable;
     private static final String DEFAULT_TEXT = "Null";
+    private DeltaTimer timer = new DeltaTimer(10, TimeUnit.MILLISECONDS);
+
 
     public LinkedLabel(Linkable<String> linkable, LabelStyle labelStyle) {
         super(DEFAULT_TEXT, labelStyle);
@@ -37,8 +42,11 @@ public class LinkedLabel extends Label {
 
     @Override
     public void act(float delta) {
-        if (linkable.getValue() != null) setText(linkable.getValue());
-        else setText(DEFAULT_TEXT);
+        if (timer.update(delta)) {
+            if (linkable.getValue() != null) setText(linkable.getValue());
+            else setText(DEFAULT_TEXT);
+        }
+
 
         super.act(delta);
     }
