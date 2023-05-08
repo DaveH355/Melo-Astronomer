@@ -6,8 +6,6 @@ import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.*;
 import com.dave.astronomer.common.world.BaseEntity;
-import com.dave.astronomer.common.world.CoreEngine;
-import com.dave.astronomer.common.world.entity.Player;
 import com.dave.astronomer.server.entity.ServerPlayer;
 import com.esotericsoftware.minlog.Log;
 
@@ -76,19 +74,19 @@ public class ServerGamePacketHandler implements PacketHandler {
 
         ImmutableArray<ServerPlayer> list = engine.getEntitiesByType(ServerPlayer.class);
 
-        for (ServerPlayer p : list) {
+        for (ServerPlayer existingPlayer : list) {
             //tell existing players about new guy
-            ClientboundAddPlayerPacket newPlayerPacket = new ClientboundAddPlayerPacket();
+            ClientboundAddEntityPacket newPlayerPacket = new ClientboundAddEntityPacket();
             newPlayerPacket.position = newPlayer.getPosition();
             newPlayerPacket.uuid = newPlayer.getUuid();
 
-            p.getConnection().sendTCP(newPlayerPacket);
+            existingPlayer.getConnection().sendTCP(newPlayerPacket);
 
 
             //tell new guy about existing players
-            ClientboundAddPlayerPacket existingPlayerPacket = new ClientboundAddPlayerPacket();
-            existingPlayerPacket.position = p.getPosition();
-            existingPlayerPacket.uuid = p.getUuid();
+            ClientboundAddEntityPacket existingPlayerPacket = new ClientboundAddEntityPacket();
+            existingPlayerPacket.position = existingPlayer.getPosition();
+            existingPlayerPacket.uuid = existingPlayer.getUuid();
 
             connection.sendTCP(existingPlayerPacket);
         }

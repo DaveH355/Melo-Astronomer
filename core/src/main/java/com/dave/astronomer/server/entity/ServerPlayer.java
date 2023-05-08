@@ -22,7 +22,7 @@ public class ServerPlayer extends Player {
 
     public ServerPlayer(CoreEngine engine, PlayerConnection connection) {
         super(engine, connection.uuid);
-        setMovementBehavior(MovementBehavior.BASIC_LERP);
+        setMovementBehavior(MovementBehavior.BASIC_INTERPOLATE);
         this.connection = connection;
 
         body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());

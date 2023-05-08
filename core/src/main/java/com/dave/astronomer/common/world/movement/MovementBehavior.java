@@ -10,9 +10,8 @@ import java.util.Deque;
 
 public class MovementBehavior {
     private static final float POSITION_TOLERANCE = 0.5f;
-    private static final float ARRIVAL_RADIUS = 0.2f;
     public static final MovementBehavior CUSTOM = new MovementBehavior();
-    public static final MovementBehavior BASIC_LERP = new BasicLerp();
+    public static final MovementBehavior BASIC_INTERPOLATE = new BasicLerp();
 
     public void apply(BaseEntity entity) {
 
@@ -28,7 +27,7 @@ public class MovementBehavior {
             if (deltaMovementBuffer.isEmpty()) return;
             Vector2 target = entity.getDeltaMovement();
 
-            Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, entityType.speed, ARRIVAL_RADIUS);
+            Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, entityType.speed);
             body.setLinearVelocity(velocity);
 
             float distance = entity.getPosition().dst(target);

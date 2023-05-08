@@ -17,10 +17,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dave.astronomer.MeloAstronomer;
-import com.dave.astronomer.client.DebugHud;
-import com.dave.astronomer.client.GameScreenConfig;
-import com.dave.astronomer.client.GameState;
-import com.dave.astronomer.client.MAClient;
+import com.dave.astronomer.client.*;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.world.*;
 import com.dave.astronomer.client.world.entity.Knife;
@@ -45,13 +42,12 @@ public class GameScreen implements Screen {
     private PhysicsSystem physicsSytem;
     private Box2DDebugRenderer debugRenderer;
 
-    //TODO: fix pixel wobble when rendering
     public GameScreen(GameScreenConfig config) {
         batch = new SpriteBatch(2000);
 
         camera = new OrthographicCamera();
-        camera.zoom = 0.55f;
-        viewport = new FillViewport(Constants.DEFAULT_WIDTH / Constants.PIXELS_PER_METER, Constants.DEFAULT_HEIGHT / Constants.PIXELS_PER_METER, camera);
+        //TODO: fix pixel wobble when rendering
+        viewport = new FillViewport(480 / 32f, 270 /32f, camera);
 
 
         physicsSytem = new PhysicsSystem();
@@ -78,7 +74,6 @@ public class GameScreen implements Screen {
 
 
         debugRenderer = new Box2DDebugRenderer();
-
         debugHud = new DebugHud(batch);
 
 

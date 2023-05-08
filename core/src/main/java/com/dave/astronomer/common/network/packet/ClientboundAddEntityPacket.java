@@ -5,10 +5,11 @@ import com.dave.astronomer.client.multiplayer.ClientGamePacketHandler;
 
 import java.util.UUID;
 
-public class ClientboundAddPlayerPacket extends Packet<ClientGamePacketHandler> {
+public class ClientboundAddEntityPacket extends Packet<ClientGamePacketHandler> {
 
     public UUID uuid;
     public Vector2 position;
+    public float angleRad = 0;
 
 
     @Override

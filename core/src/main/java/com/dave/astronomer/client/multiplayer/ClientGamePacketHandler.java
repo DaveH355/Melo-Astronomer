@@ -8,7 +8,6 @@ import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.packet.*;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
-import com.dave.astronomer.common.world.entity.Player;
 import com.esotericsoftware.minlog.Log;
 
 
@@ -40,11 +39,11 @@ public class ClientGamePacketHandler implements PacketHandler {
         GameState.getInstance().setMainPlayer(player);
     }
 
-    public void onAddPlayer(ClientboundAddPlayerPacket packet) {
+    public void onAddPlayer(ClientboundAddEntityPacket packet) {
 
         RemotePlayer remotePlayer = new RemotePlayer(engine, packet.uuid);
         remotePlayer.forcePosition(packet.position, 0);
-        remotePlayer.lerpPosition(packet.position.x, packet.position.y);
+        remotePlayer.lerpPosition(packet.position);
 
         engine.addEntity(remotePlayer);
     }
@@ -52,7 +51,7 @@ public class ClientGamePacketHandler implements PacketHandler {
         BaseEntity entity = engine.getEntityByUUID(packet.uuid);
         if (entity == null) return;
 
-        entity.lerpPosition(packet.position.x, packet.position.y);
+        entity.lerpPosition(packet.position);
     }
 
     public void onForceState(ClientboundEntityForceStatePacket packet) {

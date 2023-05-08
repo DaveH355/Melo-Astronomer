@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.common.ashley.core.Entity;
+import com.dave.astronomer.common.network.packet.ClientboundAddEntityPacket;
 import com.dave.astronomer.common.world.movement.MovementBehavior;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,19 +16,13 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BaseEntity extends Entity implements Disposable {
-    private static final AtomicInteger STATE_ID_POOL = new AtomicInteger(1);
-
+    private static final AtomicInteger STATE_ID_POOL = new AtomicInteger();
     @Getter @Setter private UUID uuid = UUID.randomUUID();
     @Getter private final CoreEngine engine;
     @Getter private final EntityType<?> entityType;
-    @Setter MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
-
+    @Setter private MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
     @Getter private Deque<Vector2> deltaMovementBuffer = new ArrayDeque<>();
 
-    public void lerpPosition(float x, float y) {
-        if (movementBehavior == MovementBehavior.CUSTOM) return;
-        deltaMovementBuffer.push(new Vector2(x, y));
-    }
     public void lerpPosition(Vector2 vector2) {
         if (movementBehavior == MovementBehavior.CUSTOM) return;
 
@@ -40,7 +35,11 @@ public abstract class BaseEntity extends Entity implements Disposable {
     @Override
     public void update(float delta) {
         movementBehavior.apply(this);
+    }
 
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        forcePosition(packet.position, packet.angleRad);
+        setUuid(packet.uuid);
     }
 
     @ToString
