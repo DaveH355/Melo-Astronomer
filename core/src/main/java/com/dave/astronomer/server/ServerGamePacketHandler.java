@@ -1,6 +1,7 @@
 package com.dave.astronomer.server;
 
 import com.badlogic.gdx.math.Vector2;
+import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.PlayerConnection;
@@ -40,6 +41,17 @@ public class ServerGamePacketHandler implements PacketHandler {
         }
     }
 
+    //very hacky
+    public void onUseItem(ServerboundUseItemPacket packet) {
+        PlayerConnection connection = ((PlayerConnection) packet.sender);
+        BaseEntity entity = engine.getEntityByUUID(connection.uuid);
+        ServerPlayer player = ((ServerPlayer) entity);
+        Knife knife = player.throwKnife(packet.targetAngleRad);
+
+        ClientboundAddEntityPacket addEntityPacket = new ClientboundAddEntityPacket(knife);
+        server.sendToAllExceptTCP(connection.getID(), addEntityPacket);
+    }
+
     public void onUpdateEntityState(ServerboundEntityUpdateStatePacket packet) {
         UUID uuid = packet.state.uuid;
         BaseEntity entity = engine.getEntityByUUID(uuid);
@@ -76,7 +88,7 @@ public class ServerGamePacketHandler implements PacketHandler {
 
         for (ServerPlayer existingPlayer : list) {
             //tell existing players about new guy
-            ClientboundAddEntityPacket newPlayerPacket = new ClientboundAddEntityPacket();
+            ClientboundAddPlayerPacket newPlayerPacket = new ClientboundAddPlayerPacket();
             newPlayerPacket.position = newPlayer.getPosition();
             newPlayerPacket.uuid = newPlayer.getUuid();
 
@@ -84,7 +96,7 @@ public class ServerGamePacketHandler implements PacketHandler {
 
 
             //tell new guy about existing players
-            ClientboundAddEntityPacket existingPlayerPacket = new ClientboundAddEntityPacket();
+            ClientboundAddPlayerPacket existingPlayerPacket = new ClientboundAddPlayerPacket();
             existingPlayerPacket.position = existingPlayer.getPosition();
             existingPlayerPacket.uuid = existingPlayer.getUuid();
 

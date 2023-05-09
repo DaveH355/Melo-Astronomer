@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.Bits;
 import com.dave.astronomer.common.ashley.signals.Signal;
 import com.dave.astronomer.common.ashley.utils.Bag;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
-import com.dave.astronomer.common.world.BaseComponent;
 import lombok.Getter;
 
 /**

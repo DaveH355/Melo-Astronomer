@@ -3,15 +3,13 @@ package com.dave.astronomer.common.world;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.dave.astronomer.client.world.ClientMapSystem;
-import com.dave.astronomer.client.world.InputSystem;
-import com.dave.astronomer.client.world.MainPlayerSystem;
-import com.dave.astronomer.client.world.SpriteRenderSystem;
 import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.ashley.core.EntitySystem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class CoreEngine extends Engine implements Disposable {
 

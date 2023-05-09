@@ -7,8 +7,6 @@ import com.dave.astronomer.common.ashley.core.EntitySystem;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import lombok.Getter;
 
-import java.util.List;
-
 public abstract class SingleEntitySystem<T extends Entity> extends EntitySystem {
     @Getter
     private CoreEngine engine;

@@ -1,11 +1,7 @@
 package com.dave.astronomer.common.ashley.core;
 
-import com.badlogic.gdx.utils.Array;
-import com.dave.astronomer.common.ashley.core.*;
-import com.dave.astronomer.common.ashley.utils.ImmutableArray;
-
-import java.util.Comparator;
 import com.badlogic.gdx.utils.*;
+import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 
 class FamilyManager {
 	ImmutableArray<Entity> entities;

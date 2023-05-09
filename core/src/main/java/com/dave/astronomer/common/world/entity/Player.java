@@ -2,14 +2,12 @@ package com.dave.astronomer.common.world.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
-import lombok.ToString;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Player extends BaseEntity implements Disposable {
 
@@ -21,6 +19,16 @@ public abstract class Player extends BaseEntity implements Disposable {
         return getBody().getLinearVelocity();
     }
 
+    //TODO: remove this temp method
+    public Knife throwKnife(float targetAngleRad) {
+        Vector2 playerPos = getPosition();
+        Vector2 knifePos = new Vector2(playerPos.x, playerPos.y + 1);
+        Knife knife = new Knife(getEngine(), knifePos, targetAngleRad);
+
+        getEngine().addEntity(knife);
+        return knife;
+
+    }
 
 
     public void setState(State state) {

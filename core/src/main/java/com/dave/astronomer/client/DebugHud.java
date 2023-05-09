@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -15,10 +16,12 @@ import com.dave.astronomer.client.ui.Linkable;
 import com.dave.astronomer.client.ui.LinkedLabel;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
+import lombok.Getter;
 
 
 public class DebugHud implements Disposable {
 
+    @Getter
     private Stage stage;
     private Table table;
     public DebugHud(SpriteBatch batch) {
@@ -60,12 +63,20 @@ public class DebugHud implements Disposable {
             return batch.maxSpritesInBatch + "";
         });
 
+        addToggle("Render server view");
 
 
 
 
         stage.addActor(table);
 
+    }
+    public void addToggle(String name) {
+        Skin skin = MeloAstronomer.getInstance().getSkin();
+
+        CheckBox checkBox = new CheckBox("", skin);
+        table.top().left().add(new Label(name, skin)).align(Align.left).padLeft(2.5f);
+        table.left().add(checkBox).align(Align.left).row();
     }
     public void addMetric(String name, Linkable<String> linkable) {
         Skin skin = MeloAstronomer.getInstance().getSkin();

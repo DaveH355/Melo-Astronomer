@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.ashley.core.ComponentMapper;
-import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.ashley.core.Family;
 import com.dave.astronomer.common.ashley.core.IteratingSystem;

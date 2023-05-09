@@ -16,11 +16,7 @@
 
 package com.dave.astronomer.common.ashley.core;
 
-import com.badlogic.gdx.utils.Array;
-import com.dave.astronomer.common.ashley.core.*;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
-
-import java.util.Comparator;
 
 /**
  * A simple EntitySystem that iterates over each entity and calls processEntity() for each entity every time the EntitySystem is

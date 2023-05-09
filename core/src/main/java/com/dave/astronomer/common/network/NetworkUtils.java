@@ -55,8 +55,8 @@ public class NetworkUtils {
         kryo.register(UUID.class, new UUIDSerializer());
         kryo.register(Vector2.class);
         kryo.register(BaseEntity.State.class);
-        kryo.register(EntityType.class);
         kryo.register(LanDiscoveryDatagram.class);
+        kryo.register(EntityType.class, new EntityType.EntityTypeSerializer());
     }
     private static <T> Set<Class<? extends T>> getClassesInPackage(String packageName, Class<T> type) {
 

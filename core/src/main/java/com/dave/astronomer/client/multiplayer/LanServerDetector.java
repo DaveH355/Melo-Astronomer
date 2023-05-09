@@ -63,6 +63,7 @@ public class LanServerDetector extends Thread implements Disposable {
             lanServer.serverName = packet.serverName;
             lanServer.address = data.getAddress();
 
+
             updateList(lanServer);
         }
 

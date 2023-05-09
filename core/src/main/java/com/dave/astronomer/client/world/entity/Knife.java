@@ -11,6 +11,7 @@ import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.network.packet.ClientboundAddEntityPacket;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;
@@ -40,13 +41,16 @@ public class Knife extends BaseEntity {
         this.targetAngleRad = targetAngleRad;
 
         forcePosition(position, targetAngleRad);
-
     }
 
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        this.targetAngleRad = packet.angleRad;
+    }
 
     @Override
     public void update(float delta) {
-
         if (bounces > 3) {
             getEngine().removeEntity(this);
             return;

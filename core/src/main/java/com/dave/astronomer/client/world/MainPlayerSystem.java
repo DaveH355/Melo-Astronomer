@@ -7,12 +7,10 @@ import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.entity.AbstractClientPlayer;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.DeltaTimer;
-import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.network.packet.ServerboundEntityUpdateStatePacket;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.MockableSystem;
 import com.dave.astronomer.common.world.SingleEntitySystem;
-import com.dave.astronomer.common.world.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 

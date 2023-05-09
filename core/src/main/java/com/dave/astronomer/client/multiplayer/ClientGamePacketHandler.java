@@ -8,6 +8,7 @@ import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.packet.*;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
+import com.dave.astronomer.common.world.EntityType;
 import com.esotericsoftware.minlog.Log;
 
 
@@ -29,6 +30,15 @@ public class ClientGamePacketHandler implements PacketHandler {
         engine.removeEntity(packet.uuid);
     }
 
+    public void onAddEntity(ClientboundAddEntityPacket packet) {
+        EntityType<?> entityType = packet.entityType;
+        BaseEntity entity = entityType.create(this.engine);
+        if (entity != null) {
+            entity.recreateFromPacket(packet);
+            this.engine.addEntity(entity);
+        }
+    }
+
     public void onAddMainPlayer(ClientboundAddMainPlayerPacket packet) {
 
         //main player
@@ -39,8 +49,7 @@ public class ClientGamePacketHandler implements PacketHandler {
         GameState.getInstance().setMainPlayer(player);
     }
 
-    public void onAddPlayer(ClientboundAddEntityPacket packet) {
-
+    public void onAddPlayer(ClientboundAddPlayerPacket packet) {
         RemotePlayer remotePlayer = new RemotePlayer(engine, packet.uuid);
         remotePlayer.forcePosition(packet.position, 0);
         remotePlayer.lerpPosition(packet.position);

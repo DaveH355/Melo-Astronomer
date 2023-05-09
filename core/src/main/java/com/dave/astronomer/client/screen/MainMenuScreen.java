@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
-import com.dave.astronomer.client.screen.UIState;
 import com.dave.astronomer.client.screen.mainmenu.ConnectErrorUI;
 import com.dave.astronomer.client.screen.mainmenu.DirectConnectUI;
 import com.dave.astronomer.client.screen.mainmenu.MainMenuUI;

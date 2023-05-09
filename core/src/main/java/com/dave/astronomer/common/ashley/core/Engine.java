@@ -16,16 +16,13 @@
 
 package com.dave.astronomer.common.ashley.core;
 
-import com.badlogic.gdx.utils.Array;
-import com.dave.astronomer.common.ashley.core.*;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.dave.astronomer.common.ashley.signals.Listener;
 import com.dave.astronomer.common.ashley.signals.Signal;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 
-import java.util.Comparator;
-import java.util.List;;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
+;
 
 /**
  * The heart of the Entity framework. It is responsible for keeping track of {@link Entity} and

@@ -2,12 +2,11 @@ package com.dave.astronomer.client.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -17,12 +16,17 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dave.astronomer.MeloAstronomer;
-import com.dave.astronomer.client.*;
+import com.dave.astronomer.client.DebugHud;
+import com.dave.astronomer.client.GameScreenConfig;
+import com.dave.astronomer.client.GameState;
+import com.dave.astronomer.client.MAClient;
 import com.dave.astronomer.client.asset.AssetManagerResolving;
-import com.dave.astronomer.client.world.*;
-import com.dave.astronomer.client.world.entity.Knife;
+import com.dave.astronomer.client.world.ClientMapSystem;
+import com.dave.astronomer.client.world.InputSystem;
+import com.dave.astronomer.client.world.MainPlayerSystem;
+import com.dave.astronomer.client.world.SpriteRenderSystem;
 import com.dave.astronomer.client.world.entity.MainPlayer;
-import com.dave.astronomer.common.Constants;
+import com.dave.astronomer.common.network.packet.ServerboundUseItemPacket;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
 import com.dave.astronomer.server.MAServer;
@@ -58,6 +62,14 @@ public class GameScreen implements Screen {
 
         ClientMapSystem mapSystem = new ClientMapSystem(map, physicsSytem.getWorld(), batch, camera);
 
+        //debug
+        debugRenderer = new Box2DDebugRenderer();
+        debugHud = new DebugHud(batch);
+
+        //input
+        InputMultiplexer multiplexer = new InputMultiplexer(
+            debugHud.getStage()
+        );
 
         engine = new CoreEngine();
 
@@ -65,7 +77,7 @@ public class GameScreen implements Screen {
             physicsSytem
         );
         engine.addSystems(
-            new InputSystem(),
+            new InputSystem(multiplexer),
             new MainPlayerSystem(),
             mapSystem,
             new SpriteRenderSystem(),
@@ -73,8 +85,6 @@ public class GameScreen implements Screen {
         );
 
 
-        debugRenderer = new Box2DDebugRenderer();
-        debugHud = new DebugHud(batch);
 
 
 
@@ -112,7 +122,6 @@ public class GameScreen implements Screen {
         Log.error("", e);
 
         Gdx.app.postRunnable(() -> {
-            dispose();
             MainMenuScreen screen = new MainMenuScreen();
             screen.getConnectErrorUI().postError(e);
             screen.setActiveUI(screen.getConnectErrorUI());
@@ -172,17 +181,17 @@ public class GameScreen implements Screen {
             Vector3 worldCoords = new Vector3(screenX, screenY, 0);
             camera.unproject(worldCoords);
 
-
             Vector2 playerPos = player.getPosition();
             Vector2 clickPos = new Vector2(worldCoords.x, worldCoords.y);
             Vector2 relativePos = clickPos.sub(playerPos);
 
             float angleRad = relativePos.angleDeg() * MathUtils.degreesToRadians;
-            Vector2 pos = new Vector2(playerPos.x, playerPos.y + 1);
-            Knife knife = new Knife(engine, pos, angleRad);
+            player.throwKnife(angleRad);
 
+            ServerboundUseItemPacket useItemPacket = new ServerboundUseItemPacket();
+            useItemPacket.targetAngleRad = angleRad;
 
-            engine.addEntity(knife);
+            client.sendTCP(useItemPacket);
         }
 
 
