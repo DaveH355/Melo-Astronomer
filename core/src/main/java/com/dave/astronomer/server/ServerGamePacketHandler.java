@@ -3,7 +3,6 @@ package com.dave.astronomer.server;
 import com.badlogic.gdx.math.Vector2;
 import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
-import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.*;
 import com.dave.astronomer.common.world.BaseEntity;
@@ -43,7 +42,7 @@ public class ServerGamePacketHandler implements PacketHandler {
 
     //very hacky
     public void onUseItem(ServerboundUseItemPacket packet) {
-        PlayerConnection connection = ((PlayerConnection) packet.sender);
+        PlayerConnection connection = (PlayerConnection) packet.sender;
         BaseEntity entity = engine.getEntityByUUID(connection.uuid);
         ServerPlayer player = ((ServerPlayer) entity);
         Knife knife = player.throwKnife(packet.targetAngleRad);
@@ -67,7 +66,7 @@ public class ServerGamePacketHandler implements PacketHandler {
     }
 
     public void onHello(ServerboundHelloPacket packet) {
-        PlayerConnection connection = ((PlayerConnection) packet.sender);
+        PlayerConnection connection = (PlayerConnection) packet.sender;
 
         if (engine.getEntityByUUID(connection.uuid) != null) {
             Log.warn("Unexpected: " + packet + " from client");

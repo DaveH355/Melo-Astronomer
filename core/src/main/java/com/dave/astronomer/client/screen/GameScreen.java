@@ -84,10 +84,6 @@ public class GameScreen implements Screen {
             mapSystem.new AlwaysFrontMapRenderer()
         );
 
-
-
-
-
         client = new MAClient(engine);
 
         client.start();
@@ -174,7 +170,7 @@ public class GameScreen implements Screen {
         camera.position.lerp(target, delta * 4);
 
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             float screenX = Gdx.input.getX();
             float screenY = Gdx.input.getY();
 

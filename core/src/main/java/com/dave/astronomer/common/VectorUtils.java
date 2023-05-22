@@ -10,7 +10,7 @@ public class VectorUtils {
      */
     public static Vector2 reflectVector(Vector2 vector, Vector2 normal, float elasticity) {
         float dot = vector.dot(normal);
-        Vector2 reflection = new Vector2(normal).scl(2 * dot);
+        Vector2 reflection = normal.cpy().scl(2 * dot);
         return new Vector2(vector).sub(reflection).scl(elasticity);
     }
 }

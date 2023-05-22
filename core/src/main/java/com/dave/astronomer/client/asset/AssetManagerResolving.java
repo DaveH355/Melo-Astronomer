@@ -24,10 +24,19 @@ public class AssetManagerResolving extends AssetManager {
         if (pathResolving) {
             FileHandle fileHandle = Gdx.files.internal(fileName);
             if (fileToPathMap.containsKey(fileHandle.name())) {
-                String message = surround(fileHandle.name()) + " already exists as " + surround(fileToPathMap.get(fileHandle.name())) + "\n";
-                String message2 = surround(fileHandle.path()) + " was not loaded due to collision"
-                        + "\n Possible solutions: Disable path resolving or change the filenames";
-                Log.error(getClass().getSimpleName(), message + message2);
+                String currentFileName = fileHandle.name();
+                String currentFilePath = fileHandle.path();
+                String existingFileName = fileToPathMap.get(fileHandle.name());
+
+
+                String string = String.format("""
+                   "%s" already exists as "%s"
+                   "%s" was not loaded due to collision
+                   Possible solutions: Disable path resolving or change the filenames
+                    """, currentFileName, existingFileName, currentFilePath);
+
+
+                Log.error(string);
             } else {
                 super.load(fileName, type, parameter);
                 fileToPathMap.put(fileHandle.name(), fileHandle.path());
@@ -68,10 +77,4 @@ public class AssetManagerResolving extends AssetManager {
         }
         return super.get(fileName, type, required);
     }
-
-    private String surround(String string) {
-        return "\"" + string + "\"";
-    }
-
-
 }

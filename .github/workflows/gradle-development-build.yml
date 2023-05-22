@@ -47,7 +47,7 @@ jobs:
           distribution: 'adopt'
           cache: gradle
       - name: Run lwjgl3:jpackageImage
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: lwjgl3:jpackageImage
 

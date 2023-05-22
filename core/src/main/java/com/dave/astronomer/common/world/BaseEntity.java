@@ -17,11 +17,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BaseEntity extends Entity implements Disposable {
     private static final AtomicInteger STATE_ID_POOL = new AtomicInteger();
-    @Getter @Setter private UUID uuid = UUID.randomUUID();
-    @Getter private final CoreEngine engine;
-    @Getter private final EntityType<?> entityType;
-    @Setter private MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
-    @Getter private Deque<Vector2> deltaMovementBuffer = new ArrayDeque<>();
+    @Getter @Setter
+    private UUID uuid = UUID.randomUUID();
+    @Getter
+    private final CoreEngine engine;
+    @Getter
+    private final EntityType<?> entityType;
+    @Setter
+    private MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
+    @Getter
+    private Deque<Vector2> deltaMovementBuffer = new ArrayDeque<>();
+
+    public BaseEntity(EntityType<?> entityType, CoreEngine engine) {
+        this.engine = engine;
+        this.entityType = entityType;
+    }
 
     public void lerpPosition(Vector2 vector2) {
         if (movementBehavior == MovementBehavior.CUSTOM) return;
@@ -29,7 +39,7 @@ public abstract class BaseEntity extends Entity implements Disposable {
         deltaMovementBuffer.push(new Vector2(vector2));
     }
     public Vector2 getDeltaMovement() {
-        return deltaMovementBuffer.getLast();
+        return deltaMovementBuffer.getFirst();
     }
 
     @Override
@@ -51,6 +61,33 @@ public abstract class BaseEntity extends Entity implements Disposable {
         public Vector2 velocity;
         public int id;
     }
+
+    public Vector2 getPosition() {
+        return getBody().getPosition();
+    }
+
+    public void forcePosition(Vector2 position, float angle) {
+        getBody().setTransform(position, angle);
+    }
+
+    public abstract Body getBody();
+
+    @Override
+    public void onRemovedFromEngine() {
+        dispose();
+    }
+
+    @Override
+    public void dispose() {
+        getBody().getWorld().destroyBody(getBody());
+    }
+
+    public void forceState(State state) {
+        getBody().setTransform(state.position, state.angleRad);
+        getBody().setLinearVelocity(state.velocity);
+        setUuid(state.uuid);
+        deltaMovementBuffer.clear();
+    }
     public State captureState() {
         State state = new State();
         state.position = getPosition();
@@ -66,39 +103,4 @@ public abstract class BaseEntity extends Entity implements Disposable {
         return state;
     }
 
-    public void forceState(State state) {
-        getBody().setTransform(state.position, state.angleRad);
-        getBody().setLinearVelocity(state.velocity);
-        setUuid(state.uuid);
-        deltaMovementBuffer.clear();
-    }
-
-
-    public BaseEntity(EntityType<?> entityType, CoreEngine engine) {
-        this.engine = engine;
-        this.entityType = entityType;
-    }
-
-    public Vector2 getPosition() {
-        return getBody().getPosition();
-    }
-
-    public void forcePosition(Vector2 position, float angle) {
-        getBody().setTransform(position, angle);
-    }
-    public void forcePosition(float x, float y, float angle) {
-        getBody().setTransform(x, y, angle);
-    }
-
-    public abstract Body getBody();
-
-    @Override
-    public void onRemovedFromEngine() {
-        dispose();
-    }
-
-    @Override
-    public void dispose() {
-        getBody().getWorld().destroyBody(getBody());
-    }
 }

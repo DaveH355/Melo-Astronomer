@@ -44,6 +44,7 @@ public class ServerEngine extends CoreEngine {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Entity> ImmutableArray<T> getEntitiesByType(Class<T> type) {
         if (type == ServerEntityWrapper.class) {
@@ -78,7 +79,4 @@ public class ServerEngine extends CoreEngine {
             internalAddWrapper(entityWrapper);
         }
     }
-
-
-
 }

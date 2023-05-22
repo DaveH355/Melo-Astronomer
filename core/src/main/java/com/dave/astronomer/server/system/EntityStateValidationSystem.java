@@ -19,7 +19,7 @@ import static com.dave.astronomer.common.world.BaseEntity.State;
 
 public class EntityStateValidationSystem extends SingleEntitySystem<ServerEntityWrapper> {
     private static final float POSITION_TOLERANCE = 0.5f;
-    private static final int BUFFER_SIZE_TOLERANCE = 5;
+    private static final int BUFFER_SIZE_TOLERANCE = 10;
     private DeltaTimer timer = new DeltaTimer(50, TimeUnit.MILLISECONDS);
     private MAServer server;
     public EntityStateValidationSystem(MAServer server) {
@@ -53,10 +53,6 @@ public class EntityStateValidationSystem extends SingleEntitySystem<ServerEntity
         //TODO: better way to handle large buffer sizes
         if (clientBuffer.size() > BUFFER_SIZE_TOLERANCE) {
             Log.warn(String.format("Entity state buffer too large (%d)", clientBuffer.size()));
-            for (int i = 0; i < clientBuffer.size()/2; i++) {
-                clientBuffer.removeLast();
-                serverBuffer.removeLast();
-            }
         }
 
         ClientboundUpdateEntityPosPacket packet = new ClientboundUpdateEntityPosPacket();
@@ -74,7 +70,6 @@ public class EntityStateValidationSystem extends SingleEntitySystem<ServerEntity
         } else {
             server.sendToAllUDP(packet);
         }
-
     }
     private void validateState(ServerEntityWrapper wrapper) {
         boolean flag = false;

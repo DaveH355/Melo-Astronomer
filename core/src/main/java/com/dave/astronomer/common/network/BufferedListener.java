@@ -1,23 +1,21 @@
 package com.dave.astronomer.common.network;
 
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.dave.astronomer.common.network.packet.Packet;
+import com.dave.astronomer.common.network.packet.PacketHandler;
 import com.dave.astronomer.server.ServerGamePacketHandler;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Map;
 
 public class BufferedListener implements Listener {
-    private Deque<Packet<?>> buffer = new ArrayDeque<>();
-    private Deque<Packet<?>> altBuffer = new ArrayDeque<>();
+    private final SnapshotArray<Packet<?>> buffer = new SnapshotArray<>(true, 16);
     private ServerGamePacketHandler serverGamePacketHandler;
     private boolean serverSide = false;
     public int packetsDown = 0;
-    private boolean isProcessing = false;
 
     public BufferedListener(ServerGamePacketHandler serverGamePacketHandler) {
         this.serverGamePacketHandler = serverGamePacketHandler;
@@ -65,28 +63,14 @@ public class BufferedListener implements Listener {
             Log.error(connection.toString() + " is not a valid player connection");
             return;
         }
-
         packet.sender = playerConnection;
-
-        if (isProcessing) {
-            altBuffer.push(packet);
-        } else {
-            buffer.push(packet);
-        }
-
-
+        buffer.add(packet);
     }
     private void onClientReceived(Connection connection, Packet<?> packet) {
         packet.sender = connection;
-
-        if (isProcessing) {
-            altBuffer.push(packet);
-        } else {
-            buffer.push(packet);
-        }
+        buffer.add(packet);
     }
     public void processPacketBuffer(Map<Class<? extends PacketHandler>, PacketHandler> map) {
-        isProcessing = true;
         while (!buffer.isEmpty()) {
             Packet<?> packet = buffer.pop();
             PacketHandler handler = map.get(NetworkUtils.getHandlerTypeFromPacket(packet));
@@ -94,11 +78,6 @@ public class BufferedListener implements Listener {
             handle(packet, handler);
 
         }
-        isProcessing = false;
-
-        buffer.addAll(altBuffer);
-        altBuffer.clear();
-
     }
     @SuppressWarnings("unchecked")
     private static <T extends PacketHandler> void handle(Packet<T> packet, PacketHandler handler) {
@@ -109,6 +88,4 @@ public class BufferedListener implements Listener {
         packet.handle((T)handler);
 
     }
-
-
 }

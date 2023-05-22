@@ -67,7 +67,7 @@ public class Knife extends BaseEntity {
         }
 
 
-        body.setAngularVelocity(PhysicsUtils.angularVelocityToAngle(body, targetAngleRad, getEntityType().speed, delta));
+        body.setAngularVelocity(PhysicsUtils.angularVelocityToAngle(body, targetAngleRad, getEntityType().speed));
 
 
 

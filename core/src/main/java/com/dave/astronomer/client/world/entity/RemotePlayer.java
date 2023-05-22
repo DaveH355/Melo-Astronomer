@@ -20,7 +20,7 @@ public class RemotePlayer extends AbstractClientPlayer {
 
     public RemotePlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
-        setMovementBehavior(MovementBehavior.BASIC_INTERPOLATE);
+        setMovementBehavior(new MovementBehavior.BasicLerp());
 
         spriteComponent = MainPlayer.createSpriteComponent();
         body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());

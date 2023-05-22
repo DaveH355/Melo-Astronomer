@@ -31,8 +31,10 @@ public class TempPlayerAnimation {
         int walkDuration = 150;
         Animation<TextureRegion> walk = AnimationUtils.loadFromTexture(texture, width, height, 4, 2, 0, walkDuration);
 
-        int dashDuration = 75;
+        int dashDuration = 100;
         Animation<TextureRegion> dash = AnimationUtils.loadFromTexture(texture, width, height, 8, 3, 0, dashDuration);
+
+
 
         Map<String, Animation<TextureRegion>> map = new HashMap<>();
         map.put("idle", idle);

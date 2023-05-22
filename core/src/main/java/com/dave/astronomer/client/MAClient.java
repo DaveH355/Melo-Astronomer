@@ -5,7 +5,7 @@ import com.dave.astronomer.client.multiplayer.ClientGamePacketHandler;
 import com.dave.astronomer.common.PolledTimer;
 import com.dave.astronomer.common.network.BufferedListener;
 import com.dave.astronomer.common.network.NetworkUtils;
-import com.dave.astronomer.common.network.PacketHandler;
+import com.dave.astronomer.common.network.packet.PacketHandler;
 import com.dave.astronomer.common.network.packet.ServerboundHelloPacket;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.esotericsoftware.kryonet.Client;

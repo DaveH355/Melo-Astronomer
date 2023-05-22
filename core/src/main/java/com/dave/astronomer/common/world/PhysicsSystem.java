@@ -12,10 +12,13 @@ import lombok.Getter;
 
 
 public class PhysicsSystem extends EntitySystem implements Disposable {
+
     @Getter private final World world = new World(Vector2.Zero, true);
     private float accumulator;
     public static final int STEP_FREQUENCY = 300;
     public static final float TIME_STEP = 1f / STEP_FREQUENCY;
+    //threshold below which two box2D positions are considered equal
+    public static final float EPSILON = 0.001f;
 
     public PhysicsSystem() {
         //TODO: remove this temp contact filter

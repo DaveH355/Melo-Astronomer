@@ -23,6 +23,7 @@ public class PlayerData {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
+
         Body b = world.createBody(bodyDef);
         FixtureDef fdef = new FixtureDef();
 

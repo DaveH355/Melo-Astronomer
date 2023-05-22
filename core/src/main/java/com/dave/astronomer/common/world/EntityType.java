@@ -17,7 +17,7 @@ public class EntityType<T extends BaseEntity> {
     private static final AtomicInteger UNIQUE_ID_POOL = new AtomicInteger();
 
     private static Map<Integer, EntityType<?>> map = new HashMap<>();
-    public static final EntityType<Player> PLAYER = register(Builder.<Player>createNothing().speed(3.5f));
+    public static final EntityType<Player> PLAYER = register(Builder.<Player>createNothing().speed(4.5f));
     public static final EntityType<Knife> KNIFE = register(Builder.<Knife>of(Knife::new).speed(8f));
 
     public final float speed;

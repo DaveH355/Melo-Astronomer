@@ -130,13 +130,10 @@ public class PhysicsUtils {
                 }
             }
         }
-
-
         Rectangle rectangle = new Rectangle(sprite.getBoundingRectangle());
         rectangle.setSize((float) maxX - minX, (float) maxY - minY);
         rectangle.setX(minX);
         rectangle.setY(minY);
-
 
         pixmap.dispose();
 
@@ -211,14 +208,14 @@ public class PhysicsUtils {
         sprite.setOrigin(bodyPos.x, bodyPos.y);
     }
 
-    public static float angularVelocityToAngle(Body body, float angleRad, float maxSpeed, float deltaTime) {
+    public static float angularVelocityToAngle(Body body, float angleRad, float maxSpeed) {
         float currentAngleRad = body.getAngle();
         float angleDiffRad = angleRad - currentAngleRad;
 
         // Calculate the shortest angle difference
         float shortestAngleDiffRad = MathUtils.atan2(MathUtils.sin(angleDiffRad), MathUtils.cos(angleDiffRad));
 
-        float angularVelocity = shortestAngleDiffRad / deltaTime;
+        float angularVelocity = shortestAngleDiffRad / Gdx.graphics.getDeltaTime();
 
         if (Math.abs(angularVelocity) > maxSpeed) {
             angularVelocity = Math.signum(angularVelocity) * maxSpeed;
@@ -226,47 +223,25 @@ public class PhysicsUtils {
 
         return angularVelocity;
     }
+
     /**
-     * @param maxSpeed the maximum speed in meters per second
+     * @param maxSpeed in meters per second
      */
     public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float maxSpeed) {
         Vector2 position = body.getPosition();
-        Vector2 velocity = body.getLinearVelocity().cpy();
-        Vector2 targetDirection = targetPosition.cpy().sub(position);
-        float distance = targetDirection.len();
 
-        //distance that can be covered in one time step
-        float maxDistancePerStep = maxSpeed / PhysicsSystem.STEP_FREQUENCY;
+        // point in target direction
+        Vector2 velocity = targetPosition.cpy().sub(position).nor().scl(maxSpeed);
 
-        if (distance <= maxDistancePerStep) {
-            velocity.setZero();
-        } else {
-            //find the velocity needed to reach the target position
-            float targetSpeed = Math.min(maxSpeed, distance / maxDistancePerStep);
-            Vector2 targetVelocity = targetDirection.cpy().nor().scl(targetSpeed);
 
-            float distanceToTarget = targetPosition.dst2(position);
-            if (distanceToTarget < 0.01f) {
-                velocity.setZero();
-            } else {
-                //reduce the velocity as the body approaches the target position
-                //avoids overshooting position
-                float factor = Math.min(1, distanceToTarget / (maxDistancePerStep * maxDistancePerStep));
-                velocity.interpolate(targetVelocity, factor, Interpolation.exp10Out);
-            }
+        float distanceToTarget = targetPosition.dst(position);
+        float overshootThreshold = maxSpeed / PhysicsSystem.STEP_FREQUENCY;
+
+        //velocity will now overshoot target, limit speed to balance
+        if (distanceToTarget < overshootThreshold) {
+            float safetyMargin = 0.1f;
+            velocity.limit(distanceToTarget * PhysicsSystem.STEP_FREQUENCY - safetyMargin);
         }
-        return velocity;
-    }
-
-
-    public static Vector2 smoothVelocityToPosition(Body body, Vector2 targetPosition, float maxSpeed) {
-        Vector2 position = body.getPosition();
-
-        //point from current direction to target
-        Vector2 targetDirection = targetPosition.cpy().sub(position);
-
-        float delta = Gdx.graphics.getDeltaTime();
-        Vector2 velocity = targetDirection.scl(delta * maxSpeed * PhysicsSystem.STEP_FREQUENCY);
         return velocity;
     }
 }

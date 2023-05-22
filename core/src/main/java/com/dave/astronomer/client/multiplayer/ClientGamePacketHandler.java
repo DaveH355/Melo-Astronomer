@@ -4,7 +4,6 @@ import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.MAClient;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.client.world.entity.RemotePlayer;
-import com.dave.astronomer.common.network.PacketHandler;
 import com.dave.astronomer.common.network.packet.*;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;

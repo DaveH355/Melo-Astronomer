@@ -1,13 +1,16 @@
 package com.dave.astronomer.client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -17,6 +20,8 @@ import com.dave.astronomer.client.ui.LinkedLabel;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
 import lombok.Getter;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class DebugHud implements Disposable {
@@ -37,7 +42,7 @@ public class DebugHud implements Disposable {
             OrthographicCamera camera = GameState.getInstance().getGameCamera();
             return String.format("%f / %f / %f", camera.viewportWidth, camera.viewportHeight, camera.zoom);
         });
-        addMetric("FPS", () -> Gdx.graphics.getFramesPerSecond() + "");
+        addMetric("FPS", () -> String.valueOf(Gdx.graphics.getFramesPerSecond()));
         addMetric("Memory", () -> {
             double totalMemoryMB = Runtime.getRuntime().totalMemory() / 1000000f;
             double usedMemoryMB = Gdx.app.getJavaHeap() / 1000000f;
@@ -63,7 +68,7 @@ public class DebugHud implements Disposable {
             return batch.maxSpritesInBatch + "";
         });
 
-        addToggle("Render server view");
+        addToggle("[+] Render server view");
 
 
 
@@ -74,9 +79,31 @@ public class DebugHud implements Disposable {
     public void addToggle(String name) {
         Skin skin = MeloAstronomer.getInstance().getSkin();
 
-        CheckBox checkBox = new CheckBox("", skin);
-        table.top().left().add(new Label(name, skin)).align(Align.left).padLeft(2.5f);
-        table.left().add(checkBox).align(Align.left).row();
+        Label label = new Label(name, skin);
+        Label value = new Label("false", skin);
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+        ClickListener clickListener = new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                label.setColor(Color.CORAL);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                label.setColor(Color.WHITE);
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                boolean previousValue = atomicBoolean.getAndSet(!atomicBoolean.get());
+                value.setText(previousValue + "");
+
+            }
+        };
+        label.addListener(clickListener);
+
+        table.top().left().add(label).align(Align.left).padLeft(2.5f).padRight(50);
+        table.left().add(value).align(Align.left).row();
     }
     public void addMetric(String name, Linkable<String> linkable) {
         Skin skin = MeloAstronomer.getInstance().getSkin();
