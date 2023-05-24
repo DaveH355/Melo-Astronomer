@@ -2,7 +2,7 @@ package com.dave.astronomer.client.multiplayer;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.common.network.NetworkUtils;
-import com.dave.astronomer.common.network.discovery.LanDiscoveryDatagram;
+import com.dave.astronomer.common.network.datagram.LanDiscoveryDatagram;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
@@ -56,7 +56,7 @@ public class LanServerDetector extends Thread implements Disposable {
 
 
             LanDiscoveryDatagram packet = (LanDiscoveryDatagram) client.getKryo()
-                    .readClassAndObject(input);
+                .readClassAndObject(input);
 
             LanServer lanServer = new LanServer();
             lanServer.serverInfo = packet.serverInfo;

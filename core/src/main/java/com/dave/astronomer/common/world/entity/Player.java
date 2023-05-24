@@ -15,9 +15,6 @@ public abstract class Player extends BaseEntity implements Disposable {
        super(EntityType.PLAYER, engine);
        setUuid(uuid);
     }
-    public Vector2 getExactVelocity() {
-        return getBody().getLinearVelocity();
-    }
 
     //TODO: remove this temp method
     public Knife throwKnife(float targetAngleRad) {

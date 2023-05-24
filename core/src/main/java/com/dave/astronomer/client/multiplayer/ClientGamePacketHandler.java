@@ -39,7 +39,6 @@ public class ClientGamePacketHandler implements PacketHandler {
     }
 
     public void onAddMainPlayer(ClientboundAddMainPlayerPacket packet) {
-
         //main player
         MainPlayer player = new MainPlayer(engine, packet.uuid);
         player.forcePosition(packet.position,0);

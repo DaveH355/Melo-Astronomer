@@ -20,27 +20,16 @@ public class MovementBehavior {
 
         @Override
         public void apply(BaseEntity entity) {
-            Deque<Vector2> deltaMovementBuffer = entity.getDeltaMovementBuffer();
 
             Body body = entity.getBody();
             EntityType<?> entityType = entity.getEntityType();
 
-            if (deltaMovementBuffer.isEmpty()) return;
             Vector2 target = entity.getDeltaMovement();
-
+            if (target == null) return;
 
 
             Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, entityType.speed);
-
             body.setLinearVelocity(velocity);
-
-
-
-
-            float distance = entity.getPosition().dst(target);
-            if (distance <= PhysicsSystem.EPSILON) {
-                deltaMovementBuffer.clear();
-            }
         }
     }
 }

@@ -2,21 +2,20 @@ package com.dave.astronomer.common.data;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.PhysicsUtils;
 
 public class PlayerData {
     private PlayerData(){}
-    private static final Circle boundingCircle;
+    private static final Circle boundingShape;
 
 
     static {
         Sprite sprite = MainPlayer.createSpriteComponent().getSprite();
-        boundingCircle = PhysicsUtils.traceCircle(sprite, true);
+        boundingShape = PhysicsUtils.traceCircle(sprite, true);
     }
 
     public static Body createBody(World world) {
@@ -25,20 +24,15 @@ public class PlayerData {
 
 
         Body b = world.createBody(bodyDef);
-        FixtureDef fdef = new FixtureDef();
-
-
-
-        fdef.shape = PhysicsUtils.toShape(getBoundingCircle());
-
 
         b.setUserData("player");
-        b.createFixture(fdef);
+
+
+        b.createFixture(PhysicsUtils.toShape(boundingShape), 0);
+
 
         return b;
     }
 
-    public static Circle getBoundingCircle() {
-        return new Circle(boundingCircle);
-    }
+
 }

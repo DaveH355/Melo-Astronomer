@@ -1,5 +1,6 @@
 package com.dave.astronomer.server;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Null;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.network.PlayerConnection;
@@ -13,8 +14,7 @@ import java.util.Deque;
 public class ServerEntityWrapper extends Entity {
     @Getter private BaseEntity serverEntity;
 
-    @Getter private Deque<BaseEntity.State> serverStateBuffer = new ArrayDeque<>();
-    @Getter private Deque<BaseEntity.State> clientStateBuffer = new ArrayDeque<>();
+    @Getter Vector2 latestClientPos;
     @Getter @Null private final PlayerConnection connection;
 
     public ServerEntityWrapper(BaseEntity serverEntity, PlayerConnection connection) {

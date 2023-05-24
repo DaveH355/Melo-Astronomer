@@ -26,7 +26,7 @@ public abstract class BaseEntity extends Entity implements Disposable {
     @Setter
     private MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
     @Getter
-    private Deque<Vector2> deltaMovementBuffer = new ArrayDeque<>();
+    private Vector2 deltaMovement;
 
     public BaseEntity(EntityType<?> entityType, CoreEngine engine) {
         this.engine = engine;
@@ -34,12 +34,7 @@ public abstract class BaseEntity extends Entity implements Disposable {
     }
 
     public void lerpPosition(Vector2 vector2) {
-        if (movementBehavior == MovementBehavior.CUSTOM) return;
-
-        deltaMovementBuffer.push(new Vector2(vector2));
-    }
-    public Vector2 getDeltaMovement() {
-        return deltaMovementBuffer.getFirst();
+        deltaMovement = vector2;
     }
 
     @Override
@@ -52,14 +47,8 @@ public abstract class BaseEntity extends Entity implements Disposable {
         setUuid(packet.uuid);
     }
 
-    @ToString
-    public static class State {
-        public Vector2 position;
-        public float angleRad;
-
-        public UUID uuid;
-        public Vector2 velocity;
-        public int id;
+    public final Vector2 getExactVelocity() {
+        return getBody().getLinearVelocity();
     }
 
     public Vector2 getPosition() {
@@ -86,7 +75,7 @@ public abstract class BaseEntity extends Entity implements Disposable {
         getBody().setTransform(state.position, state.angleRad);
         getBody().setLinearVelocity(state.velocity);
         setUuid(state.uuid);
-        deltaMovementBuffer.clear();
+        deltaMovement = state.position;
     }
     public State captureState() {
         State state = new State();
@@ -101,6 +90,15 @@ public abstract class BaseEntity extends Entity implements Disposable {
         State state = captureState();
         state.id = id;
         return state;
+    }
+    @ToString
+    public static class State {
+        public Vector2 position;
+        public float angleRad;
+
+        public UUID uuid;
+        public Vector2 velocity;
+        public int id;
     }
 
 }

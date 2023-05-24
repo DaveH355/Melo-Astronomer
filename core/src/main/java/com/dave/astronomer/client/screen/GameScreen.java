@@ -50,6 +50,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch(2000);
 
         camera = new OrthographicCamera();
+
         //TODO: fix pixel wobble when rendering
         viewport = new FillViewport(480 / 32f, 270 /32f, camera);
 
@@ -167,21 +168,18 @@ public class GameScreen implements Screen {
         Vector3 target = new Vector3(player.getPosition(), 0);
 
 
-        camera.position.lerp(target, delta * 4);
+        camera.position.lerp(target, delta * 5);
 
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             float screenX = Gdx.input.getX();
             float screenY = Gdx.input.getY();
 
-            Vector3 worldCoords = new Vector3(screenX, screenY, 0);
-            camera.unproject(worldCoords);
+            Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
 
-            Vector2 playerPos = player.getPosition();
-            Vector2 clickPos = new Vector2(worldCoords.x, worldCoords.y);
-            Vector2 relativePos = clickPos.sub(playerPos);
+            Vector2 position = new Vector2(worldCoords.x, worldCoords.y).sub(player.getPosition());
 
-            float angleRad = relativePos.angleDeg() * MathUtils.degreesToRadians;
+            float angleRad = position.angleDeg() * MathUtils.degreesToRadians;
             player.throwKnife(angleRad);
 
             ServerboundUseItemPacket useItemPacket = new ServerboundUseItemPacket();

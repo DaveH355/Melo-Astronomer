@@ -51,17 +51,19 @@ public class ServerGamePacketHandler implements PacketHandler {
         server.sendToAllExceptTCP(connection.getID(), addEntityPacket);
     }
 
+
     public void onUpdateEntityState(ServerboundEntityUpdateStatePacket packet) {
         UUID uuid = packet.state.uuid;
         BaseEntity entity = engine.getEntityByUUID(uuid);
         if (entity == null) return;
 
-        State clientState = packet.state;
-        State serverState = entity.captureState(clientState.id);
+        Vector2 clientPos = packet.state.position;
+        entity.lerpPosition(clientPos);
+
 
         ServerEntityWrapper wrapper = engine.getEntityWrapper(uuid);
-        wrapper.getServerStateBuffer().push(serverState);
-        wrapper.getClientStateBuffer().push(clientState);
+        wrapper.latestClientPos = clientPos;
+
 
     }
 

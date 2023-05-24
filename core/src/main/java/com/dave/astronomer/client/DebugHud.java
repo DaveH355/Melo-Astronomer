@@ -61,50 +61,18 @@ public class DebugHud implements Disposable {
             float kilobytesPerSec = client.bytesUpPerSec / 1000f;
             return String.format("↑ %d Packets/s %.2f KB/s", client.packetsUpPerSec, kilobytesPerSec);
         });
-        addMetric("Main batch render calls", () -> {
-            return batch.renderCalls + "";
+        addMetric("Batch render calls", () -> {
+            return String.valueOf(batch.renderCalls);
         });
         addMetric("Peak sprites batched", () -> {
-            return batch.maxSpritesInBatch + "";
+            return String.valueOf(batch.maxSpritesInBatch);
         });
-
-        addToggle("[+] Render server view");
-
-
 
 
         stage.addActor(table);
 
     }
-    public void addToggle(String name) {
-        Skin skin = MeloAstronomer.getInstance().getSkin();
 
-        Label label = new Label(name, skin);
-        Label value = new Label("false", skin);
-        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
-        ClickListener clickListener = new ClickListener() {
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                label.setColor(Color.CORAL);
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                label.setColor(Color.WHITE);
-            }
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                boolean previousValue = atomicBoolean.getAndSet(!atomicBoolean.get());
-                value.setText(previousValue + "");
-
-            }
-        };
-        label.addListener(clickListener);
-
-        table.top().left().add(label).align(Align.left).padLeft(2.5f).padRight(50);
-        table.left().add(value).align(Align.left).row();
-    }
     public void addMetric(String name, Linkable<String> linkable) {
         Skin skin = MeloAstronomer.getInstance().getSkin();
 

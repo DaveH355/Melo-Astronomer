@@ -1,16 +1,20 @@
 package com.dave.astronomer.common.network;
 
 import com.badlogic.gdx.math.Vector2;
-import com.dave.astronomer.common.network.discovery.LanDiscoveryDatagram;
+import com.dave.astronomer.common.network.datagram.LanDiscoveryDatagram;
 import com.dave.astronomer.common.network.packet.Packet;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.EntityType;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
+import com.esotericsoftware.kryonet.serialization.Serialization;
 import net.jodah.typetools.TypeResolver;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

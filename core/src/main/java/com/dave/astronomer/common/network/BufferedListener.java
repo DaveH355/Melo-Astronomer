@@ -14,12 +14,11 @@ import java.util.Map;
 public class BufferedListener implements Listener {
     private final SnapshotArray<Packet<?>> buffer = new SnapshotArray<>(true, 16);
     private ServerGamePacketHandler serverGamePacketHandler;
-    private boolean serverSide = false;
     public int packetsDown = 0;
 
     public BufferedListener(ServerGamePacketHandler serverGamePacketHandler) {
         this.serverGamePacketHandler = serverGamePacketHandler;
-        serverSide = true;
+
     }
     public BufferedListener() {
     }
@@ -51,22 +50,6 @@ public class BufferedListener implements Listener {
         }
         packetsDown++;
 
-        if (serverSide) {
-            onServerReceived(connection, packet);
-        } else {
-            onClientReceived(connection, packet);
-        }
-
-    }
-    private void onServerReceived(Connection connection, Packet<?> packet) {
-        if (!(connection instanceof PlayerConnection playerConnection)) {
-            Log.error(connection.toString() + " is not a valid player connection");
-            return;
-        }
-        packet.sender = playerConnection;
-        buffer.add(packet);
-    }
-    private void onClientReceived(Connection connection, Packet<?> packet) {
         packet.sender = connection;
         buffer.add(packet);
     }

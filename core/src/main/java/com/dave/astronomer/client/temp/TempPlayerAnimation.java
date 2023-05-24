@@ -24,7 +24,7 @@ public class TempPlayerAnimation {
 
         int width = 32;
         int height = 32;
-        //cut idle, no blink
+        //idle, no blink
         int idleDuration = 200;
         Animation<TextureRegion> idle = AnimationUtils.loadFromTexture(texture, width, height,2, 0, 0, idleDuration);
 

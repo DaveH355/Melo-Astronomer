@@ -44,7 +44,7 @@ Systems are responsible for taking the components of an entity and processing ga
 The server wraps incoming client connections for convenient storing of data. Client does not see this wrapped connection class.
 
 ### Packets
-Any classes extending Packet.java under `packet` package are automatically registered with kryo using reflection.
+Any classes extending Packet.java under the same package are automatically registered with kryo using reflection.
 
 
 ### Notes

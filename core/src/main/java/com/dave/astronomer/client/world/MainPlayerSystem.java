@@ -58,16 +58,8 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
         Vector2 velocity = p.getExactVelocity();
         String animation = "idle";
 
-        if (velocity.x > 0) {
-            animation = "dash";
-        }
-        if (velocity.x < 0) {
-            animation = "dash";
-        }
-        if (velocity.y < 0) {
-            animation = "dash";
-        }
-        if (velocity.y > 0) {
+        float len = velocity.len();
+        if (len > 0.1f) {
             animation = "dash";
         }
 

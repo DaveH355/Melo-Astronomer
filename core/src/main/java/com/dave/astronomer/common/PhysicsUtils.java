@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ShortArray;
 import com.dave.astronomer.common.world.PhysicsSystem;
 
 import java.util.ArrayList;
@@ -140,45 +142,43 @@ public class PhysicsUtils {
         return rectangle;
     }
 
+
     public static Circle traceCircle(Sprite sprite, boolean halfOrigin) {
         Pixmap pixmap = getVisiblePixmap(sprite);
 
+        int pixmapWidth = pixmap.getWidth();
+        int pixmapHeight = pixmap.getHeight();
 
-        List<Vector2> coloredPixels = new ArrayList<>();
+        int count = 0;
+        float xSum = 0;
+        float ySum = 0;
+        float maxDistanceSquared = 0;
 
         // Iterate through the pixels and find colored pixels
-        for (int x = 0; x < pixmap.getWidth(); x++) {
-            for (int y = 0; y < pixmap.getHeight(); y++) {
+        for (int x = 0; x < pixmapWidth; x++) {
+            for (int y = 0; y < pixmapHeight; y++) {
                 int color = pixmap.getPixel(x, y);
                 if ((color & 0x000000ff) != 0) { // check if alpha is not 0
-                    coloredPixels.add(new Vector2(x, y));
+                    count++;
+                    xSum += x;
+                    ySum += y;
+
+                    //distance from current pixel to center
+                    Vector2 vector2 = new Vector2(x - pixmapWidth / 2f, y - pixmapHeight / 2f);
+
+                    maxDistanceSquared = Math.max(maxDistanceSquared, vector2.len2());
                 }
             }
         }
 
-        // Calculate center of mass
-        float xSum = 0;
-        float ySum = 0;
-        for (Vector2 pixel : coloredPixels) {
-            xSum += pixel.x;
-            ySum += pixel.y;
-        }
-        float xCenter = xSum / coloredPixels.size();
-        float yCenter = ySum / coloredPixels.size();
+        float xCenter = xSum / count;
+        float yCenter = (pixmapHeight - ySum / count);
+        float radius = (float) Math.sqrt(maxDistanceSquared);
 
-        // Calculate radius
-        float maxDistance = 0;
-        for (Vector2 pixel : coloredPixels) {
-            float distance = (float) Math.sqrt(Math.pow(pixel.x - xCenter, 2) + Math.pow(pixel.y - yCenter, 2));
-            if (distance > maxDistance) {
-                maxDistance = distance;
-            }
-        }
-        float radius = maxDistance;
 
         if (halfOrigin) {
-            yCenter /= 2;
-            radius /= 2;
+            yCenter /= 2f;
+            radius /= 2f;
         }
 
         Circle circle = new Circle();
@@ -189,7 +189,6 @@ public class PhysicsUtils {
 
         return circle;
     }
-
     public static Polygon bevelRectangle(Rectangle rect, float bevelSize) {
         return new Polygon(new float[]{
             rect.x, rect.y + bevelSize,

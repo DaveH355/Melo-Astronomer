@@ -9,8 +9,8 @@ import java.util.UUID;
 
 public class UUIDSerializer extends Serializer<UUID> {
     @Override
-    public void write(Kryo kryo, Output output, UUID object) {
-        output.writeString(object.toString());
+    public void write(Kryo kryo, Output output, UUID uuid) {
+        output.writeString(uuid.toString());
     }
 
     @Override
