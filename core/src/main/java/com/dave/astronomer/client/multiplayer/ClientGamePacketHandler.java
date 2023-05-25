@@ -50,15 +50,14 @@ public class ClientGamePacketHandler implements PacketHandler {
     public void onAddPlayer(ClientboundAddPlayerPacket packet) {
         RemotePlayer remotePlayer = new RemotePlayer(engine, packet.uuid);
         remotePlayer.forcePosition(packet.position, 0);
-        remotePlayer.lerpPosition(packet.position);
 
         engine.addEntity(remotePlayer);
     }
-    public void onUpdateEntityPos(ClientboundUpdateEntityPosPacket packet) {
+    public void onUpdateEntityPos(ClientboundMoveEntityPacket packet) {
         BaseEntity entity = engine.getEntityByUUID(packet.uuid);
         if (entity == null) return;
 
-        entity.lerpPosition(packet.position);
+        entity.lerpPosition(packet.position, packet.speed);
     }
 
     public void onForceState(ClientboundEntityForceStatePacket packet) {

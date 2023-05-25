@@ -20,15 +20,13 @@ public class MovementBehavior {
 
         @Override
         public void apply(BaseEntity entity) {
-
             Body body = entity.getBody();
-            EntityType<?> entityType = entity.getEntityType();
 
             Vector2 target = entity.getDeltaMovement();
             if (target == null) return;
 
 
-            Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, entityType.speed);
+            Vector2 velocity = PhysicsUtils.velocityToPosition(body, target, entity.getDeltaSpeed());
             body.setLinearVelocity(velocity);
         }
     }

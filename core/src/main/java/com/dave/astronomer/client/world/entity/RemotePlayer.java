@@ -38,6 +38,6 @@ public class RemotePlayer extends AbstractClientPlayer {
         spriteComponent.getSprite().setPosition(getPosition().x, getPosition().y);
 
 
-        MainPlayerSystem.determineAnimation(this);
+        MainPlayerSystem.determineAnimation(this, getDeltaSpeed());
     }
 }

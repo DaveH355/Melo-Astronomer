@@ -17,7 +17,7 @@ public class MainPlayer extends AbstractClientPlayer {
     @Getter private SpriteComponent spriteComponent;
     @Getter private Body body;
     @Getter private InputComponent inputComponent;
-    @Getter private InputComponent.KeyAction walkUpKey, walkDownKey, walkLeftKey, walkRightKey;
+    @Getter private InputComponent.KeyAction walkUpKey, walkDownKey, walkLeftKey, walkRightKey, dashKey;
 
     public MainPlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
@@ -48,16 +48,14 @@ public class MainPlayer extends AbstractClientPlayer {
         InputComponent inputComponent = new InputComponent();
 
 
-        walkUpKey = new InputComponent.KeyAction(Input.Keys.W);
-        walkLeftKey = new InputComponent.KeyAction(Input.Keys.A);
-        walkDownKey = new InputComponent.KeyAction(Input.Keys.S);
-        walkRightKey = new InputComponent.KeyAction(Input.Keys.D);
+
 
         inputComponent.addKeyAction(
-                walkDownKey,
-                walkUpKey,
-                walkLeftKey,
-                walkRightKey
+            walkUpKey = new InputComponent.KeyAction(Input.Keys.W),
+            walkLeftKey = new InputComponent.KeyAction(Input.Keys.A),
+            walkDownKey = new InputComponent.KeyAction(Input.Keys.S),
+            walkRightKey = new InputComponent.KeyAction(Input.Keys.D),
+            dashKey = new InputComponent.KeyAction(Input.Keys.SPACE)
         );
 
         return inputComponent;

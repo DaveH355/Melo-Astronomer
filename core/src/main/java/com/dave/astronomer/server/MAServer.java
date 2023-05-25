@@ -6,7 +6,7 @@ import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.PacketHandler;
 import com.dave.astronomer.common.world.MapSystem;
 import com.dave.astronomer.common.world.PhysicsSystem;
-import com.dave.astronomer.server.system.EntityStateValidationSystem;
+import com.dave.astronomer.server.system.ServerPlayerValidationSystem;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
@@ -39,7 +39,7 @@ public class MAServer extends Server {
 
         engine = new ServerEngine(data.clientEngineMetaData());
         engine.addSystems(
-                new EntityStateValidationSystem(this),
+                new ServerPlayerValidationSystem(this),
                 physicsSystem,
                 new MapSystem(data.map(), physicsSystem.getWorld())
 

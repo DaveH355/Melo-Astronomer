@@ -27,14 +27,16 @@ public abstract class BaseEntity extends Entity implements Disposable {
     private MovementBehavior movementBehavior = MovementBehavior.CUSTOM;
     @Getter
     private Vector2 deltaMovement;
+    @Getter float deltaSpeed;
 
     public BaseEntity(EntityType<?> entityType, CoreEngine engine) {
         this.engine = engine;
         this.entityType = entityType;
     }
 
-    public void lerpPosition(Vector2 vector2) {
+    public void lerpPosition(Vector2 vector2, float speed) {
         deltaMovement = vector2;
+        deltaSpeed = speed;
     }
 
     @Override
@@ -86,16 +88,10 @@ public abstract class BaseEntity extends Entity implements Disposable {
         state.id = STATE_ID_POOL.incrementAndGet();
         return state;
     }
-    public State captureState(int id) {
-        State state = captureState();
-        state.id = id;
-        return state;
-    }
     @ToString
     public static class State {
         public Vector2 position;
         public float angleRad;
-
         public UUID uuid;
         public Vector2 velocity;
         public int id;

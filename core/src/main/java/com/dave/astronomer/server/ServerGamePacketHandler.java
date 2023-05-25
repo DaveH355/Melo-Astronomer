@@ -11,8 +11,6 @@ import com.esotericsoftware.minlog.Log;
 
 import java.util.UUID;
 
-import static com.dave.astronomer.common.world.BaseEntity.State;
-
 
 public class ServerGamePacketHandler implements PacketHandler {
 
@@ -52,19 +50,16 @@ public class ServerGamePacketHandler implements PacketHandler {
     }
 
 
-    public void onUpdateEntityState(ServerboundEntityUpdateStatePacket packet) {
-        UUID uuid = packet.state.uuid;
-        BaseEntity entity = engine.getEntityByUUID(uuid);
-        if (entity == null) return;
+    public void onMovePlayer(ServerboundMovePlayerPacket packet) {
+        ServerPlayer serverPlayer = (ServerPlayer) engine.getEntityByUUID(packet.uuid);
+        if (serverPlayer == null) return;
 
-        Vector2 clientPos = packet.state.position;
-        entity.lerpPosition(clientPos);
-
-
-        ServerEntityWrapper wrapper = engine.getEntityWrapper(uuid);
-        wrapper.latestClientPos = clientPos;
+        Vector2 clientPos = packet.position;
+        serverPlayer.lerpPosition(clientPos, packet.speed);
 
 
+
+        serverPlayer.lastestClientPosition = clientPos;
     }
 
     public void onHello(ServerboundHelloPacket packet) {
@@ -104,9 +99,7 @@ public class ServerGamePacketHandler implements PacketHandler {
             connection.sendTCP(existingPlayerPacket);
         }
 
-        engine.addEntity(newPlayer, connection);
-
-
+        engine.addEntity(newPlayer);
 
         connection.sendTCP(new ClientboundConfirmLoginPacket());
     }

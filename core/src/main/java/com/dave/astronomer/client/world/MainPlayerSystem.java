@@ -7,7 +7,7 @@ import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.world.entity.AbstractClientPlayer;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.DeltaTimer;
-import com.dave.astronomer.common.network.packet.ServerboundEntityUpdateStatePacket;
+import com.dave.astronomer.common.network.packet.ServerboundMovePlayerPacket;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.MockableSystem;
 import com.dave.astronomer.common.world.SingleEntitySystem;
@@ -27,13 +27,16 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
     public void processEntity(MainPlayer p, float delta) {
         Vector2 velocity = new Vector2();
 
+        float speed = p.getEntityType().speed;
+        if (p.getDashKey().isDown()) speed = 5.5f;
+
         if (p.getWalkRightKey().isDown()) velocity.x += 1;
         if (p.getWalkLeftKey().isDown()) velocity.x -= 1;
         if (p.getWalkUpKey().isDown()) velocity.y += 1;
         if (p.getWalkDownKey().isDown()) velocity.y -= 1;
 
         velocity.nor();
-        velocity.scl(p.getEntityType().speed);
+        velocity.scl(speed);
 
 
         p.getBody().setLinearVelocity(velocity);
@@ -45,31 +48,34 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
 
 
         if (timer.update(delta)) {
-            sendUpdateToServer(p.captureState());
+            //send update to server
+            ServerboundMovePlayerPacket packet = new ServerboundMovePlayerPacket();
+            packet.position = p.getPosition();
+            packet.uuid = p.getUuid();
+            packet.speed = speed;
+
+            GameState.getInstance().getClient().sendUDP(packet);
+
         }
 
 
-        determineAnimation(p);
-
-
+        determineAnimation(p, speed);
     }
 
-    public static void determineAnimation(AbstractClientPlayer p) {
-        Vector2 velocity = p.getExactVelocity();
+    public static void determineAnimation(AbstractClientPlayer p, float speed) {
+
         String animation = "idle";
 
-        float len = velocity.len();
-        if (len > 0.1f) {
+
+        if (speed >= 5f) {
             animation = "dash";
+        } else if (speed > 0.1f) {
+            animation = "walk";
         }
 
         p.getSpriteComponent().selectAnimationIfAbsent(animation, true);
     }
-    private void sendUpdateToServer(BaseEntity.State state) {
-        ServerboundEntityUpdateStatePacket packet = new ServerboundEntityUpdateStatePacket(state);
 
-        GameState.getInstance().getClient().sendUDP(packet);
-    }
 
     @Override
     public Class<MainPlayer> getGenericType() {

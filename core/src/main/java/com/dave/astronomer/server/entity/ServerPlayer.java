@@ -17,6 +17,7 @@ import java.util.Deque;
 public class ServerPlayer extends Player {
     @Getter @Setter private Body body;
     @Getter private PlayerConnection connection;
+    public Vector2 lastestClientPosition;
     @Getter private Deque<State> serverState = new ArrayDeque<>();
     @Getter private Deque<State> clientState = new ArrayDeque<>();
 

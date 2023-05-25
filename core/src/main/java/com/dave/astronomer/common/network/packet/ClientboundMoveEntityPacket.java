@@ -5,10 +5,11 @@ import com.dave.astronomer.client.multiplayer.ClientGamePacketHandler;
 
 import java.util.UUID;
 
-public class ClientboundUpdateEntityPosPacket extends Packet<ClientGamePacketHandler> {
+public class ClientboundMoveEntityPacket extends Packet<ClientGamePacketHandler> {
     public Vector2 position;
+    public float speed;
     public UUID uuid;
-    public ClientboundUpdateEntityPosPacket() {}
+    public ClientboundMoveEntityPacket() {}
 
     @Override
     public void handle(ClientGamePacketHandler handler) {
