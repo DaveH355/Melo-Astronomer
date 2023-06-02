@@ -2,23 +2,21 @@ package com.dave.astronomer;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.dave.astronomer.client.GameSkin;
-import com.dave.astronomer.client.NonGameClient;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.screen.SplashScreen;
 import com.dave.astronomer.common.MALogger;
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 
 /**
@@ -26,10 +24,13 @@ import java.io.IOException;
  */
 public class MeloAstronomer extends Game {
     private static MeloAstronomer instance;
-    @Getter private Skin skin;
+    @Getter
+    private Skin skin;
+    @Getter
+    private BitmapFont font;
     private TextureAtlas skinRegion;
-    @Getter private Client nonGameClient = new NonGameClient();
-    @Getter @Setter private AssetManagerResolving assetManager;
+    @Getter @Setter
+    private AssetFinder assetFinder;
     private MALogger logger;
 
     public MeloAstronomer() {
@@ -60,6 +61,8 @@ public class MeloAstronomer extends Game {
         skinRegion = new TextureAtlas(Gdx.files.internal("Pixeld16/Pixeld16.atlas"));
         skin.addRegions(skinRegion);
 
+        font = skin.getFont("font_8");
+
         this.setScreen(new SplashScreen());
     }
 
@@ -74,13 +77,7 @@ public class MeloAstronomer extends Game {
     public void dispose() {
         super.dispose();
 
-        try {
-            nonGameClient.dispose();
-        } catch (IOException e) {
-            Log.error("", e);
-        }
-
-        assetManager.dispose();
+        assetFinder.dispose();
         skin.dispose();
         skinRegion.dispose();
         logger.dispose();

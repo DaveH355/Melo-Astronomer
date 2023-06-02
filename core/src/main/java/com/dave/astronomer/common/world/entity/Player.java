@@ -15,22 +15,18 @@ public abstract class Player extends BaseEntity implements Disposable {
        super(EntityType.PLAYER, engine);
        setUuid(uuid);
     }
+    public Player(CoreEngine engine) {
+        super(EntityType.PLAYER, engine);
+    }
 
     //TODO: remove this temp method
     public Knife throwKnife(float targetAngleRad) {
-        Vector2 playerPos = getPosition();
-        Vector2 knifePos = new Vector2(playerPos.x, playerPos.y + 1);
+        Vector2 bodyCenter = getBody().getPosition();
+        Vector2 knifePos = new Vector2(bodyCenter.x, bodyCenter.y);
         Knife knife = new Knife(getEngine(), knifePos, targetAngleRad);
 
         getEngine().addEntity(knife);
         return knife;
 
     }
-
-
-    public void setState(State state) {
-        forcePosition(state.position, 0);
-        setUuid(state.uuid);
-    }
-
 }

@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.dave.astronomer.client.temp.TempPlayerAnimation;
 import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.client.world.component.SpriteComponent;
-import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
@@ -25,9 +24,8 @@ public class MainPlayer extends AbstractClientPlayer {
 
         spriteComponent = createSpriteComponent();
         inputComponent = createInputComponent();
-        body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());
-
-        PhysicsUtils.centerSprite(spriteComponent.getSprite(), body);
+        body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld(), spriteComponent.getSprite());
+//        PhysicsUtils.centerSprite(spriteComponent.getSprite(), body);
 
         addComponents(
                 inputComponent,

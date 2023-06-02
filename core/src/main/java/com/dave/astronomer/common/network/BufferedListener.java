@@ -56,7 +56,7 @@ public class BufferedListener implements Listener {
     public void processPacketBuffer(Map<Class<? extends PacketHandler>, PacketHandler> map) {
         while (!buffer.isEmpty()) {
             Packet<?> packet = buffer.pop();
-            PacketHandler handler = map.get(NetworkUtils.getHandlerTypeFromPacket(packet));
+            PacketHandler handler = map.get(Packet.resolveHandler(packet));
 
             handle(packet, handler);
 

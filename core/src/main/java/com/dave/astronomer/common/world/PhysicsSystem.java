@@ -17,8 +17,6 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
     private float accumulator;
     public static final int STEP_FREQUENCY = 300;
     public static final float TIME_STEP = 1f / STEP_FREQUENCY;
-    //threshold below which two box2D positions are considered equal
-    public static final float EPSILON = 0.001f;
 
     public PhysicsSystem() {
         //TODO: remove this temp contact filter
@@ -77,7 +75,6 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
-
             }
 
             @Override

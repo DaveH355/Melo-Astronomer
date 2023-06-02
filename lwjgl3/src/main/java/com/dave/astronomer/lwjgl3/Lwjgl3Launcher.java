@@ -2,6 +2,7 @@ package com.dave.astronomer.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowConfiguration;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.common.Constants;
@@ -25,7 +26,7 @@ public class Lwjgl3Launcher {
         configuration.setWindowSizeLimits(256, 144, -1, -1);
         configuration.setIdleFPS(30);
         //// Limits FPS to the refresh rate of the currently active monitor.
-//        configuration.setForegroundFPS();
+        configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be
         //// useful for testing performance, but can also be very stressful to some hardware.

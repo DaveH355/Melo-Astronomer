@@ -29,7 +29,7 @@ public class MAClient extends Client {
 
 
     public MAClient(CoreEngine engine) {
-        NetworkUtils.registerAll(this);
+        NetworkUtils.register(this);
 
         addListener(bufferedListener);
         addHandler(new ClientGamePacketHandler(engine, this));

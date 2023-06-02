@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.GameScreenConfig;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.screen.GameScreen;
 import com.dave.astronomer.client.screen.MainMenuScreen;
 import com.dave.astronomer.client.screen.UIState;
@@ -22,7 +22,7 @@ public class MainMenuUI extends UIState {
     public MainMenuUI(Stage stage, MainMenuScreen screen) {
         super(stage);
 
-        AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
         Skin skin = MeloAstronomer.getInstance().getSkin();
 
         Table center = new Table();
@@ -36,7 +36,7 @@ public class MainMenuUI extends UIState {
         stage.addActor(bottomRight);
 
         //UI BEGIN
-        Image logo = new Image(assetManager.get("game_logo.png", Texture.class));
+        Image logo = new Image(assetFinder.get("game_logo.png", Texture.class));
         logo.setOrigin(Align.center);
         logo.setScale(3f);
         center.add(logo).pad(10);

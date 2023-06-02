@@ -7,52 +7,49 @@ import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.EntityType;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
-import com.esotericsoftware.kryonet.serialization.Serialization;
-import net.jodah.typetools.TypeResolver;
+import com.esotericsoftware.kryonet.serialization.KryoSerialization;
+import com.esotericsoftware.minlog.Log;
+import lombok.Getter;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 
 public class NetworkUtils {
     private NetworkUtils(){}
+    public static final int DATAGRAM_BUFFER_SIZE = 1024;
     public static final int TCP_PORT = 42590;
     public static final int UDP_PORT = 42591;
     public static final int BROADCAST_PORT = 5037;
     //multicast broadcast address
     public static final String BROADCAST_ADDRESS = "224.0.1.25";
-    private static Map<Class<?>, Class<?>> map = new HashMap<>();
+    @Getter
+    private static final KryoSerialization serialization = register(new KryoSerialization());
 
-    //get the generic parameter for all packets
-    //needs to be done because of type erasure
-    static {
-        Set<Class<? extends Packet>> set = getClassesInPackage(Packet.class.getPackageName(), Packet.class);
+    /**
+        Accepts only {@link EndPoint} or {@link KryoSerialization}
+     */
+    public static <T> T register(T t) {
+        Reflections reflections = new Reflections(Packet.class, Scanners.SubTypes.filterResultsBy(c -> true));
+        Set<Class<? extends Packet>> packets = reflections.getSubTypesOf(Packet.class);
 
-        for (Class<? extends Packet> packetClass : set) {
-            Class<?> type = TypeResolver.resolveRawArgument(Packet.class, packetClass);
-            map.put(packetClass, type);
+        Kryo kryo;
+
+        if (t instanceof EndPoint endPoint) {
+            kryo = endPoint.getKryo();
+        } else if (t instanceof KryoSerialization serialization) {
+            kryo = serialization.getKryo();
+        } else {
+            Log.warn("Couldn't register kryo to network");
+            return t;
         }
-    }
 
-    public static Class<?> getHandlerTypeFromPacket(Packet<?> packet) {
-        return map.get(packet.getClass());
-    }
-
-
-    public static void registerAll(EndPoint endPoint) {
-        Set<Class<? extends Packet>> packets = getClassesInPackage(Packet.class.getPackageName(), Packet.class);
-
-        Kryo kryo = endPoint.getKryo();
         packets.forEach(kryo::register);
 
         registerMisc(kryo);
+        return t;
     }
     private static void registerMisc(Kryo kryo) {
         kryo.register(Class.class);
@@ -61,10 +58,5 @@ public class NetworkUtils {
         kryo.register(BaseEntity.State.class);
         kryo.register(LanDiscoveryDatagram.class);
         kryo.register(EntityType.class, new EntityType.EntityTypeSerializer());
-    }
-    private static <T> Set<Class<? extends T>> getClassesInPackage(String packageName, Class<T> type) {
-
-        Reflections reflections = new Reflections(packageName, Scanners.SubTypes.filterResultsBy(c -> true));
-        return reflections.getSubTypesOf(type);
     }
 }

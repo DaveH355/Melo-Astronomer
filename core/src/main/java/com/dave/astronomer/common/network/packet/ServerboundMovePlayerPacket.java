@@ -2,7 +2,6 @@ package com.dave.astronomer.common.network.packet;
 
 
 import com.badlogic.gdx.math.Vector2;
-import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.server.ServerGamePacketHandler;
 
 import java.util.UUID;

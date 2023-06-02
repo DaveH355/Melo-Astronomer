@@ -3,14 +3,14 @@ package com.dave.astronomer.client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -21,15 +21,16 @@ import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
 import lombok.Getter;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 
 public class DebugHud implements Disposable {
 
     @Getter
     private Stage stage;
     private Table table;
+    private ShapeRenderer shapeRenderer;
     public DebugHud(SpriteBatch batch) {
+        shapeRenderer = new ShapeRenderer();
+
         stage = new Stage(new ExtendViewport(Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT), batch);
         table = new Table();
         table.setFillParent(true);
@@ -50,7 +51,7 @@ public class DebugHud implements Disposable {
         });
         addMetric("RTT ping", () -> {
             MAClient client = GameState.getInstance().getClient();
-            return client.getReturnTripTime() + "";
+            return String.valueOf(client.getReturnTripTime());
         });
         addMetric("Network Down", () -> {
             MAClient client = GameState.getInstance().getClient();
@@ -81,17 +82,45 @@ public class DebugHud implements Disposable {
     }
 
 
-    public void render(float delta) {
+    public void render(float delta, Matrix4 projection) {
+        renderWorldDebug(projection);
         stage.getViewport().apply();
 
         stage.act(delta);
         stage.draw();
+
+
+    }
+
+    private void renderWorldDebug(Matrix4 projectionMatrix) {
+        MainPlayer player = GameState.getInstance().getMainPlayer();
+        Sprite sprite = player.getSpriteComponent().getSprite();
+
+        shapeRenderer.setProjectionMatrix(projectionMatrix);
+        shapeRenderer.setAutoShapeType(true);
+        shapeRenderer.begin();
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+
+        //world coordinates of the sprite's origin
+        float originX = sprite.getX() + sprite.getOriginX();
+        float originY = sprite.getY() + sprite.getOriginY();
+        shapeRenderer.setColor(Color.MAROON);
+        shapeRenderer.circle(originX, originY, 1/32f, 8);
+
+        shapeRenderer.setColor(Color.PINK);
+        shapeRenderer.circle(player.getPosition().x, player.getPosition().y, 1/32f, 8);
+
+
+        shapeRenderer.end();
+
     }
 
 
     @Override
     public void dispose() {
         stage.dispose();
+
+        shapeRenderer.dispose();
     }
 
     public void update(int width, int height, boolean centerCamera) {

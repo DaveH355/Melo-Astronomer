@@ -20,20 +20,20 @@ public class MAServer extends Server {
 
     private ServerEngine engine;
     private BufferedListener bufferedListener;
-    private LanManager lanManager;
+    private LanBroadcaster lanBroadcaster;
     private Map<Class<? extends PacketHandler>, PacketHandler> handlers = new HashMap<>();
 
     public MAServer(WorldData data) throws IOException {
-        NetworkUtils.registerAll(this);
+        NetworkUtils.register(this);
 
         ServerState.getInstance().setWorldData(data);
 
 
 
         try {
-            lanManager = new LanManager(this);
+            lanBroadcaster = new LanBroadcaster();
         } catch (IOException e) {
-            Log.warn("Unable to start LAN manager: " + e.getMessage());
+            Log.warn("Unable to start LAN broadcaster: " + e.getMessage());
         }
         PhysicsSystem physicsSystem = new PhysicsSystem();
 
@@ -68,8 +68,8 @@ public class MAServer extends Server {
 
         bufferedListener.processPacketBuffer(handlers);
 
-        if (lanManager != null && lanManager.isOpenToLan()) {
-            lanManager.broadcast();
+        if (lanBroadcaster != null && lanBroadcaster.isOpenToLan()) {
+            lanBroadcaster.broadcast();
         }
     }
 

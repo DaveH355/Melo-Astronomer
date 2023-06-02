@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.MeloAstronomer;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.PhysicsUtils;
@@ -82,9 +82,9 @@ public class Knife extends BaseEntity {
         return body;
     }
     private SpriteComponent createSpriteComponent() {
-        AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
 
-        Texture texture = assetManager.get("knife.png", Texture.class);
+        Texture texture = assetFinder.get("knife.png", Texture.class);
 
 
         Sprite sprite = new Sprite(texture);

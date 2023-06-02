@@ -7,13 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.GameScreenConfig;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.multiplayer.LanServer;
 import com.dave.astronomer.client.multiplayer.LanServerDetector;
 import com.dave.astronomer.client.screen.GameScreen;
 import com.dave.astronomer.client.screen.MainMenuScreen;
 import com.dave.astronomer.client.screen.UIState;
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
 import com.github.tommyettinger.textra.TypingLabel;
 
@@ -31,9 +30,9 @@ public class MultiplayerUI extends UIState {
         Skin skin = MeloAstronomer.getInstance().getSkin();;
 
         try {
-            Client client = MeloAstronomer.getInstance().getNonGameClient();
 
-            lanDetector = new LanServerDetector(client);
+
+            lanDetector = new LanServerDetector();
             lanDetector.start();
         } catch (IOException e) {
             Log.warn("Unable to start LAN server detection: " + e.getMessage());
@@ -114,7 +113,7 @@ public class MultiplayerUI extends UIState {
 
     public void listServer(LanServer server) {
         Skin skin = MeloAstronomer.getInstance().getSkin();
-        AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
 
         Table table = new Table();
         Table imageTable = new Table();
@@ -134,7 +133,7 @@ public class MultiplayerUI extends UIState {
         });
 
 
-        Image image = new Image(assetManager.get("unknown.png", Texture.class));
+        Image image = new Image(assetFinder.get("unknown.png", Texture.class));
         imageTable.add(image).expand().fill();
 
 

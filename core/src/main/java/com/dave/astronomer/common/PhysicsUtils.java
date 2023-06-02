@@ -14,12 +14,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ShortArray;
 import com.dave.astronomer.common.world.PhysicsSystem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //Note: anything toShape needs to be adjusted with Pixels Per Meter
 public class PhysicsUtils {
@@ -132,7 +127,7 @@ public class PhysicsUtils {
                 }
             }
         }
-        Rectangle rectangle = new Rectangle(sprite.getBoundingRectangle());
+        Rectangle rectangle = new Rectangle();
         rectangle.setSize((float) maxX - minX, (float) maxY - minY);
         rectangle.setX(minX);
         rectangle.setY(minY);
@@ -141,7 +136,6 @@ public class PhysicsUtils {
 
         return rectangle;
     }
-
 
     public static Circle traceCircle(Sprite sprite, boolean halfOrigin) {
         Pixmap pixmap = getVisiblePixmap(sprite);
@@ -224,21 +218,20 @@ public class PhysicsUtils {
     }
 
     /**
-     * @param maxSpeed in meters per second
+     * @param speed in meters per second
      */
-    public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float maxSpeed) {
+    public static Vector2 velocityToPosition(Body body, Vector2 targetPosition, float speed) {
         Vector2 position = body.getPosition();
 
-        // point in target direction
-        Vector2 velocity = targetPosition.cpy().sub(position).nor().scl(maxSpeed);
-
+        //point in target direction
+        Vector2 velocity = targetPosition.cpy().sub(position).nor().scl(speed);
 
         float distanceToTarget = targetPosition.dst(position);
-        float overshootThreshold = maxSpeed / PhysicsSystem.STEP_FREQUENCY;
+        float overshootThreshold = speed / PhysicsSystem.STEP_FREQUENCY;
 
         //velocity will now overshoot target, limit speed to balance
         if (distanceToTarget < overshootThreshold) {
-            float safetyMargin = 0.1f;
+            float safetyMargin = 0.01f;
             velocity.limit(distanceToTarget * PhysicsSystem.STEP_FREQUENCY - safetyMargin);
         }
         return velocity;

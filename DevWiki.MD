@@ -52,10 +52,9 @@ Any classes extending Packet.java under the same package are automatically regis
 
 
 ## Assets
-Adding assets to the game has been made simple. All supported file formats in non-blacklisted folders are auto loaded. You can access them in-game through the AssetManager instance with the relative path of your file.
+All supported file formats are automatically loaded. The assets can be easily accessed using just the file name. The file name should include the extension e.g. texture.png
 
-- Optionally you can enable path resolving in AssetManager and access any assets simply with the filename. However, this requires all files to have unique names
-- Blacklisted folders are registered in the AssetFinder class
 
 ### Notes
 - Asset files should follow snake case naming convention. Ex: `example_asset.png`
+- All file names should be unique

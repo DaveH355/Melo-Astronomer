@@ -2,9 +2,9 @@ package com.dave.astronomer.common.data;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.PhysicsUtils;
 
@@ -23,6 +23,7 @@ public class PlayerData {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
 
+
         Body b = world.createBody(bodyDef);
 
         b.setUserData("player");
@@ -33,6 +34,24 @@ public class PlayerData {
 
         return b;
     }
+    public static Body createBody(World world, Sprite sprite) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        sprite.setOriginCenter();
+        bodyDef.position.set(sprite.getOriginX(), sprite.getOriginY());
+
+
+        Body b = world.createBody(bodyDef);
+
+        b.setUserData("player");
+
+
+        b.createFixture(PhysicsUtils.toShape(boundingShape), 0);
+
+
+        return b;
+    }
+
 
 
 }

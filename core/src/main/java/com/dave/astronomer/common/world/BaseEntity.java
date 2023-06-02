@@ -10,13 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BaseEntity extends Entity implements Disposable {
-    private static final AtomicInteger STATE_ID_POOL = new AtomicInteger();
     @Getter @Setter
     private UUID uuid = UUID.randomUUID();
     @Getter
@@ -47,10 +43,6 @@ public abstract class BaseEntity extends Entity implements Disposable {
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         forcePosition(packet.position, packet.angleRad);
         setUuid(packet.uuid);
-    }
-
-    public final Vector2 getExactVelocity() {
-        return getBody().getLinearVelocity();
     }
 
     public Vector2 getPosition() {
@@ -85,7 +77,6 @@ public abstract class BaseEntity extends Entity implements Disposable {
         state.angleRad = getBody().getAngle();
         state.velocity = getBody().getLinearVelocity();
         state.uuid = getUuid();
-        state.id = STATE_ID_POOL.incrementAndGet();
         return state;
     }
     @ToString
@@ -94,7 +85,6 @@ public abstract class BaseEntity extends Entity implements Disposable {
         public float angleRad;
         public UUID uuid;
         public Vector2 velocity;
-        public int id;
     }
 
 }

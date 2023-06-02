@@ -8,7 +8,6 @@ import com.dave.astronomer.client.world.entity.AbstractClientPlayer;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.DeltaTimer;
 import com.dave.astronomer.common.network.packet.ServerboundMovePlayerPacket;
-import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.MockableSystem;
 import com.dave.astronomer.common.world.SingleEntitySystem;
 
@@ -59,7 +58,7 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
         }
 
 
-        determineAnimation(p, speed);
+        determineAnimation(p, velocity.len());
     }
 
     public static void determineAnimation(AbstractClientPlayer p, float speed) {

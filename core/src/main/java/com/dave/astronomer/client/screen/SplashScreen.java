@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Version;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,7 +18,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetFinder;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
 import com.dave.astronomer.client.ui.LinkedLabel;
 import com.esotericsoftware.minlog.Log;
 
@@ -30,13 +30,12 @@ public class SplashScreen extends InputAdapter implements Screen {
 
     @Override
     public void show() {
-        AssetManagerResolving assetManager = new AssetManagerResolving();
+        AssetManager assetManager = new AssetManager();
         MeloAstronomer game = MeloAstronomer.getInstance();
         Skin skin = game.getSkin();
 
         AssetFinder assetFinder = new AssetFinder(assetManager);
-        assetManager.setPathResolving(true);
-        assetFinder.load();
+        assetFinder.find();
 
 
         stage = new Stage();
@@ -67,7 +66,7 @@ public class SplashScreen extends InputAdapter implements Screen {
         table.row();
 
         Gdx.input.setInputProcessor(stage);
-        game.setAssetManager(assetManager);
+        game.setAssetFinder(assetFinder);
 
     }
 
@@ -77,9 +76,10 @@ public class SplashScreen extends InputAdapter implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         MeloAstronomer game = MeloAstronomer.getInstance();
+        AssetManager assetManager = game.getAssetFinder().getAssetManager();
 
-        if (game.getAssetManager().update()) {
-            Log.info(game.getAssetManager().getLoadedAssets() + " assets loaded");
+        if (assetManager.update()) {
+            Log.info(assetManager.getLoadedAssets() + " assets loaded");
             Log.info("Gdx Version: " + Version.VERSION);
 
             game.setScreen(new MainMenuScreen());

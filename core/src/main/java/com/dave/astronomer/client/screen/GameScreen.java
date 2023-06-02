@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -20,7 +19,7 @@ import com.dave.astronomer.client.DebugHud;
 import com.dave.astronomer.client.GameScreenConfig;
 import com.dave.astronomer.client.GameState;
 import com.dave.astronomer.client.MAClient;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.world.ClientMapSystem;
 import com.dave.astronomer.client.world.InputSystem;
 import com.dave.astronomer.client.world.MainPlayerSystem;
@@ -58,8 +57,8 @@ public class GameScreen implements Screen {
         physicsSytem = new PhysicsSystem();
 
         //get tiled map
-        AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
-        TiledMap map = assetManager.get("map.tmx", TiledMap.class);
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
+        TiledMap map = assetFinder.get("map.tmx", TiledMap.class);
 
         ClientMapSystem mapSystem = new ClientMapSystem(map, physicsSytem.getWorld(), batch, camera);
 
@@ -152,7 +151,6 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-
         engine.update(delta);
         batch.end();
 
@@ -160,7 +158,8 @@ public class GameScreen implements Screen {
 
         //debug
         debugRenderer.render(physicsSytem.getWorld(), camera.combined);
-        debugHud.render(delta);
+        debugHud.render(delta, camera.combined);
+
 
 
         //camera follow player
@@ -168,8 +167,11 @@ public class GameScreen implements Screen {
         Vector3 target = new Vector3(player.getPosition(), 0);
 
 
-        camera.position.lerp(target, delta * 5);
-
+        if (player.getDashKey().isDown()) {
+            camera.position.lerp(target, delta * 6);
+        } else {
+            camera.position.lerp(target, delta * 3);
+        }
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             float screenX = Gdx.input.getX();
@@ -177,9 +179,9 @@ public class GameScreen implements Screen {
 
             Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
 
-            Vector2 position = new Vector2(worldCoords.x, worldCoords.y).sub(player.getPosition());
+            Vector2 position = new Vector2(worldCoords.x, worldCoords.y).sub(player.getBody().getWorldCenter());
 
-            float angleRad = position.angleDeg() * MathUtils.degreesToRadians;
+            float angleRad = position.angleRad();
             player.throwKnife(angleRad);
 
             ServerboundUseItemPacket useItemPacket = new ServerboundUseItemPacket();

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.dave.astronomer.MeloAstronomer;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.AnimationUtils;
 import com.dave.astronomer.common.Constants;
@@ -17,9 +17,9 @@ import java.util.Map;
 public class TempPlayerAnimation {
 
     public static SpriteComponent createSpriteComponent() {
-        AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
 
-        Texture texture = assetManager.get("temp_player.png", Texture.class);
+        Texture texture = assetFinder.get("temp_player.png", Texture.class);
 
 
         int width = 32;

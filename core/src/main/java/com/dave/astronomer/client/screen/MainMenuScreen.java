@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.dave.astronomer.MeloAstronomer;
-import com.dave.astronomer.client.asset.AssetManagerResolving;
+import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.screen.mainmenu.ConnectErrorUI;
 import com.dave.astronomer.client.screen.mainmenu.DirectConnectUI;
 import com.dave.astronomer.client.screen.mainmenu.MainMenuUI;
@@ -47,12 +47,12 @@ public class MainMenuScreen implements Screen {
         setActiveUI(mainMenuUI);
 
         //load bg
-        AssetManagerResolving assetManager = MeloAstronomer.getInstance().getAssetManager();
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
 
-        backgrounds[0] = assetManager.get("bglayer.png", Texture.class);
-        backgrounds[1] = assetManager.get("layer2.png", Texture.class);
-        backgrounds[2] = assetManager.get("layer3.png", Texture.class);
-        backgrounds[3] = assetManager.get("layer4.png", Texture.class);
+        backgrounds[0] = assetFinder.get("bglayer.png", Texture.class);
+        backgrounds[1] = assetFinder.get("layer2.png", Texture.class);
+        backgrounds[2] = assetFinder.get("layer3.png", Texture.class);
+        backgrounds[3] = assetFinder.get("layer4.png", Texture.class);
 
 
     }

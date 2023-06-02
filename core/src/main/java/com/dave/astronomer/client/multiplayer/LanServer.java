@@ -15,7 +15,6 @@ public class LanServer {
         LanServer lanServer = (LanServer) o;
         return address.equals(lanServer.address);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(address);

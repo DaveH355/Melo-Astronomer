@@ -5,11 +5,8 @@ import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.*;
-import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.server.entity.ServerPlayer;
 import com.esotericsoftware.minlog.Log;
-
-import java.util.UUID;
 
 
 public class ServerGamePacketHandler implements PacketHandler {
@@ -26,23 +23,19 @@ public class ServerGamePacketHandler implements PacketHandler {
     }
 
     public void onDisconnection(PlayerConnection connection) {
-        BaseEntity entity = engine.getEntityByUUID(connection.uuid);
+        engine.removeEntity(connection.serverPlayer);
 
-        if (entity != null) {
-            engine.removeEntity(entity);
+        ClientboundRemoveEntityPacket packet = new ClientboundRemoveEntityPacket();
+        packet.uuid = connection.serverPlayer.getUuid();
 
-            ClientboundRemoveEntityPacket packet = new ClientboundRemoveEntityPacket();
-            packet.uuid = entity.getUuid();
-
-            server.sendToAllExceptTCP(connection.getID(), packet);
-        }
+        server.sendToAllExceptTCP(connection.getID(), packet);
     }
 
     //very hacky
     public void onUseItem(ServerboundUseItemPacket packet) {
         PlayerConnection connection = (PlayerConnection) packet.sender;
-        BaseEntity entity = engine.getEntityByUUID(connection.uuid);
-        ServerPlayer player = ((ServerPlayer) entity);
+
+        ServerPlayer player = connection.serverPlayer;
         Knife knife = player.throwKnife(packet.targetAngleRad);
 
         ClientboundAddEntityPacket addEntityPacket = new ClientboundAddEntityPacket(knife);
@@ -51,7 +44,9 @@ public class ServerGamePacketHandler implements PacketHandler {
 
 
     public void onMovePlayer(ServerboundMovePlayerPacket packet) {
-        ServerPlayer serverPlayer = (ServerPlayer) engine.getEntityByUUID(packet.uuid);
+        PlayerConnection connection = (PlayerConnection) packet.sender;
+        ServerPlayer serverPlayer = connection.serverPlayer;
+
         if (serverPlayer == null) return;
 
         Vector2 clientPos = packet.position;
@@ -65,7 +60,7 @@ public class ServerGamePacketHandler implements PacketHandler {
     public void onHello(ServerboundHelloPacket packet) {
         PlayerConnection connection = (PlayerConnection) packet.sender;
 
-        if (engine.getEntityByUUID(connection.uuid) != null) {
+        if (connection.serverPlayer != null) {
             Log.warn("Unexpected: " + packet + " from client");
             return;
         }

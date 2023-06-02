@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.common.network.NetworkUtils;
 import com.dave.astronomer.common.network.datagram.LanDiscoveryDatagram;
 import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
 
@@ -13,6 +12,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,12 +23,12 @@ public class LanServerDetector extends Thread implements Disposable {
     private final InetAddress pingGroup;
     private final MulticastSocket socket;
     private Input input = new Input();
-    public boolean dirty = false;
-    private Client client;
 
-    public LanServerDetector(Client client) throws IOException {
+    public boolean dirty = false;
+
+
+    public LanServerDetector() throws IOException {
         super("LanServerDetector #" + UNIQUE_THREAD_ID.incrementAndGet());
-        this.client = client;
 
         this.socket = new MulticastSocket(NetworkUtils.BROADCAST_PORT);
         this.socket.setSoTimeout(5000);
@@ -44,7 +44,8 @@ public class LanServerDetector extends Thread implements Disposable {
     public void run() {
 
         while(!isInterrupted()) {
-            DatagramPacket data = createDatagramPacket();
+            byte[] buffer = new byte[NetworkUtils.DATAGRAM_BUFFER_SIZE];
+            DatagramPacket data = new DatagramPacket(buffer, buffer.length);
             try {
                 this.socket.receive(data);
             } catch (SocketTimeoutException sockettimeoutexception) {
@@ -54,9 +55,10 @@ public class LanServerDetector extends Thread implements Disposable {
                 break;
             }
 
+            input.setBuffer(buffer);
 
-            LanDiscoveryDatagram packet = (LanDiscoveryDatagram) client.getKryo()
-                .readClassAndObject(input);
+            LanDiscoveryDatagram packet = (LanDiscoveryDatagram) NetworkUtils.getSerialization()
+                .read(null, ByteBuffer.wrap(buffer));
 
             LanServer lanServer = new LanServer();
             lanServer.serverInfo = packet.serverInfo;
@@ -68,11 +70,7 @@ public class LanServerDetector extends Thread implements Disposable {
         }
 
     }
-    public DatagramPacket createDatagramPacket() {
-        byte[] buffer = new byte[1024];
-        input.setBuffer(buffer);
-        return new DatagramPacket(buffer, buffer.length);
-    }
+
     private void updateList(LanServer server) {
         boolean isNewServer = true;
 

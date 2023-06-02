@@ -15,10 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 //allow network to easily create entities or access entity specific data
 public class EntityType<T extends BaseEntity> {
     private static final AtomicInteger UNIQUE_ID_POOL = new AtomicInteger();
-
     private static Map<Integer, EntityType<?>> map = new HashMap<>();
     public static final EntityType<Player> PLAYER = register(Builder.<Player>createNothing().speed(4f));
-    public static final EntityType<Knife> KNIFE = register(Builder.<Knife>of(Knife::new).speed(8f));
+    public static final EntityType<Knife> KNIFE = register(Builder.<Knife>of(Knife::new).speed(9f));
 
     public final float speed;
     private final int uniqueID = UNIQUE_ID_POOL.incrementAndGet();
