@@ -34,11 +34,10 @@ Entities are purely for creating/configuring components
 
 ### Systems
 Systems are responsible for taking the components of an entity and processing game logic using them.
+Systems can only be added a single engine
 
-- `Single Entity System` Processes all entities of an _exact_ type. If this entity is a subclass, it will automatically be exempt from the relevant Broad Entity System.
+- `Single Entity System` Processes all entities of an _exact_ type.
 
-### Notes
-- Systems can only be added a single engine
 
 ## Networking
 The server wraps incoming client connections for convenient storing of data. Client does not see this wrapped connection class.

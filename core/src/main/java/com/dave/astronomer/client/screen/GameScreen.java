@@ -7,24 +7,26 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dave.astronomer.MeloAstronomer;
-import com.dave.astronomer.client.DebugHud;
-import com.dave.astronomer.client.GameScreenConfig;
-import com.dave.astronomer.client.GameState;
-import com.dave.astronomer.client.MAClient;
+import com.dave.astronomer.client.*;
 import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.world.ClientMapSystem;
 import com.dave.astronomer.client.world.InputSystem;
 import com.dave.astronomer.client.world.MainPlayerSystem;
 import com.dave.astronomer.client.world.SpriteRenderSystem;
 import com.dave.astronomer.client.world.entity.MainPlayer;
+import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.network.packet.ServerboundUseItemPacket;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
@@ -44,6 +46,7 @@ public class GameScreen implements Screen {
     private DebugHud debugHud;
     private PhysicsSystem physicsSytem;
     private Box2DDebugRenderer debugRenderer;
+    boolean stopUpdating = false;
 
     public GameScreen(GameScreenConfig config) {
         batch = new SpriteBatch(2000);
@@ -51,15 +54,14 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
 
         //TODO: fix pixel wobble when rendering
-        viewport = new FillViewport(480 / 32f, 270 /32f, camera);
+        viewport = new FillViewport(480 / Constants.PIXELS_PER_METER, 270 / Constants.PIXELS_PER_METER, camera);
 
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
 
-        physicsSytem = new PhysicsSystem();
 
         //get tiled map
-        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
         TiledMap map = assetFinder.get("map.tmx", TiledMap.class);
-
+        physicsSytem = new PhysicsSystem();
         ClientMapSystem mapSystem = new ClientMapSystem(map, physicsSytem.getWorld(), batch, camera);
 
         //debug
@@ -71,7 +73,7 @@ public class GameScreen implements Screen {
             debugHud.getStage()
         );
 
-        engine = new CoreEngine();
+        engine = new CoreEngine(true);
 
         engine.addPrioritySystems(
             physicsSytem
@@ -99,7 +101,6 @@ public class GameScreen implements Screen {
             client.connect(config.connectTimeout, config.address, config.tcpPort, config.udpPort);
         } catch (IOException e) {
             errorToMainMenu(e);
-
             return;
         }
 
@@ -115,13 +116,13 @@ public class GameScreen implements Screen {
         client.requestGameStart();
     }
     public void errorToMainMenu(Exception e) {
+        stopUpdating = true;
         Log.error("", e);
 
         Gdx.app.postRunnable(() -> {
             MainMenuScreen screen = new MainMenuScreen();
             screen.getConnectErrorUI().postError(e);
             screen.setActiveUI(screen.getConnectErrorUI());
-
 
             MeloAstronomer.getInstance().setScreen(screen);
         });
@@ -137,12 +138,17 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK, true);
 
-        //TODO move this to separate thread. Box2d doesn't like this though
-        //https://stackoverflow.com/questions/24924306/box2d-on-separate-thread
+        if (stopUpdating) return;
+
+
         if (server != null) server.update(delta);
 
         client.update();
         if (!client.isReadyForGame()) return;
+        //TODO: try to reconnect
+        if (!client.isConnected()) {
+            errorToMainMenu(new Exception("Disconnected from server"));
+        }
 
         viewport.apply();
         camera.update();
@@ -150,9 +156,11 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
 
+
         batch.begin();
         engine.update(delta);
         batch.end();
+
 
 
 
@@ -174,10 +182,8 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            float screenX = Gdx.input.getX();
-            float screenY = Gdx.input.getY();
 
-            Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
+            Vector3 worldCoords = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
             Vector2 position = new Vector2(worldCoords.x, worldCoords.y).sub(player.getBody().getWorldCenter());
 
@@ -195,9 +201,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        if (stopUpdating) return;
         viewport.update(width, height, false);
         debugHud.update(width, height, true);
-
     }
 
     @Override

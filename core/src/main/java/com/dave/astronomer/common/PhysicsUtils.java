@@ -10,10 +10,7 @@ import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.common.world.PhysicsSystem;
 
 //Note: anything toShape needs to be adjusted with Pixels Per Meter
@@ -109,7 +106,6 @@ public class PhysicsUtils {
         int height = pixmap.getHeight();
 
         // The rectangle is defined by (minX, minY) and (maxX, maxY)
-        // The bottom leftmost pixel with a color is at (minX, minY)
         int minX = width;
         int minY = height;
         int maxX = 0;
@@ -130,7 +126,8 @@ public class PhysicsUtils {
         Rectangle rectangle = new Rectangle();
         rectangle.setSize((float) maxX - minX, (float) maxY - minY);
         rectangle.setX(minX);
-        rectangle.setY(minY);
+        //invert y
+        rectangle.setY(height - 1f - maxY);
 
         pixmap.dispose();
 
@@ -235,5 +232,56 @@ public class PhysicsUtils {
             velocity.limit(distanceToTarget * PhysicsSystem.STEP_FREQUENCY - safetyMargin);
         }
         return velocity;
+    }
+    public static void calculateBodyAABB(Body body, Vector2 lower, Vector2 upper) {
+        boolean first = true;
+
+        for (Fixture fixture : body.getFixtureList()) {
+            Vector2 fixtureLower = new Vector2();
+            Vector2 fixtureUpper = new Vector2();
+            calculateAABB(fixture, fixtureLower, fixtureUpper);
+
+            if (first) {
+                lower.set(fixtureLower);
+                upper.set(fixtureUpper);
+                first = false;
+            } else {
+                lower.x = Math.min(lower.x, fixtureLower.x);
+                lower.y = Math.min(lower.y, fixtureLower.y);
+                upper.x = Math.max(upper.x, fixtureUpper.x);
+                upper.y = Math.max(upper.y, fixtureUpper.y);
+            }
+        }
+    }
+
+    private static void calculateAABB(Fixture fixture, Vector2 lower, Vector2 upper) {
+        Transform transform = fixture.getBody().getTransform();
+        if (fixture.getShape().getType() == Shape.Type.Circle) {
+
+            CircleShape shape = (CircleShape)fixture.getShape();
+            float radius = shape.getRadius();
+            Vector2 position = transform.mul(shape.getPosition());
+            lower.set(position.x - radius, position.y - radius);
+            upper.set(position.x + radius, position.y + radius);
+
+        } else if (fixture.getShape().getType() == Shape.Type.Polygon) {
+
+            PolygonShape shape = (PolygonShape)fixture.getShape();
+            int vertexCount = shape.getVertexCount();
+            Vector2[] vertices = new Vector2[vertexCount];
+            for (int i = 0; i < vertexCount; i++) {
+                vertices[i] = new Vector2();
+                shape.getVertex(i, vertices[i]);
+                transform.mul(vertices[i]);
+            }
+            lower.set(vertices[0]);
+            upper.set(vertices[0]);
+            for (int i = 1; i < vertexCount; i++) {
+                lower.x = Math.min(lower.x, vertices[i].x);
+                lower.y = Math.min(lower.y, vertices[i].y);
+                upper.x = Math.max(upper.x, vertices[i].x);
+                upper.y = Math.max(upper.y, vertices[i].y);
+            }
+        }
     }
 }

@@ -23,10 +23,13 @@ public abstract class Player extends BaseEntity implements Disposable {
     public Knife throwKnife(float targetAngleRad) {
         Vector2 bodyCenter = getBody().getPosition();
         Vector2 knifePos = new Vector2(bodyCenter.x, bodyCenter.y);
-        Knife knife = new Knife(getEngine(), knifePos, targetAngleRad);
+        Knife knife = new Knife(getEngine(), knifePos, targetAngleRad, this);
 
         getEngine().addEntity(knife);
         return knife;
+
+    }
+    public void hurt() {
 
     }
 }

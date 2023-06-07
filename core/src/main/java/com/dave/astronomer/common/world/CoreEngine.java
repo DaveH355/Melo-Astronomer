@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.ashley.core.EntitySystem;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +14,13 @@ import java.util.UUID;
 
 public class CoreEngine extends Engine implements Disposable {
 
+    public final boolean isClientSide;
     private ObjectMap<UUID, BaseEntity> entitiesByUUID = new ObjectMap<>();
 
 
+    public CoreEngine(boolean isClientSide) {
+        this.isClientSide = isClientSide;
+    }
     public static EngineMetaData getEngineMetaData(CoreEngine engine) {
         EngineMetaData data = new EngineMetaData();
         for (EntitySystem system : engine.getSystems()) {

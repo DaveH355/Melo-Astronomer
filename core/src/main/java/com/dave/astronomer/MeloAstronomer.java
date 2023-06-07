@@ -7,23 +7,30 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.dave.astronomer.client.GameSkin;
 import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.screen.SplashScreen;
 import com.dave.astronomer.common.MALogger;
+import com.dave.astronomer.common.network.packet.Packet;
+import com.dave.astronomer.common.network.packet.PacketHandler;
 import com.esotericsoftware.minlog.Log;
 import lombok.Getter;
 import lombok.Setter;
+import net.jodah.typetools.TypeResolver;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Set;
 
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
 public class MeloAstronomer extends Game {
-    private static MeloAstronomer instance;
+    @Getter private static MeloAstronomer instance;
     @Getter
     private Skin skin;
     @Getter
@@ -55,7 +62,6 @@ public class MeloAstronomer extends Game {
             throw new RuntimeException(e);
         }
         ShaderProgram.pedantic = false;
-        Box2D.init();
 
         skin = new GameSkin(Gdx.files.internal("Pixeld16/Pixeld16.json"));
         skinRegion = new TextureAtlas(Gdx.files.internal("Pixeld16/Pixeld16.atlas"));
@@ -86,7 +92,4 @@ public class MeloAstronomer extends Game {
         System.exit(0);
     }
 
-    public static MeloAstronomer getInstance() {
-        return instance;
-    }
 }

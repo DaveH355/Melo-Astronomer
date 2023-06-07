@@ -20,7 +20,7 @@ public class ClientMapSystem extends MapSystem implements Disposable, MockableSy
     public ClientMapSystem(TiledMap map, World world, SpriteBatch batch,OrthographicCamera camera) {
         super(map, world);
         this.camera = camera;
-        renderer = new OrthogonalTiledMapRendererBleeding(map, 1 / Constants.PIXELS_PER_METER, batch);
+        renderer = new OrthogonalTiledMapRendererBleeding(map, 1f / Constants.PIXELS_PER_METER, batch);
 
     }
 

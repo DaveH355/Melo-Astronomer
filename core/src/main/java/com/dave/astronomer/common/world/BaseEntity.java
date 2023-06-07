@@ -2,7 +2,9 @@ package com.dave.astronomer.common.world;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Null;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.network.packet.ClientboundAddEntityPacket;
 import com.dave.astronomer.common.world.movement.MovementBehavior;
@@ -10,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.annotation.CheckForNull;
 import java.util.UUID;
 
 public abstract class BaseEntity extends Entity implements Disposable {
@@ -37,6 +40,9 @@ public abstract class BaseEntity extends Entity implements Disposable {
 
     @Override
     public void update(float delta) {
+        if (getBody().getUserData() != this) {
+            getBody().setUserData(this);
+        }
         movementBehavior.apply(this);
     }
 
@@ -54,6 +60,14 @@ public abstract class BaseEntity extends Entity implements Disposable {
     }
 
     public abstract Body getBody();
+    //collision
+    public void beginCollision(CollisionContact contact, @CheckForNull BaseEntity entity) {
+
+    }
+
+    public void endCollision(CollisionContact contact, @CheckForNull BaseEntity entity) {
+
+    }
 
     @Override
     public void onRemovedFromEngine() {
@@ -65,26 +79,5 @@ public abstract class BaseEntity extends Entity implements Disposable {
         getBody().getWorld().destroyBody(getBody());
     }
 
-    public void forceState(State state) {
-        getBody().setTransform(state.position, state.angleRad);
-        getBody().setLinearVelocity(state.velocity);
-        setUuid(state.uuid);
-        deltaMovement = state.position;
-    }
-    public State captureState() {
-        State state = new State();
-        state.position = getPosition();
-        state.angleRad = getBody().getAngle();
-        state.velocity = getBody().getLinearVelocity();
-        state.uuid = getUuid();
-        return state;
-    }
-    @ToString
-    public static class State {
-        public Vector2 position;
-        public float angleRad;
-        public UUID uuid;
-        public Vector2 velocity;
-    }
 
 }

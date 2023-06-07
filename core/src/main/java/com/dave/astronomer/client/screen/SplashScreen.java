@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -26,8 +27,7 @@ import com.esotericsoftware.minlog.Log;
 public class SplashScreen extends InputAdapter implements Screen {
     private Stage stage;
     private Table table;
-    private Image logo;
-
+    private boolean exiting = false;
     @Override
     public void show() {
         AssetManager assetManager = new AssetManager();
@@ -36,6 +36,7 @@ public class SplashScreen extends InputAdapter implements Screen {
 
         AssetFinder assetFinder = new AssetFinder(assetManager);
         assetFinder.find();
+        game.setAssetFinder(assetFinder);
 
 
         stage = new Stage();
@@ -45,13 +46,6 @@ public class SplashScreen extends InputAdapter implements Screen {
 
         stage.addActor(table);
 
-        logo = new Image(new Texture("splashScreen/studio_logo.png"));
-        logo.setScaling(Scaling.fit);
-        logo.setAlign(Align.center);
-        logo.addAction(Actions.sequence(Actions.alpha(0.0F), Actions.fadeIn(1.75F), Actions.delay(2F), Actions.fadeOut(0.5F)));
-        table.add(logo).pad(10);
-        table.row();
-
         Label label = new Label("Loading resources", skin, "light");
         label.setColor(Color.WHITE);
         label.setAlignment(Align.center);
@@ -59,14 +53,11 @@ public class SplashScreen extends InputAdapter implements Screen {
         table.row();
 
 
-        Label countLeft = new LinkedLabel(() -> (int) assetManager.getProgress() * 100 + "%", skin, "light");
+        Label progressCounter = new LinkedLabel(() -> (int) assetManager.getProgress() * 100 + "%", skin, "light");
         label.setColor(Color.WHITE);
         label.setAlignment(Align.center);
-        table.add(countLeft).pad(10);
+        table.add(progressCounter).pad(10);
         table.row();
-
-        Gdx.input.setInputProcessor(stage);
-        game.setAssetFinder(assetFinder);
 
     }
 
@@ -78,16 +69,25 @@ public class SplashScreen extends InputAdapter implements Screen {
         MeloAstronomer game = MeloAstronomer.getInstance();
         AssetManager assetManager = game.getAssetFinder().getAssetManager();
 
-        if (assetManager.update()) {
-            Log.info(assetManager.getLoadedAssets() + " assets loaded");
-            Log.info("Gdx Version: " + Version.VERSION);
-
-            game.setScreen(new MainMenuScreen());
-            return;
-        }
 
         stage.act(delta);
         stage.draw();
+
+
+        if (assetManager.isFinished() && !exiting) {
+            RunnableAction run = Actions.run(() -> {
+                Log.info(assetManager.getLoadedAssets() + " assets loaded");
+                Log.info("Gdx Version: " + Version.VERSION);
+                game.setScreen(new MainMenuScreen());
+            });
+
+//            stage.addAction(Actions.sequence(Actions.delay(0.25f),Actions.fadeOut(0.5f), run));
+            stage.addAction(run);
+            exiting = true;
+            return;
+        }
+        assetManager.update();
+
     }
 
     @Override

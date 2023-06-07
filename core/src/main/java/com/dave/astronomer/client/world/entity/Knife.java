@@ -2,29 +2,34 @@ package com.dave.astronomer.client.world.entity;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.world.component.SpriteComponent;
 import com.dave.astronomer.common.Constants;
+import com.dave.astronomer.common.DeltaTimer;
 import com.dave.astronomer.common.PhysicsUtils;
+import com.dave.astronomer.common.VectorUtils;
 import com.dave.astronomer.common.network.packet.ClientboundAddEntityPacket;
-import com.dave.astronomer.common.world.BaseEntity;
-import com.dave.astronomer.common.world.CoreEngine;
-import com.dave.astronomer.common.world.EntityType;
-import com.dave.astronomer.common.world.PhysicsSystem;
+import com.dave.astronomer.common.world.*;
+import com.dave.astronomer.common.world.entity.Player;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Knife extends BaseEntity {
 
     private Body body;
     private SpriteComponent spriteComponent;
     public int bounces = 0;
-    boolean applied = false;
-
+    boolean velocityApplied = false;
     public float targetAngleRad;
+
+    private BaseEntity owner;
+    private boolean leftOwner = false;
+    private DeltaTimer checkTimer = new DeltaTimer(25, TimeUnit.MILLISECONDS);
+
     public Knife(EntityType<?> type, CoreEngine engine) {
         super(type, engine);
 
@@ -36,9 +41,10 @@ public class Knife extends BaseEntity {
         );
     }
 
-    public Knife(CoreEngine engine, Vector2 position, float targetAngleRad)  {
+    public Knife(CoreEngine engine, Vector2 position, float targetAngleRad, BaseEntity owner)  {
         this(EntityType.KNIFE, engine);
         this.targetAngleRad = targetAngleRad;
+        this.owner = owner;
 
         forcePosition(position, targetAngleRad);
     }
@@ -48,6 +54,28 @@ public class Knife extends BaseEntity {
         super.recreateFromPacket(packet);
         this.targetAngleRad = packet.angleRad;
     }
+    private boolean checkLeftOwner() {
+        Vector2 lower = new Vector2();
+        Vector2 upper = new Vector2();
+
+        PhysicsUtils.calculateBodyAABB(body, lower, upper);
+
+        AtomicBoolean bodyInsideOwner = new AtomicBoolean(false);
+        body.getWorld().QueryAABB(new QueryCallback() {
+            @Override
+            public boolean reportFixture(Fixture fixture) {
+                //stop searching
+                if (fixture.getBody() == owner.getBody()) {
+                    bodyInsideOwner.set(true);
+                    return false;
+                }
+                //continue searching
+                return true;
+            }
+        }, lower.x, lower.y, upper.x, upper.y);
+
+        return !bodyInsideOwner.get();
+    }
 
     @Override
     public void update(float delta) {
@@ -56,15 +84,22 @@ public class Knife extends BaseEntity {
             return;
         }
 
+        if (!leftOwner && checkTimer.update(delta)) {
+            leftOwner = checkLeftOwner();
+        }
+
+
+
         float speed = getEntityType().speed;
         float velocityX = speed * MathUtils.cos(targetAngleRad);
         float velocityY = speed * MathUtils.sin(targetAngleRad);
 
         Vector2 velocity = new Vector2(velocityX, velocityY);
-        if (!applied) {
+        if (!velocityApplied) {
             body.setLinearVelocity(velocity);
-            applied = true;
+            velocityApplied = true;
         }
+
 
 
         body.setAngularVelocity(PhysicsUtils.angularVelocityToAngle(body, targetAngleRad, getEntityType().speed));
@@ -73,6 +108,32 @@ public class Knife extends BaseEntity {
 
         spriteComponent.getSprite().setPosition(getPosition().x, getPosition().y);
         spriteComponent.getSprite().setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+
+
+    }
+
+    //Remember! This code runs on server side and client side
+    //TODO: server side collision detection only
+    @Override
+    public void beginCollision(CollisionContact contact, BaseEntity entity) {
+
+        if (contact.getOtherBody().getType() == BodyDef.BodyType.StaticBody) {
+            float dot = this.body.getLinearVelocity().dot(contact.getContactNormal());
+
+            if (dot < 0) {
+                Vector2 newVelocity = VectorUtils.reflectVector(this.body.getLinearVelocity(), contact.getContactNormal(), 0.8f);
+
+                this.body.setLinearVelocity(newVelocity);
+                this.targetAngleRad = MathUtils.degreesToRadians * newVelocity.angleDeg();
+                this.bounces++;
+            }
+            return;
+        }
+
+        if (entity instanceof Player player && contact.getOtherFixture().isSensor() && leftOwner) {
+            player.hurt();
+            getEngine().removeEntity(this);
+        }
 
 
     }

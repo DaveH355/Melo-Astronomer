@@ -8,6 +8,7 @@ import com.dave.astronomer.common.world.MockableSystem;
 public class ServerEngine extends CoreEngine {
 
     public ServerEngine(CoreEngine.EngineMetaData clientEngineMetaData) {
+        super(false);
         for (EntitySystem prioritySystem : clientEngineMetaData.prioritySystems) {
             if (prioritySystem instanceof MockableSystem) {
                 addPrioritySystems(prioritySystem);

@@ -4,7 +4,7 @@ package com.dave.astronomer.server.system;
 import com.badlogic.gdx.math.Vector2;
 import com.dave.astronomer.common.DeltaTimer;
 import com.dave.astronomer.common.network.PlayerConnection;
-import com.dave.astronomer.common.network.packet.ClientboundEntityForceStatePacket;
+import com.dave.astronomer.common.network.packet.ClientboundForceEntityPosRotPacket;
 import com.dave.astronomer.common.network.packet.ClientboundMoveEntityPacket;
 import com.dave.astronomer.common.world.SingleEntitySystem;
 import com.dave.astronomer.server.MAServer;
@@ -12,7 +12,7 @@ import com.dave.astronomer.server.entity.ServerPlayer;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.dave.astronomer.common.world.BaseEntity.State;
+
 
 public class ServerPlayerValidationSystem extends SingleEntitySystem<ServerPlayer> {
     private static final float POSITION_TOLERANCE = 0.5f;
@@ -36,7 +36,9 @@ public class ServerPlayerValidationSystem extends SingleEntitySystem<ServerPlaye
 
 
         if (serverPos.dst(clientPos) > POSITION_TOLERANCE) {
-            invalidateState(serverPlayer);
+            ClientboundForceEntityPosRotPacket packet = new ClientboundForceEntityPosRotPacket(serverPlayer);
+            server.sendToAllTCP(packet);
+            return;
 
         }
 
@@ -50,12 +52,7 @@ public class ServerPlayerValidationSystem extends SingleEntitySystem<ServerPlaye
         server.sendToAllExceptUDP(connection.getID(), packet);
 
     }
-    private void invalidateState(ServerPlayer serverPlayer) {
-        State serverState = serverPlayer.captureState();
 
-        ClientboundEntityForceStatePacket packet = new ClientboundEntityForceStatePacket(serverState);
-        server.sendToAllTCP(packet);
-    }
 
     @Override
     public Class<ServerPlayer> getGenericType() {

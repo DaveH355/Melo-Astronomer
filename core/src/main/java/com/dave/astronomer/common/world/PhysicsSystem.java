@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.VectorUtils;
 import com.dave.astronomer.common.ashley.core.EntitySystem;
+import com.dave.astronomer.common.ashley.core.PooledEngine;
 import lombok.Getter;
 
 
@@ -21,6 +22,8 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
     public PhysicsSystem() {
         //TODO: remove this temp contact filter
         world.setContactFilter((fixtureA, fixtureB) -> {
+            if (fixtureA.isSensor() || fixtureB.isSensor()) return true;
+
             if (fixtureA.getBody().getUserData() != null &&
                 fixtureB.getBody().getUserData() != null) {
 
@@ -28,49 +31,66 @@ public class PhysicsSystem extends EntitySystem implements Disposable {
                 Body body2 = fixtureB.getBody();
 
                 if (body1.getType() == BodyDef.BodyType.DynamicBody && body2.getType() == BodyDef.BodyType.DynamicBody) return false;
-                if (body1.getUserData().equals("player") && body2.getUserData().equals("player")) return false;
             }
 
             return true;
         });
 
         world.setContactListener(new ContactListener() {
-            //TODO: better collision handling
+
             @Override
             public void beginContact(Contact contact) {
-                Body body1 = contact.getFixtureA().getBody();
-                Body body2 = contact.getFixtureB().getBody();
-
-                Vector2 contactNormal = contact.getWorldManifold().getNormal();
-
-                if (body1.getUserData() instanceof Knife knife && body2.getType() == BodyDef.BodyType.StaticBody) {
-                    float dot = knife.getBody().getLinearVelocity().dot(contactNormal);
-
-                    if (dot < 0) {
-                        Vector2 newVelocity = VectorUtils.reflectVector(knife.getBody().getLinearVelocity(), contactNormal, 0.8f);
-
-                        knife.getBody().setLinearVelocity(newVelocity);
-                        knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.angleDeg();
-                        knife.bounces++;
+                Fixture fixtureA = contact.getFixtureA();
+                Fixture fixtureB = contact.getFixtureB();
+                if (fixtureA.getBody().getUserData() instanceof BaseEntity entityA) {
+                    BaseEntity entityB = null;
+                    if (fixtureB.getBody().getUserData() instanceof BaseEntity) {
+                        entityB = ((BaseEntity) fixtureB.getBody().getUserData());
                     }
-                } else if (body2.getUserData() instanceof Knife knife && body1.getType() == BodyDef.BodyType.StaticBody) {
 
-                    float dot = knife.getBody().getLinearVelocity().dot(contactNormal);
+                    CollisionContact contactA = new CollisionContact(fixtureA, fixtureB, contact);
+                    entityA.beginCollision(contactA, entityB);
 
-                    if (dot < 0f) {
-                        Vector2 newVelocity = VectorUtils.reflectVector(knife.getBody().getLinearVelocity(), contactNormal, 0.8f);
-
-                        knife.getBody().setLinearVelocity(newVelocity);
-                        knife.targetAngleRad = MathUtils.degreesToRadians * newVelocity.angleDeg();
-                        knife.bounces++;
-                    }
                 }
+                if (fixtureB.getBody().getUserData() instanceof BaseEntity entityB) {
+                    BaseEntity entityA = null;
+                    if (fixtureA.getBody().getUserData() instanceof BaseEntity) {
+                        entityA = ((BaseEntity) fixtureA.getBody().getUserData());
+                    }
+
+                    CollisionContact contactB = new CollisionContact(fixtureB, fixtureA, contact);
+                    entityB.beginCollision(contactB, entityA);
+
+                }
+
             }
 
 
             @Override
             public void endContact(Contact contact) {
 
+                Fixture fixtureA = contact.getFixtureA();
+                Fixture fixtureB = contact.getFixtureB();
+                if (fixtureA.getBody().getUserData() instanceof BaseEntity entityA) {
+                    BaseEntity entityB = null;
+                    if (fixtureB.getBody().getUserData() instanceof BaseEntity) {
+                        entityB = ((BaseEntity) fixtureB.getBody().getUserData());
+                    }
+
+                    CollisionContact contactA = new CollisionContact(fixtureA, fixtureB, contact);
+                    entityA.endCollision(contactA, entityB);
+
+                }
+                if (fixtureB.getBody().getUserData() instanceof BaseEntity entityB) {
+                    BaseEntity entityA = null;
+                    if (fixtureA.getBody().getUserData() instanceof BaseEntity) {
+                        entityA = ((BaseEntity) fixtureA.getBody().getUserData());
+                    }
+
+                    CollisionContact contactB = new CollisionContact(fixtureB, fixtureA, contact);
+                    entityB.endCollision(contactB, entityA);
+
+                }
             }
 
             @Override
