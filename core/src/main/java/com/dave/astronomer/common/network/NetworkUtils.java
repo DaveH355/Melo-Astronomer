@@ -3,7 +3,6 @@ package com.dave.astronomer.common.network;
 import com.badlogic.gdx.math.Vector2;
 import com.dave.astronomer.common.network.datagram.LanDiscoveryDatagram;
 import com.dave.astronomer.common.network.packet.Packet;
-import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.EntityType;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
@@ -13,6 +12,7 @@ import lombok.Getter;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
+import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,6 +55,8 @@ public class NetworkUtils {
         kryo.register(Class.class);
         kryo.register(UUID.class, new UUIDSerializer());
         kryo.register(Vector2.class);
+        kryo.register(HashMap.class);
+
         kryo.register(LanDiscoveryDatagram.class);
         kryo.register(EntityType.class, new EntityType.EntityTypeSerializer());
     }

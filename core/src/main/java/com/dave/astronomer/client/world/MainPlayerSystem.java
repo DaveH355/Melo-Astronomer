@@ -37,7 +37,6 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
         velocity.nor();
         velocity.scl(speed);
 
-
         p.getBody().setLinearVelocity(velocity);
 
         Sprite sprite = p.getSpriteComponent().getSprite();

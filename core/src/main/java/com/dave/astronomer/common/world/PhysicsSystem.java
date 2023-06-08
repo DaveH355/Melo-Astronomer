@@ -1,14 +1,10 @@
 package com.dave.astronomer.common.world;
 
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
-import com.dave.astronomer.client.world.entity.Knife;
-import com.dave.astronomer.common.VectorUtils;
 import com.dave.astronomer.common.ashley.core.EntitySystem;
-import com.dave.astronomer.common.ashley.core.PooledEngine;
 import lombok.Getter;
 
 

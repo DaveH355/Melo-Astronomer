@@ -2,7 +2,6 @@ package com.dave.astronomer.common.world.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
-import com.dave.astronomer.client.world.entity.Knife;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.EntityType;

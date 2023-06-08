@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -21,10 +22,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.*;
 import com.dave.astronomer.client.asset.AssetFinder;
-import com.dave.astronomer.client.world.ClientMapSystem;
-import com.dave.astronomer.client.world.InputSystem;
-import com.dave.astronomer.client.world.MainPlayerSystem;
-import com.dave.astronomer.client.world.SpriteRenderSystem;
+import com.dave.astronomer.client.world.*;
 import com.dave.astronomer.client.world.entity.MainPlayer;
 import com.dave.astronomer.common.Constants;
 import com.dave.astronomer.common.network.packet.ServerboundUseItemPacket;
@@ -154,6 +152,8 @@ public class GameScreen implements Screen {
         camera.update();
 
 
+
+
         batch.setProjectionMatrix(camera.combined);
 
 
@@ -175,10 +175,17 @@ public class GameScreen implements Screen {
         Vector3 target = new Vector3(player.getPosition(), 0);
 
 
+
         if (player.getDashKey().isDown()) {
             camera.position.lerp(target, delta * 6);
         } else {
             camera.position.lerp(target, delta * 3);
+        }
+
+        //camera shake
+        if (CameraShake.getTimeLeft() > 0) {
+            CameraShake.tick(delta);
+            camera.translate(CameraShake.getShake());
         }
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {

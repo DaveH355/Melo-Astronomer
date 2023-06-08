@@ -1,7 +1,7 @@
 package com.dave.astronomer.server;
 
 import com.badlogic.gdx.math.Vector2;
-import com.dave.astronomer.client.world.entity.Knife;
+import com.dave.astronomer.common.world.entity.Knife;
 import com.dave.astronomer.common.ashley.utils.ImmutableArray;
 import com.dave.astronomer.common.network.PlayerConnection;
 import com.dave.astronomer.common.network.packet.*;
@@ -38,8 +38,8 @@ public class ServerGamePacketHandler implements PacketHandler {
         ServerPlayer player = connection.serverPlayer;
         Knife knife = player.throwKnife(packet.targetAngleRad);
 
-        ClientboundAddEntityPacket addEntityPacket = new ClientboundAddEntityPacket(knife);
-        server.sendToAllExceptTCP(connection.getID(), addEntityPacket);
+
+        server.sendToAllExceptTCP(connection.getID(), knife.getAddEntityPacket());
     }
 
 

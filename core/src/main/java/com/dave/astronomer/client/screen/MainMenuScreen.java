@@ -2,11 +2,13 @@ package com.dave.astronomer.client.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.dave.astronomer.MeloAstronomer;
 import com.dave.astronomer.client.asset.AssetFinder;
@@ -72,8 +74,7 @@ public class MainMenuScreen implements Screen {
     }
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        ScreenUtils.clear(Color.BLACK);
 
         viewport.apply();
         if (activeUI == mainMenuUI) {

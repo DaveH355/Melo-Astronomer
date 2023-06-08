@@ -3,9 +3,9 @@ package com.dave.astronomer.client.world.entity;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.dave.astronomer.client.temp.TempPlayerAnimation;
+import com.dave.astronomer.client.world.CameraShake;
 import com.dave.astronomer.client.world.component.InputComponent;
 import com.dave.astronomer.client.world.component.SpriteComponent;
-import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.data.PlayerData;
 import com.dave.astronomer.common.world.CoreEngine;
 import com.dave.astronomer.common.world.PhysicsSystem;
@@ -18,6 +18,8 @@ public class MainPlayer extends AbstractClientPlayer {
     @Getter private Body body;
     @Getter private InputComponent inputComponent;
     @Getter private InputComponent.KeyAction walkUpKey, walkDownKey, walkLeftKey, walkRightKey, dashKey;
+
+
 
     public MainPlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
@@ -37,7 +39,8 @@ public class MainPlayer extends AbstractClientPlayer {
 
     @Override
     public void hurt() {
-
+        super.hurt();
+        CameraShake.shake(0.03f, 0.25f);
     }
 
     @Override

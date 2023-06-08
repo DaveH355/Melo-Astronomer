@@ -1,7 +1,7 @@
 package com.dave.astronomer.common.world;
 
 
-import com.dave.astronomer.client.world.entity.Knife;
+import com.dave.astronomer.common.world.entity.Knife;
 import com.dave.astronomer.common.world.entity.Player;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;

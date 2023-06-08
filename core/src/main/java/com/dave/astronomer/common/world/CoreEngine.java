@@ -15,7 +15,7 @@ import java.util.UUID;
 public class CoreEngine extends Engine implements Disposable {
 
     public final boolean isClientSide;
-    private ObjectMap<UUID, BaseEntity> entitiesByUUID = new ObjectMap<>();
+    private final ObjectMap<UUID, BaseEntity> entitiesByUUID = new ObjectMap<>();
 
 
     public CoreEngine(boolean isClientSide) {

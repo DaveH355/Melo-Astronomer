@@ -84,7 +84,7 @@ public class DebugHud implements Disposable {
 
     public void render(float delta, Matrix4 projection) {
         renderWorldDebug(projection);
-        stage.getViewport().apply();
+
 
         stage.act(delta);
         stage.draw();

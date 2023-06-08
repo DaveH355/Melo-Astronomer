@@ -5,6 +5,8 @@ import com.dave.astronomer.client.multiplayer.ClientGamePacketHandler;
 import com.dave.astronomer.common.world.BaseEntity;
 import com.dave.astronomer.common.world.EntityType;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ClientboundAddEntityPacket extends Packet<ClientGamePacketHandler> {
@@ -13,6 +15,7 @@ public class ClientboundAddEntityPacket extends Packet<ClientGamePacketHandler> 
     public Vector2 position;
     public float angleRad = 0;
     public EntityType<?> entityType;
+    private Map<String, Object> dataMap = new HashMap<>();
 
     public ClientboundAddEntityPacket(BaseEntity baseEntity) {
         this.uuid = baseEntity.getUuid();
@@ -24,6 +27,12 @@ public class ClientboundAddEntityPacket extends Packet<ClientGamePacketHandler> 
 
     }
 
+    public void setData(String s, Object object) {
+        dataMap.put(s, object);
+    }
+    public <T> T getData(String s) {
+        return (T) dataMap.get(s);
+    }
 
     @Override
     public void handle(ClientGamePacketHandler handler) {

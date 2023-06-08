@@ -26,7 +26,7 @@ public class MAServer extends Server {
     public MAServer(WorldData data) throws IOException {
         NetworkUtils.register(this);
 
-        ServerState.getInstance().setWorldData(data);
+
 
 
 

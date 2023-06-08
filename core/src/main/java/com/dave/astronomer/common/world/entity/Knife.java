@@ -1,4 +1,4 @@
-package com.dave.astronomer.client.world.entity;
+package com.dave.astronomer.common.world.entity;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,9 +12,11 @@ import com.dave.astronomer.common.DeltaTimer;
 import com.dave.astronomer.common.PhysicsUtils;
 import com.dave.astronomer.common.VectorUtils;
 import com.dave.astronomer.common.network.packet.ClientboundAddEntityPacket;
+import com.dave.astronomer.common.network.packet.Packet;
 import com.dave.astronomer.common.world.*;
 import com.dave.astronomer.common.world.entity.Player;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -50,9 +52,20 @@ public class Knife extends BaseEntity {
     }
 
     @Override
+    public Packet<?> getAddEntityPacket() {
+        ClientboundAddEntityPacket packet = new ClientboundAddEntityPacket(this);
+        packet.setData("owner_uuid", owner.getUuid());
+        return packet;
+    }
+
+    @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
         this.targetAngleRad = packet.angleRad;
+
+        UUID uuid = packet.getData("owner_uuid");
+        this.owner = getEngine().getEntityByUUID(uuid);
+
     }
     private boolean checkLeftOwner() {
         Vector2 lower = new Vector2();
@@ -79,6 +92,8 @@ public class Knife extends BaseEntity {
 
     @Override
     public void update(float delta) {
+        super.update(delta);
+
         if (bounces > 3) {
             getEngine().removeEntity(this);
             return;
@@ -118,15 +133,12 @@ public class Knife extends BaseEntity {
     public void beginCollision(CollisionContact contact, BaseEntity entity) {
 
         if (contact.getOtherBody().getType() == BodyDef.BodyType.StaticBody) {
-            float dot = this.body.getLinearVelocity().dot(contact.getContactNormal());
+            Vector2 newVelocity = VectorUtils.reflectVector(this.body.getLinearVelocity(), contact.getContactNormal(), 0.8f);
 
-            if (dot < 0) {
-                Vector2 newVelocity = VectorUtils.reflectVector(this.body.getLinearVelocity(), contact.getContactNormal(), 0.8f);
+            this.body.setLinearVelocity(newVelocity);
+            this.targetAngleRad = MathUtils.degreesToRadians * newVelocity.angleDeg();
+            this.bounces++;
 
-                this.body.setLinearVelocity(newVelocity);
-                this.targetAngleRad = MathUtils.degreesToRadians * newVelocity.angleDeg();
-                this.bounces++;
-            }
             return;
         }
 
@@ -160,7 +172,6 @@ public class Knife extends BaseEntity {
     private Body createBody() {
         BodyDef bdef = new BodyDef();
         bdef.type = BodyDef.BodyType.DynamicBody;
-        bdef.angularDamping = 0.25f;
 
         World world = getEngine().getSystem(PhysicsSystem.class).getWorld();
         Body b = world.createBody(bdef);
@@ -173,7 +184,7 @@ public class Knife extends BaseEntity {
         fixtureDef.shape = shape;
         fixtureDef.density = 150;
         fixtureDef.restitution = 0.75f;
-        fixtureDef.friction = 0.5f;
+
 
 
         b.createFixture(fixtureDef);

@@ -9,6 +9,9 @@ public class ServerEngine extends CoreEngine {
 
     public ServerEngine(CoreEngine.EngineMetaData clientEngineMetaData) {
         super(false);
+
+
+
         for (EntitySystem prioritySystem : clientEngineMetaData.prioritySystems) {
             if (prioritySystem instanceof MockableSystem) {
                 addPrioritySystems(prioritySystem);
@@ -25,4 +28,5 @@ public class ServerEngine extends CoreEngine {
     public boolean shouldProcess(EntitySystem system) {
         return !(system instanceof MockableSystem);
     }
+
 }

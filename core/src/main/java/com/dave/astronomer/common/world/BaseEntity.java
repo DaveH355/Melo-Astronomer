@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Null;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.network.packet.ClientboundAddEntityPacket;
+import com.dave.astronomer.common.network.packet.Packet;
 import com.dave.astronomer.common.world.movement.MovementBehavior;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +45,9 @@ public abstract class BaseEntity extends Entity implements Disposable {
             getBody().setUserData(this);
         }
         movementBehavior.apply(this);
+    }
+    public Packet<?> getAddEntityPacket() {
+        return new ClientboundAddEntityPacket(this);
     }
 
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
