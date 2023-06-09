@@ -34,12 +34,15 @@ public class TempPlayerAnimation {
         int dashDuration = 100;
         Animation<TextureRegion> dash = AnimationUtils.loadFromTexture(texture, width, height, 8, 3, 0, dashDuration);
 
+        int deathDuration = 100;
+        Animation<TextureRegion> death = AnimationUtils.loadFromTexture(texture, width, height, 8, 7, 0, deathDuration);
 
 
         Map<String, Animation<TextureRegion>> map = new HashMap<>();
         map.put("idle", idle);
         map.put("walk", walk);
         map.put("dash", dash);
+        map.put("death", death);
 
 
         SpriteComponent component = new SpriteComponent(map);

@@ -25,7 +25,7 @@ public class PlayerData {
     public static Body createBody(World world) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-
+        bodyDef.fixedRotation = true;
 
 
         Body b = world.createBody(bodyDef);
@@ -33,13 +33,13 @@ public class PlayerData {
         b.setUserData("player");
 
 
-        b.createFixture(PhysicsUtils.toShape(circle), 0);
+        b.createFixture(PhysicsUtils.toShape(circle), 100);
 
         //hit box sensor
         FixtureDef fdef = new FixtureDef();
         fdef.isSensor = true;
-        fdef.shape = PhysicsUtils.toShape(rectangle);
 
+        fdef.shape = PhysicsUtils.toShape(rectangle);
         b.createFixture(fdef);
 
         return b;

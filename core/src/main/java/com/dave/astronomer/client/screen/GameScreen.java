@@ -172,9 +172,8 @@ public class GameScreen implements Screen {
 
         //camera follow player
         MainPlayer player = GameState.getInstance().getMainPlayer();
+
         Vector3 target = new Vector3(player.getPosition(), 0);
-
-
 
         if (player.getDashKey().isDown()) {
             camera.position.lerp(target, delta * 6);
@@ -188,7 +187,7 @@ public class GameScreen implements Screen {
             camera.translate(CameraShake.getShake());
         }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !player.isDead()) {
 
             Vector3 worldCoords = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 

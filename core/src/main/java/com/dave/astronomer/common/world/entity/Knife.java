@@ -16,13 +16,13 @@ import com.dave.astronomer.common.network.packet.Packet;
 import com.dave.astronomer.common.world.*;
 import com.dave.astronomer.common.world.entity.Player;
 
+import javax.annotation.CheckForNull;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Knife extends BaseEntity {
-
-    private Body body;
+    private final Body body = getBody();
     private SpriteComponent spriteComponent;
     public int bounces = 0;
     boolean velocityApplied = false;
@@ -35,8 +35,6 @@ public class Knife extends BaseEntity {
     public Knife(EntityType<?> type, CoreEngine engine) {
         super(type, engine);
 
-        spriteComponent = createSpriteComponent();
-        body = createBody();
 
         addComponents(
             spriteComponent
@@ -51,22 +49,51 @@ public class Knife extends BaseEntity {
         forcePosition(position, targetAngleRad);
     }
 
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        ClientboundAddEntityPacket packet = new ClientboundAddEntityPacket(this);
-        packet.setData("owner_uuid", owner.getUuid());
-        return packet;
+    private SpriteComponent createSpriteComponent() {
+        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
+
+        Texture texture = assetFinder.get("knife.png", Texture.class);
+
+
+        Sprite sprite = new Sprite(texture);
+
+        sprite.setBounds(0, 0, sprite.getWidth() / Constants.PIXELS_PER_METER, sprite.getHeight() / Constants.PIXELS_PER_METER);
+        SpriteComponent spriteComponent = new SpriteComponent(texture);
+        spriteComponent.setSprite(sprite);
+
+        this.spriteComponent = spriteComponent;
+        return spriteComponent;
     }
 
-    @Override
-    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
-        super.recreateFromPacket(packet);
-        this.targetAngleRad = packet.angleRad;
+    public Body createBody() {
+        Sprite sprite = createSpriteComponent().getSprite();
 
-        UUID uuid = packet.getData("owner_uuid");
-        this.owner = getEngine().getEntityByUUID(uuid);
 
+        BodyDef bdef = new BodyDef();
+        bdef.type = BodyDef.BodyType.DynamicBody;
+
+        World world = getEngine().getSystem(PhysicsSystem.class).getWorld();
+        Body b = world.createBody(bdef);
+
+
+        Rectangle rect = PhysicsUtils.traceRectangle(sprite);
+        PolygonShape shape = PhysicsUtils.toShape(rect);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 150;
+        fixtureDef.restitution = 0.75f;
+
+
+
+        b.createFixture(fixtureDef);
+        shape.dispose();
+
+        PhysicsUtils.centerSprite(sprite, b);
+        return b;
     }
+
+
     private boolean checkLeftOwner() {
         Vector2 lower = new Vector2();
         Vector2 upper = new Vector2();
@@ -142,7 +169,11 @@ public class Knife extends BaseEntity {
             return;
         }
 
-        if (entity instanceof Player player && contact.getOtherFixture().isSensor() && leftOwner) {
+        if (entity instanceof Player player && contact.getOtherFixture().isSensor()) {
+
+            if (player == owner && !leftOwner) {
+                return;
+            }
             player.hurt();
             getEngine().removeEntity(this);
         }
@@ -151,46 +182,20 @@ public class Knife extends BaseEntity {
     }
 
     @Override
-    public Body getBody() {
-        return body;
-    }
-    private SpriteComponent createSpriteComponent() {
-        AssetFinder assetFinder = MeloAstronomer.getInstance().getAssetFinder();
-
-        Texture texture = assetFinder.get("knife.png", Texture.class);
-
-
-        Sprite sprite = new Sprite(texture);
-
-        sprite.setBounds(0, 0, sprite.getWidth() / Constants.PIXELS_PER_METER, sprite.getHeight() / Constants.PIXELS_PER_METER);
-        SpriteComponent spriteComponent = new SpriteComponent(texture);
-        spriteComponent.setSprite(sprite);
-
-        return spriteComponent;
+    public Packet<?> getAddEntityPacket() {
+        ClientboundAddEntityPacket packet = new ClientboundAddEntityPacket(this);
+        packet.setData("owner_uuid", owner.getUuid());
+        return packet;
     }
 
-    private Body createBody() {
-        BodyDef bdef = new BodyDef();
-        bdef.type = BodyDef.BodyType.DynamicBody;
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        this.targetAngleRad = packet.angleRad;
 
-        World world = getEngine().getSystem(PhysicsSystem.class).getWorld();
-        Body b = world.createBody(bdef);
-        b.setUserData(this);
+        UUID uuid = packet.getData("owner_uuid");
+        this.owner = getEngine().getEntityByUUID(uuid);
 
-        Rectangle rect = PhysicsUtils.traceRectangle(spriteComponent.getSprite());
-        PolygonShape shape = PhysicsUtils.toShape(rect);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 150;
-        fixtureDef.restitution = 0.75f;
-
-
-
-        b.createFixture(fixtureDef);
-        shape.dispose();
-
-        PhysicsUtils.centerSprite(spriteComponent.getSprite(), b);
-        return b;
     }
+
 }

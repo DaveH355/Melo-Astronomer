@@ -14,17 +14,12 @@ import java.util.UUID;
 public class RemotePlayer extends AbstractClientPlayer {
     @Getter
     private SpriteComponent spriteComponent;
-    @Getter
-    private Body body;
-
 
     public RemotePlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
         setMovementBehavior(new MovementBehavior.BasicLerp());
 
         spriteComponent = MainPlayer.createSpriteComponent();
-        body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());
-
 
         addComponents(
                 spriteComponent
@@ -34,10 +29,16 @@ public class RemotePlayer extends AbstractClientPlayer {
     @Override
     public void update(float delta) {
         super.update(delta);
+        if (isDead()) return;
 
         spriteComponent.getSprite().setPosition(getPosition().x, getPosition().y);
 
 
         MainPlayerSystem.determineAnimation(this, getDeltaSpeed());
+    }
+
+    @Override
+    public Body createBody() {
+        return PlayerData.createBody(getEngine().getSystem(PhysicsSystem.class).getWorld());
     }
 }

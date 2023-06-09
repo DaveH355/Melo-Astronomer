@@ -37,7 +37,7 @@ public class MAServer extends Server {
         }
         PhysicsSystem physicsSystem = new PhysicsSystem();
 
-        engine = new ServerEngine(data.clientEngineMetaData());
+        engine = new ServerEngine(this, data.clientEngineMetaData());
         engine.addSystems(
                 new ServerPlayerValidationSystem(this),
                 physicsSystem,

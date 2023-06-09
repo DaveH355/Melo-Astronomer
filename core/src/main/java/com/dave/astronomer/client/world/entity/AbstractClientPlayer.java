@@ -21,16 +21,24 @@ public abstract class AbstractClientPlayer extends Player {
     }
     @Override
     public void hurt() {
+        super.hurt();
         takingDamage = true;
         flashTimer = 0;
     }
 
+    @Override
+    public void die() {
+        super.die();
+        getSpriteComponent().selectAnimationIfAbsent("death", false);
+        takingDamage = false;
+        getSpriteComponent().getSprite().setColor(Color.WHITE);
+    }
 
     @Override
     public void update(float delta) {
         super.update(delta);
 
-        if (takingDamage) {
+        if (takingDamage && !isDead()) {
             flashTimer += delta;
             if (flashTimer > flashDuration) {
                 flashTimer = 0f;

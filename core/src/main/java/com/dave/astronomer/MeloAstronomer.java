@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.dave.astronomer.client.GameSkin;
 import com.dave.astronomer.client.asset.AssetFinder;
 import com.dave.astronomer.client.screen.SplashScreen;

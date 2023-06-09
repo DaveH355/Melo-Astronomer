@@ -28,10 +28,13 @@ public abstract class BaseEntity extends Entity implements Disposable {
     @Getter
     private Vector2 deltaMovement;
     @Getter float deltaSpeed;
+    @Getter private Body body;
 
     public BaseEntity(EntityType<?> entityType, CoreEngine engine) {
         this.engine = engine;
         this.entityType = entityType;
+        this.body = createBody();
+        this.body.setUserData(this);
     }
 
     public void lerpPosition(Vector2 vector2, float speed) {
@@ -41,9 +44,6 @@ public abstract class BaseEntity extends Entity implements Disposable {
 
     @Override
     public void update(float delta) {
-        if (getBody().getUserData() != this) {
-            getBody().setUserData(this);
-        }
         movementBehavior.apply(this);
     }
     public Packet<?> getAddEntityPacket() {
@@ -56,14 +56,14 @@ public abstract class BaseEntity extends Entity implements Disposable {
     }
 
     public Vector2 getPosition() {
-        return getBody().getPosition();
+        return this.body.getPosition();
     }
 
     public void forcePosition(Vector2 position, float angle) {
-        getBody().setTransform(position, angle);
+        this.body.setTransform(position, angle);
     }
 
-    public abstract Body getBody();
+    public abstract Body createBody();
     //collision
     public void beginCollision(CollisionContact contact, @CheckForNull BaseEntity entity) {
 
@@ -80,7 +80,7 @@ public abstract class BaseEntity extends Entity implements Disposable {
 
     @Override
     public void dispose() {
-        getBody().getWorld().destroyBody(getBody());
+        this.body.getWorld().destroyBody(body);
     }
 
 

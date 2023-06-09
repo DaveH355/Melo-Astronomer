@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.dave.astronomer.common.ashley.core.Engine;
 import com.dave.astronomer.common.ashley.core.Entity;
 import com.dave.astronomer.common.ashley.core.EntitySystem;
-import lombok.Getter;
+import com.dave.astronomer.common.world.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,11 @@ public class CoreEngine extends Engine implements Disposable {
     public CoreEngine(boolean isClientSide) {
         this.isClientSide = isClientSide;
     }
+
+    public void removeAndRespawnPlayer(Player player) {
+
+    }
+
     public static EngineMetaData getEngineMetaData(CoreEngine engine) {
         EngineMetaData data = new EngineMetaData();
         for (EntitySystem system : engine.getSystems()) {

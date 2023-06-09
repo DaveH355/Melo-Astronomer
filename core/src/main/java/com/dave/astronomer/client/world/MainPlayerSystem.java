@@ -24,6 +24,9 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
 
     @Override
     public void processEntity(MainPlayer p, float delta) {
+        if (p.isDead()) return;
+
+
         Vector2 velocity = new Vector2();
 
         float speed = p.getEntityType().speed;

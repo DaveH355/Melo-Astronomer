@@ -14,7 +14,13 @@ public class InputComponent extends BaseComponent implements InputProcessor {
 
     public static class KeyAction {
         @Getter private int key;
-        @Getter @Setter boolean isDown;
+        @Setter boolean isDown;
+        @Getter @Setter boolean disabled;
+
+        public boolean isDown() {
+            if (disabled) return false;
+            else return isDown;
+        }
         public KeyAction(int key) {
             this.key = key;
         }
@@ -24,6 +30,9 @@ public class InputComponent extends BaseComponent implements InputProcessor {
         for (KeyAction action : actions) {
             keyMap.put(action.key, action);
         }
+    }
+    public void disableAll() {
+        keyMap.values().forEach(keyAction -> keyAction.setDisabled(true));
     }
 
     @Override

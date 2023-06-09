@@ -1,6 +1,7 @@
 package com.dave.astronomer.client.world.entity;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.dave.astronomer.client.temp.TempPlayerAnimation;
 import com.dave.astronomer.client.world.CameraShake;
@@ -14,20 +15,18 @@ import lombok.Getter;
 import java.util.UUID;
 
 public class MainPlayer extends AbstractClientPlayer {
-    @Getter private SpriteComponent spriteComponent;
-    @Getter private Body body;
-    @Getter private InputComponent inputComponent;
-    @Getter private InputComponent.KeyAction walkUpKey, walkDownKey, walkLeftKey, walkRightKey, dashKey;
-
-
-
+    @Getter
+    private SpriteComponent spriteComponent;
+    @Getter
+    private InputComponent inputComponent;
+    @Getter
+    private InputComponent.KeyAction walkUpKey, walkDownKey, walkLeftKey, walkRightKey, dashKey;
     public MainPlayer(CoreEngine engine, UUID uuid) {
         super(engine, uuid);
 
 
         spriteComponent = createSpriteComponent();
         inputComponent = createInputComponent();
-        body = PlayerData.createBody(engine.getSystem(PhysicsSystem.class).getWorld());
 
 
         addComponents(
@@ -44,8 +43,19 @@ public class MainPlayer extends AbstractClientPlayer {
     }
 
     @Override
+    public void die() {
+        super.die();
+        inputComponent.disableAll();
+    }
+
+    @Override
     public void update(float delta) {
         super.update(delta);
+    }
+
+    @Override
+    public Body createBody() {
+        return PlayerData.createBody(getEngine().getSystem(PhysicsSystem.class).getWorld());
     }
 
     public static SpriteComponent createSpriteComponent() {
