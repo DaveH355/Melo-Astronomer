@@ -16,7 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerPlayer extends Player {
 
-    @Getter private PlayerConnection connection;
+    @Getter
+    private PlayerConnection connection;
     public Vector2 lastestClientPosition;
 
     private DeltaTimer delayRespawnTimer = new DeltaTimer(5, TimeUnit.SECONDS);
@@ -36,6 +37,11 @@ public class ServerPlayer extends Player {
                 getEngine().removeAndRespawnPlayer(this);
             }
         }
+     }
+
+    @Override
+    public void die() {
+        super.die();
     }
 
     @Override

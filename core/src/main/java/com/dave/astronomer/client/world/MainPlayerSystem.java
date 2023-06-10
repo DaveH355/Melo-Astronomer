@@ -47,20 +47,21 @@ public class MainPlayerSystem extends SingleEntitySystem<MainPlayer> implements 
         sprite.setRotation(p.getBody().getAngle() * MathUtils.radiansToDegrees);
 
 
+        float intendedSpeed = velocity.len();
 
         if (timer.update(delta)) {
             //send update to server
             ServerboundMovePlayerPacket packet = new ServerboundMovePlayerPacket();
             packet.position = p.getPosition();
             packet.uuid = p.getUuid();
-            packet.speed = speed;
+            packet.speed = intendedSpeed;
 
             GameState.getInstance().getClient().sendUDP(packet);
 
         }
 
 
-        determineAnimation(p, velocity.len());
+        determineAnimation(p, intendedSpeed);
     }
 
     public static void determineAnimation(AbstractClientPlayer p, float speed) {

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public abstract class Player extends BaseEntity implements Disposable {
 
-    private int hurtTimes;
+    @Getter private int hurtTimes;
     @Getter
     private boolean dead;
     public Player(CoreEngine engine, UUID uuid) {
@@ -45,5 +45,6 @@ public abstract class Player extends BaseEntity implements Disposable {
     }
     public void die() {
         dead = true;
+        getBody().setLinearVelocity(0, 0);
     }
 }

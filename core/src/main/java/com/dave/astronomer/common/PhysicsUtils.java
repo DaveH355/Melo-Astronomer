@@ -226,10 +226,9 @@ public class PhysicsUtils {
         float distanceToTarget = targetPosition.dst(position);
         float overshootThreshold = speed / PhysicsSystem.STEP_FREQUENCY;
 
-        //velocity will now overshoot target, limit speed to balance
+        //velocity will now overshoot target, limit speed to just enough
         if (distanceToTarget < overshootThreshold) {
-            float safetyMargin = 0.01f;
-            velocity.limit(distanceToTarget * PhysicsSystem.STEP_FREQUENCY - safetyMargin);
+            velocity.limit(distanceToTarget * PhysicsSystem.STEP_FREQUENCY);
         }
         return velocity;
     }

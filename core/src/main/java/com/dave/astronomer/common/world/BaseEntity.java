@@ -61,6 +61,7 @@ public abstract class BaseEntity extends Entity implements Disposable {
 
     public void forcePosition(Vector2 position, float angle) {
         this.body.setTransform(position, angle);
+        this.deltaMovement = position;
     }
 
     public abstract Body createBody();
