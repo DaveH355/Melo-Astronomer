@@ -3,10 +3,11 @@
 
 [![Development Build](https://github.com/Jackkillian/World-Of-Dragons/actions/workflows/gradle-development-build.yml/badge.svg)](https://github.com/Jackkillian/World-Of-Dragons/actions/workflows/gradle-development-build.yml)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/64dfaf153feb4602bd77b43f56bdec61)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Jackkillian/World-Of-Dragons&amp;utm_campaign=Badge_Grade)
 
-Space station pvp
+This game is not being worked on anymore
 
-Checkout the [Design Doc](https://docs.google.com/document/d/1xq8jR8LlegB-B6DlreXa6K_KRdj1nVW3QA7ovoa350k/edit?usp=sharing "") for more details
+the code is really clean but it barely does anything
 
+:C
 
 ## Pixel Art
 This game uses two different color palettes, one for day and night. The art is 16x16. Feel free
