@@ -44,7 +44,7 @@ public class AssetFinder implements Disposable {
             if (map.containsKey(file.name())) {
                 Log.error(getClass().getSimpleName(), String.format("""
                    "%s" collides with existing "%s"
-                   This may cause expected results when accessing these files. Make sure file names are unique""",
+                   This may cause unexpected results when accessing these files. Make sure file names are unique""",
                     file, map.get(file.name())));
                 continue;
             }
