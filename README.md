@@ -56,5 +56,7 @@ For example, `core:clean` removes `build` folder only from the `core` project.
 
 Looking to contribute? Checkout [Dev Wiki](DevWiki.MD) to get started
 
+##
+
 ![progress_slows](https://github.com/user-attachments/assets/660d4f29-9b31-4483-bb9a-3f751f91fd76)
 
