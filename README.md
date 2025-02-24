@@ -55,3 +55,6 @@ Note that most tasks that are not specific to a single project can be run with `
 For example, `core:clean` removes `build` folder only from the `core` project.
 
 Looking to contribute? Checkout [Dev Wiki](DevWiki.MD) to get started
+
+![progress_slows](https://github.com/user-attachments/assets/879b213a-9951-465a-b2e8-0c20c6f5aab9)
+
